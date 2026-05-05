@@ -18,7 +18,7 @@ export default function Nav() {
   return (
     <>
       <nav className="sticky top-0 z-50 bg-white border-b border-[#e8e8e8] h-[56px]">
-        <div className="h-full max-w-[1200px] mx-auto px-12 flex items-center justify-between">
+        <div className="h-full max-w-[1200px] mx-auto px-6 md:px-12 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <Image
@@ -50,7 +50,7 @@ export default function Nav() {
               variant="primary"
               label="Apply"
               href="/contact"
-              className="py-2 px-[18px] rounded-none bg-[#0f0f0f] text-white text-[13px] font-medium"
+              className="py-2 px-[18px] rounded-none border-0 bg-[#0f0f0f] text-white text-[13px] font-medium"
             />
           </div>
 

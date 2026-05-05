@@ -3,11 +3,11 @@ import FadeIn from '@/components/ui/FadeIn'
 
 export default function Hero() {
   return (
-    <section className="border-b border-[#e8e8e8] px-6 md:px-12 py-24">
+    <section className="border-b border-[#e8e8e8] px-6 md:px-12 py-16 md:py-24">
       <FadeIn className="mx-auto max-w-[1200px]">
         <div className="max-w-[860px]">
           {/* Tag line */}
-          <p className="text-[12px] text-ink-muted mb-8">
+          <p className="text-[12px] text-[#888] mb-6">
             Hong Kong · Biomedical accelerator
           </p>
 

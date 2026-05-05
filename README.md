@@ -25,11 +25,13 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 **Step 2:** In GoDaddy DNS settings, delete any existing A records for `@`.
 
 **Step 3:** Add an A record:
+
 - Host: `@`
 - Points to: `76.76.21.21`
 - TTL: `600`
 
 **Step 4:** Add a CNAME record:
+
 - Host: `www`
 - Points to: `cname.vercel-dns.com`
 - TTL: `600`
@@ -53,8 +55,8 @@ Edit `src/data/portfolio.ts`. Add, remove, or modify entries in the array. The p
 ## Adding the real logo
 
 1. Place your logo files in `/public/`:
-   - `logo.png` — dark version (used on white backgrounds)
-   - `logo-white.png` — white version (for any future dark-background contexts)
+  - `logo.png` — dark version (used on white backgrounds)
+  - `logo-white.png` — white version (for any future dark-background contexts)
 2. In `src/components/layout/Nav.tsx`, replace the ember circle `<div>` and "Pebble" text with:
 
 ```tsx
@@ -63,3 +65,4 @@ import Image from 'next/image'
 // Inside the Link component:
 <Image src="/logo.png" alt="Pebble Accelerator" width={120} height={24} priority />
 ```
+

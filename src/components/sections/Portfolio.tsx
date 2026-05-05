@@ -42,7 +42,7 @@ export default function Portfolio({ limit }: Props) {
   const showViewAll = limit !== undefined
 
   return (
-    <section className="border-b border-[#e8e8e8] px-6 md:px-12 py-16">
+    <section className="border-b border-[#e8e8e8]">
       <div className="mx-auto max-w-[1200px]">
       {/* Header row */}
         <FadeIn>
