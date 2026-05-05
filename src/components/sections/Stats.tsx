@@ -11,7 +11,7 @@ export default function Stats() {
         {stats.map((stat, i) => (
           <div
             key={stat.label}
-            className={`py-7 px-10 ${i < stats.length - 1 ? 'border-b md:border-b-0 md:border-r border-[#e8e8e8]' : ''}`}
+            className={`py-7 px-10 border-b md:border-b-0 border-[#e8e8e8] ${i < stats.length - 1 ? 'md:border-r' : ''}`}
           >
             <p className="font-display text-[42px] font-normal tracking-[-0.02em] text-[#0f0f0f] leading-none">
               {stat.number}
