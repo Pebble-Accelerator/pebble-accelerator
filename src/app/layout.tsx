@@ -40,7 +40,7 @@ export default function RootLayout({
     <html lang="en" className={`${cormorantGaramond.variable} ${ibmPlexSans.variable}`}>
       <body className={ibmPlexSans.className}>
         <Nav />
-        <main>{children}</main>
+        <main className="min-w-0">{children}</main>
         <Footer />
       </body>
     </html>

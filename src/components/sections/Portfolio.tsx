@@ -7,33 +7,33 @@ interface Props {
   limit?: number
 }
 
-function cardBorder(idx: number) {
-  const pos = idx + 1
-  const isSecondInRow = pos % 2 === 0
-  const isThirdInRow = pos % 3 === 0
-  return [
-    'border-b border-[#e8e8e8]',
-    'md:border-r md:border-[#e8e8e8]',
-    isSecondInRow ? 'md:border-r-0' : '',
-    isSecondInRow && !isThirdInRow ? 'lg:border-r lg:border-[#e8e8e8]' : '',
-    isThirdInRow ? 'lg:border-r-0' : '',
-  ]
-    .filter(Boolean)
-    .join(' ')
-}
+function CompanyRow({ company, isFirst }: { company: Company; isFirst: boolean }) {
+  const href = company.href ?? '/portfolio'
 
-function CompanyCard({ company, delay }: { company: Company; delay: number }) {
   return (
-    <FadeIn delay={delay} className="h-full">
-      <div className="h-full py-7 px-10 hover:bg-[#fafafa] transition-colors duration-150">
-        <p className="text-[11px] font-medium text-[#2D6A5A] mb-[10px]">{company.sector}</p>
-        <p className="text-[15px] font-medium text-[#0f0f0f] mb-2">{company.name}</p>
-        <p className="text-[13px] font-light text-[#888] leading-[1.6]">
-          {company.oneLiner}
-        </p>
-        <p className="text-[11px] text-[#ccc] mt-4">{company.location}</p>
+    <Link
+      href={href}
+      className={`group flex cursor-pointer items-baseline justify-between gap-4 border-b border-black/[0.08] py-[22px] transition-all duration-150 md:gap-6 ${
+        isFirst ? 'border-t border-black/[0.08]' : ''
+      }`}
+    >
+      <div className="flex min-w-0 shrink items-baseline gap-4">
+        <span className="font-sans text-[18px] font-medium text-[#0f0f0f] transition-colors duration-150 group-hover:text-[#2D6A5A]">
+          {company.name}
+        </span>
+        <span className="shrink-0 text-[10px] font-medium uppercase tracking-[0.08em] text-[#2D6A5A]">
+          {company.sector}
+        </span>
       </div>
-    </FadeIn>
+      <div className="flex min-w-0 shrink-0 items-baseline justify-end gap-10">
+        <span className="hidden max-w-[400px] text-right text-[13px] font-light text-[#888] md:block">
+          {company.oneLiner}
+        </span>
+        <span className="min-w-[80px] shrink-0 whitespace-nowrap text-right text-[12px] text-[#bbb]">
+          {company.location}
+        </span>
+      </div>
+    </Link>
   )
 }
 
@@ -42,39 +42,33 @@ export default function Portfolio({ limit }: Props) {
   const showViewAll = limit !== undefined
 
   return (
-    <section className="border-b border-[#e8e8e8]">
-      <div className="mx-auto max-w-[1200px]">
-      {/* Header row */}
+    <section className="bg-[#F5F0E8] px-[5vw] py-[120px]">
+      <div className="mx-auto max-w-[1280px]">
         <FadeIn>
-          <div className="py-7 px-10 border-b border-[#e8e8e8] flex items-center justify-between">
-            <span className="text-[12px] text-ink-faint">Portfolio</span>
+          <div className="mb-12 flex items-baseline justify-between md:mb-12">
+            <span className="text-[11px] font-normal uppercase tracking-[0.12em] text-[#888]">
+              Portfolio
+            </span>
             <Link
               href="/portfolio"
-              className="text-[12px] text-ink-muted hover:text-ink transition-colors duration-150"
+              className="text-[13px] text-[#888] transition-colors hover:text-[#0f0f0f]"
             >
               All companies →
             </Link>
           </div>
         </FadeIn>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        <div>
           {companies.map((company, i) => (
-            <div key={company.id} className={cardBorder(i)}>
-              <CompanyCard company={company} delay={i * 0.06} />
-            </div>
+            <CompanyRow key={company.id} company={company} isFirst={i === 0} />
           ))}
           {showViewAll && (
-            <div className={cardBorder(companies.length)}>
-              <FadeIn delay={companies.length * 0.06} className="h-full">
-                <Link
-                  href="/portfolio"
-                  className="flex h-full min-h-[140px] items-center justify-center hover:bg-[#fafafa] transition-colors duration-150"
-                >
-                  <span className="text-[12px] text-ink-ghost">View all companies →</span>
-                </Link>
-              </FadeIn>
-            </div>
+            <Link
+              href="/portfolio"
+              className="flex cursor-pointer justify-center border-b border-black/[0.08] py-[22px] text-[13px] text-[#888] transition-colors hover:text-[#0f0f0f]"
+            >
+              View all companies →
+            </Link>
           )}
         </div>
       </div>

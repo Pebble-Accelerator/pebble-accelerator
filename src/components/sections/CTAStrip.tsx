@@ -1,26 +1,61 @@
-import Button from '@/components/ui/Button'
-import FadeIn from '@/components/ui/FadeIn'
+import Link from 'next/link'
 
 export default function CTAStrip() {
   return (
-    <section className="border-b border-[#e8e8e8]">
-      <div className="mx-auto max-w-[1200px] grid grid-cols-1 md:grid-cols-[200px_1fr]">
-        {/* Label */}
-        <div className="w-[200px] border-b md:border-b-0 md:border-r border-[#e8e8e8] p-5 md:p-10 md:pt-11 self-start flex items-start">
-          <span className="text-[12px] text-[#aaa]">Get in touch</span>
+    <section style={{
+      background: '#0f0f0f',
+      padding: '120px 5vw',
+    }}>
+      <div style={{
+        maxWidth: '1280px',
+        margin: '0 auto',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: '64px',
+      }}>
+        <h2 style={{
+          fontFamily: 'var(--font-cormorant), Georgia, serif',
+          fontSize: 'clamp(36px, 4vw, 56px)',
+          fontWeight: 400,
+          lineHeight: 1.2,
+          letterSpacing: '-0.02em',
+          color: '#ffffff',
+          maxWidth: '520px',
+          margin: 0,
+        }}>
+          Building something that changes medicine?
+        </h2>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column' as const,
+          alignItems: 'flex-start',
+          gap: '20px',
+          flexShrink: 0,
+        }}>
+          <span style={{
+            fontSize: '13px',
+            color: 'rgba(255,255,255,0.4)',
+            fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+          }}>
+            hello@pebbleaccelerator.com
+          </span>
+          <Link href="/contact" style={{
+            background: '#ffffff',
+            color: '#0f0f0f',
+            fontSize: '13px',
+            fontWeight: 500,
+            padding: '14px 36px',
+            border: 'none',
+            letterSpacing: '0.06em',
+            textTransform: 'uppercase' as const,
+            textDecoration: 'none',
+            display: 'inline-block',
+            fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+          }}>
+            Apply now
+          </Link>
         </div>
-
-        {/* Content */}
-        <FadeIn className="p-5 md:p-12 flex flex-col md:flex-row md:items-center md:justify-between gap-8">
-          <p className="font-display text-[32px] font-normal leading-[1.35] tracking-[-0.01em] text-ink max-w-[360px]">
-            Building something that changes medicine?
-          </p>
-
-          <div className="flex flex-col items-start gap-3">
-            <span className="text-[12px] text-[#aaa]">hello@pebbleaccelerator.com</span>
-            <Button variant="primary" label="Apply now" href="/contact" className="py-[10px] px-[22px]" />
-          </div>
-        </FadeIn>
       </div>
     </section>
   )

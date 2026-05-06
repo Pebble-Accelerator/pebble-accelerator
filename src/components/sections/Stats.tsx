@@ -1,22 +1,47 @@
-const stats = [
-  { number: '18+', label: 'Companies financed' },
-  { number: '30+', label: 'Companies accelerated' },
-  { number: '100m', label: 'Patient pool by 2030' },
-]
-
 export default function Stats() {
+  const stats = [
+    { number: '18+', label: 'Companies Financed' },
+    { number: '30+', label: 'Companies Accelerated' },
+    { number: '100m', label: 'Patient Pool by 2030' },
+  ]
+
   return (
-    <section className="border-b border-[#e8e8e8]">
-      <div className="mx-auto max-w-[1200px] grid grid-cols-1 md:grid-cols-3">
+    <section style={{ background: '#ffffff', padding: '0 5vw' }}>
+      <div style={{
+        maxWidth: '1280px',
+        margin: '0 auto',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+      }}>
         {stats.map((stat, i) => (
-          <div
-            key={stat.label}
-            className={`py-7 px-10 border-b md:border-b-0 border-[#e8e8e8] ${i < stats.length - 1 ? 'md:border-r' : ''}`}
-          >
-            <p className="font-display text-[42px] font-normal tracking-[-0.02em] text-[#0f0f0f] leading-none">
+          <div key={i} style={{
+            padding: '72px 48px 72px 0',
+            borderRight: i < 2 ? '1px solid rgba(0,0,0,0.08)' : 'none',
+            paddingLeft: i === 0 ? '0' : '48px',
+          }}>
+            <span style={{
+              fontFamily: 'var(--font-cormorant), Georgia, serif',
+              fontSize: 'clamp(72px, 8vw, 104px)',
+              fontWeight: 300,
+              letterSpacing: '-0.04em',
+              color: '#0f0f0f',
+              lineHeight: 1,
+              display: 'block',
+              marginBottom: '14px',
+            }}>
               {stat.number}
-            </p>
-            <p className="text-[12px] text-[#999] mt-1">{stat.label}</p>
+            </span>
+            <span style={{
+              fontSize: '11px',
+              color: '#999',
+              fontWeight: 400,
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase' as const,
+              display: 'block',
+              fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+            }}>
+              {stat.label}
+            </span>
           </div>
         ))}
       </div>

@@ -13,31 +13,16 @@ const filters: { label: string; value: Filter }[] = [
   { label: 'Accelerated', value: 'accelerated' },
 ]
 
-function cardBorder(idx: number, total: number) {
-  const pos = idx + 1
-  const isLast2 = pos % 2 === 0
-  const isLast3 = pos % 3 === 0
-  return [
-    'border-b border-border',
-    'sm:border-r sm:border-border',
-    isLast2 ? 'sm:border-r-0' : '',
-    isLast2 && !isLast3 ? 'lg:border-r lg:border-border' : '',
-    isLast3 ? 'lg:border-r-0' : '',
-  ]
-    .filter(Boolean)
-    .join(' ')
-}
-
 function CompanyCard({ company, delay }: { company: Company; delay: number }) {
   return (
     <FadeIn delay={delay} className="h-full">
-      <div className="h-full px-5 md:px-10 py-7 hover:bg-hover-bg transition-colors duration-150">
-        <p className="text-[11px] font-medium text-forest mb-[10px]">{company.sector}</p>
-        <p className="text-[14px] font-medium text-ink mb-[6px]">{company.name}</p>
-        <p className="text-[12px] font-light text-ink-muted leading-[1.6]">
-          {company.oneLiner}
+      <div className="h-full py-6">
+        <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.04em] text-[#2D6A5A]">
+          {company.sector}
         </p>
-        <p className="text-[11px] text-ink-ghost mt-4">{company.location}</p>
+        <p className="mb-2.5 text-[16px] font-medium text-[#0f0f0f]">{company.name}</p>
+        <p className="text-[13px] font-light leading-[1.65] text-[#888]">{company.oneLiner}</p>
+        <p className="mt-5 text-[11px] text-[#ccc]">{company.location}</p>
       </div>
     </FadeIn>
   )
@@ -50,38 +35,44 @@ export default function PortfolioPage() {
     active === 'all' ? portfolio : portfolio.filter((c) => c.status === active)
 
   return (
+    <div style={{ paddingTop: '60px' }}>
     <>
-      {/* Header */}
-      <div className="px-5 md:px-10 pt-16 pb-[64px] border-b border-border">
-        <h1 className="text-[40px] font-normal text-ink mb-3">Portfolio</h1>
-        <p className="text-[14px] font-light text-ink-muted">
-          Companies we&apos;ve backed and accelerated across biomedical innovation.
-        </p>
-      </div>
+      <section>
+        <div className="mx-auto max-w-[1200px] px-6 py-24 md:px-12">
+          <h1 className="mb-3 font-display text-[48px] font-normal leading-[1.1] tracking-[-0.02em] text-[#0f0f0f] md:text-[56px]">
+            Portfolio
+          </h1>
+          <p className="text-[14px] font-light leading-[1.75] text-[#555]">
+            Companies we&apos;ve backed and accelerated across biomedical innovation.
+          </p>
+        </div>
+      </section>
 
-      {/* Filter bar */}
-      <div className="flex flex-row border-b border-border">
-        {filters.map((f, i) => (
-          <button
-            key={f.value}
-            onClick={() => setActive(f.value)}
-            className={`px-5 py-[14px] text-[13px] transition-colors duration-150 ${
-              i < filters.length - 1 ? 'border-r border-border' : ''
-            } ${active === f.value ? 'text-ink font-medium' : 'text-ink-faint font-normal'}`}
-          >
-            {f.label}
-          </button>
-        ))}
-      </div>
+      <section>
+        <div className="mx-auto flex max-w-[1200px] flex-row flex-wrap gap-x-10 gap-y-3 px-6 md:px-12">
+          {filters.map((f) => (
+            <button
+              key={f.value}
+              type="button"
+              onClick={() => setActive(f.value)}
+              className={`py-2 text-[13px] transition-colors duration-150 ${
+                active === f.value ? 'font-medium text-[#0f0f0f]' : 'font-normal text-[#aaa]'
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+      </section>
 
-      {/* Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-        {filtered.map((company, i) => (
-          <div key={company.id} className={cardBorder(i, filtered.length)}>
-            <CompanyCard company={company} delay={i * 0.05} />
-          </div>
-        ))}
-      </div>
+      <section>
+        <div className="mx-auto grid max-w-[1200px] grid-cols-1 gap-x-16 gap-y-8 px-6 pb-24 md:grid-cols-2 md:px-12 lg:grid-cols-3">
+          {filtered.map((company, i) => (
+            <CompanyCard key={company.id} company={company} delay={i * 0.05} />
+          ))}
+        </div>
+      </section>
     </>
+    </div>
   )
 }

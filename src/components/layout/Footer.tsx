@@ -1,42 +1,52 @@
-import Link from 'next/link'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export default function Footer() {
   return (
-    <footer className="border-t border-[#e8e8e8] px-10 py-[18px] flex flex-row items-center justify-between">
-      <div className="flex flex-col items-start">
-        <Image
-          src="/logos/Pebble_Accelerator_Sideways_Logo.png"
-          alt="Pebble Accelerator"
-          height={24}
-          width={140}
-          style={{ objectFit: 'contain', opacity: 0.5, marginBottom: '12px' }}
-        />
-        <span className="text-[12px] text-[#bbb]">
-          © 2025 Pebble Accelerator · Hong Kong
-        </span>
-      </div>
-      <div className="flex items-center gap-5">
-        <a
-          href="https://linkedin.com/company/pebbleaccelerator"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-[12px] text-[#bbb] hover:text-[#555] transition-colors duration-150"
-        >
-          LinkedIn
-        </a>
-        <Link
-          href="/privacy"
-          className="text-[12px] text-[#bbb] hover:text-[#555] transition-colors duration-150"
-        >
-          Privacy
-        </Link>
-        <Link
-          href="/terms"
-          className="text-[12px] text-[#bbb] hover:text-[#555] transition-colors duration-150"
-        >
-          Terms
-        </Link>
+    <footer style={{
+      background: '#0f0f0f',
+      borderTop: '1px solid rgba(255,255,255,0.08)',
+      padding: '32px 5vw',
+    }}>
+      <div style={{
+        maxWidth: '1280px',
+        margin: '0 auto',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
+          <Image
+            src="/logos/Pebble_Accelerator_Sideways_Logo_transparent_v2.png"
+            alt="Pebble Accelerator"
+            width={140}
+            height={24}
+            style={{ objectFit: 'contain', opacity: 0.5 }}
+          />
+          <span style={{
+            fontSize: '12px',
+            color: 'rgba(255,255,255,0.25)',
+            fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+          }}>
+            © 2025 Pebble Accelerator · Hong Kong
+          </span>
+        </div>
+        <div style={{ display: 'flex', gap: '24px' }}>
+          {[
+            { label: 'LinkedIn', href: 'https://linkedin.com/company/pebbleaccelerator' },
+            { label: 'Privacy', href: '/privacy' },
+            { label: 'Terms', href: '/terms' },
+          ].map((link) => (
+            <Link key={link.label} href={link.href} style={{
+              fontSize: '12px',
+              color: 'rgba(255,255,255,0.3)',
+              textDecoration: 'none',
+              fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+            }}>
+              {link.label}
+            </Link>
+          ))}
+        </div>
       </div>
     </footer>
   )

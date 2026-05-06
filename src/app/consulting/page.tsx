@@ -1,109 +1,164 @@
 import CTAStrip from '@/components/sections/CTAStrip'
 import FadeIn from '@/components/ui/FadeIn'
 
+const services = [
+  {
+    name: 'HK as clinical & R&D node',
+    description:
+      'Leverage Hong Kong as a clinical trial, R&D, and logistics hub for your biomedical operations.',
+  },
+  {
+    name: 'China strategy',
+    description:
+      'Formulate your China launch and globalization strategy with boots-on-the-ground expertise.',
+  },
+  {
+    name: 'Greater Bay Area ecosystem',
+    description:
+      "Develop business opportunities within the Greater Bay Area's growing biomedical ecosystem.",
+  },
+  {
+    name: 'Tigermed integration',
+    description:
+      'Integrate with the broader ecosystem of Tigermed and its global network of partners.',
+  },
+  {
+    name: 'Grants & subsidies',
+    description:
+      'Apply for grants and subsidies from the Hong Kong Government and other available sources.',
+  },
+  {
+    name: 'Corporate setup',
+    description:
+      'Set up offshore corporate entities, VIE structures, bank accounts, and visa packages.',
+  },
+  {
+    name: 'Market validation',
+    description:
+      'Utilize Hong Kong as a test market to identify product-market fit before broader expansion.',
+  },
+  {
+    name: 'Licensing & partnerships',
+    description:
+      'Identify potential assets for licensing, collaboration, and strategic partnerships.',
+  },
+]
+
 const steps = [
   {
     number: '01',
     name: 'Initial conversation',
     description:
-      'A brief call to understand your company, technology, and where you are in the journey. No deck required.',
+      'We learn about your company, goals, and where Hong Kong fits into your strategy.',
   },
   {
     number: '02',
     name: 'Assessment & fit',
     description:
-      'We evaluate scientific differentiation, market opportunity, and strategic fit with our portfolio and network.',
+      'We assess alignment with our network and identify the highest-leverage opportunities.',
   },
   {
     number: '03',
-    name: 'Term sheet',
-    description:
-      'If there is mutual interest, we move quickly to a term sheet. Our standard terms are clean and founder-friendly.',
+    name: 'Engagement scope',
+    description: 'We define a clear scope of work, timeline, and success metrics together.',
   },
   {
     number: '04',
-    name: 'Onboarding',
+    name: 'Active engagement',
     description:
-      'Introductions to our network begin immediately — investors, clinical advisors, regulatory experts, and government contacts.',
+      'We execute — opening doors, making introductions, and navigating the local ecosystem on your behalf.',
   },
   {
     number: '05',
-    name: 'Active support',
+    name: 'Ongoing support',
     description:
-      'We remain actively involved through milestone planning, follow-on fundraising, and strategic pivots as they arise.',
+      'We remain a long-term partner, available as your HK presence evolves.',
   },
 ]
 
+const labelCol =
+  'self-start p-6 uppercase tracking-[0.04em] md:px-12 md:pb-12 md:pl-12 md:pr-10 md:pt-[52px]'
+const labelText = 'text-[12px] font-normal text-[#aaa]'
+const contentCol = 'p-6 md:p-12 md:pb-12 md:pl-14 md:pr-12 md:pt-12'
+
 export default function ConsultingPage() {
   return (
+    <div style={{ paddingTop: '60px' }}>
     <>
-      {/* Header */}
-      <div className="px-5 md:px-10 pt-16 pb-[64px] border-b border-border">
-        <h1 className="text-[40px] font-normal text-ink mb-3">How we work</h1>
-        <p className="text-[14px] font-light text-ink-muted">
-          Our model combines capital, operational depth, and unparalleled Hong Kong access.
-        </p>
-      </div>
-
-      {/* Investment */}
-      <section className="border-b border-border">
-        <div className="grid grid-cols-1 md:grid-cols-[200px_1fr]">
-          <div className="border-b md:border-b-0 md:border-r border-border px-5 md:px-10 py-10 flex items-start">
-            <span className="text-[12px] text-ink-faint">Investment</span>
-          </div>
-          <FadeIn delay={0.1} className="py-10 px-5 md:px-12">
-            <p className="text-[14px] font-light text-ink-body leading-[1.8] max-w-[580px]">
-              Pebble deploys starting capital of US$200K alongside hands-on operational
-              support tailored to your stage. We take concentrated positions in biomedical
-              companies with clear differentiation — typically pre-Series A with validated
-              technology and a defined path to the clinic or market. Our milestone-based
-              support model means we actively work alongside founders on regulatory
-              strategy, key hires, and investor positioning. The ideal Pebble company has
-              a strong scientific founder, an addressable market with significant
-              Asia-Pacific exposure, and capital efficiency built into its model.
+      <section>
+        <div className="mx-auto max-w-[1200px] px-6 py-24 md:px-12">
+          <FadeIn>
+            <p className="mb-6 text-[12px] font-normal uppercase tracking-[0.04em] text-[#aaa]">
+              Services
+            </p>
+            <h1 className="mb-7 max-w-[700px] font-display text-[48px] font-normal leading-[1.1] tracking-[-0.02em] text-[#0f0f0f] md:text-[56px]">
+              Consulting excellence in biomedical strategy.
+            </h1>
+            <p className="max-w-[520px] text-[15px] font-light leading-[1.75] text-[#555]">
+              For centuries, Hong Kong has been a bridge between East and West. This position has
+              never been more relevant as the US and China become the two largest markets for
+              biomedical companies. Let us be your eyes and ears — boots on the ground in Hong Kong.
             </p>
           </FadeIn>
         </div>
       </section>
 
-      {/* Consulting */}
-      <section className="border-b border-border">
-        <div className="grid grid-cols-1 md:grid-cols-[200px_1fr]">
-          <div className="border-b md:border-b-0 md:border-r border-border px-5 md:px-10 py-10 flex items-start">
-            <span className="text-[12px] text-ink-faint">Consulting</span>
+      <section>
+        <div className="mx-auto grid max-w-[1200px] grid-cols-1 md:grid-cols-[220px_1fr]">
+          <div className={labelCol}>
+            <span className={labelText}>What we do</span>
           </div>
-          <FadeIn delay={0.1} className="py-10 px-5 md:px-12">
-            <p className="text-[14px] font-light text-ink-body leading-[1.8] max-w-[580px]">
-              For companies that are not a fit for our investment program, Pebble serves
-              as your operational extension in Hong Kong. This means navigating the
-              Innovation and Technology Fund (ITF) and the Health and Medical Research
-              Fund (HMRF), connecting you with local CROs and clinical networks, and
-              facilitating introductions to strategic investors and corporate partners in
-              Greater China. We work on a project or retainer basis, with scope defined
-              by your specific market entry objectives. Past mandates have included
-              regulatory mapping, joint venture structuring, and KOL engagement across
-              APAC.
+          <FadeIn delay={0.05} className={contentCol}>
+            <p className="max-w-[880px] font-display text-[22px] font-normal italic leading-[1.7] text-[#0f0f0f]">
+              Whether you are a global company seeking to access the Chinese market, or a Chinese
+              company looking to expand globally — we help you navigate the complexity of operating
+              at the intersection of two worlds.
             </p>
           </FadeIn>
         </div>
       </section>
 
-      {/* Process */}
-      <section className="border-b border-border">
-        <div className="grid grid-cols-1 md:grid-cols-[200px_1fr]">
-          <div className="border-b md:border-b-0 md:border-r border-border px-5 md:px-10 py-10 flex items-start">
-            <span className="text-[12px] text-ink-faint">Process</span>
+      <section>
+        <div className="mx-auto grid max-w-[1200px] grid-cols-1 md:grid-cols-[220px_1fr]">
+          <div className={labelCol}>
+            <span className={labelText}>Services</span>
           </div>
-          <FadeIn delay={0.1} className="py-10 px-5 md:px-12">
+          <FadeIn delay={0.08} className={contentCol}>
+            <div className="grid grid-cols-1 gap-x-16 gap-y-10 md:grid-cols-2">
+              {services.map((service) => (
+                <div key={service.name}>
+                  <p className="mb-2 text-[14px] font-medium text-[#0f0f0f]">{service.name}</p>
+                  <p className="text-[13px] font-light leading-[1.75] text-[#666]">
+                    {service.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      <section>
+        <div className="mx-auto grid max-w-[1200px] grid-cols-1 md:grid-cols-[220px_1fr]">
+          <div className={labelCol}>
+            <span className={labelText}>Process</span>
+          </div>
+          <FadeIn delay={0.1} className={contentCol}>
             <div>
               {steps.map((step) => (
                 <div
                   key={step.number}
-                  className="border-b border-border py-5 last:border-b-0"
+                  className="flex gap-6 border-b border-black/[0.07] py-6 last:border-b-0"
                 >
-                  <p className="text-[12px] text-ink-ghost mb-1">{step.number}</p>
-                  <p className="text-[14px] font-medium text-ink mb-1">{step.name}</p>
-                  <p className="text-[13px] font-light text-ink-body">{step.description}</p>
+                  <span className="min-w-[24px] shrink-0 pt-0.5 text-[12px] font-normal text-[#ccc]">
+                    {step.number}
+                  </span>
+                  <div>
+                    <p className="mb-1.5 text-[15px] font-medium text-[#0f0f0f]">{step.name}</p>
+                    <p className="text-[13px] font-light leading-[1.7] text-[#666]">
+                      {step.description}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -113,5 +168,6 @@ export default function ConsultingPage() {
 
       <CTAStrip />
     </>
+    </div>
   )
 }

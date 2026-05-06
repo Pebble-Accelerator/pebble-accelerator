@@ -1,44 +1,74 @@
-import FadeIn from '@/components/ui/FadeIn'
-
-const services = [
-  {
-    name: 'Investment',
-    description:
-      'We deploy starting capital of US$200K alongside deep operational support, leveraging our investor network to accelerate the milestones that matter.',
-    tags: 'Seed · Series A bridge · Follow-on',
-  },
-  {
-    name: 'Consulting',
-    description:
-      'For companies beyond our investment scope, we serve as your extension in Hong Kong — opening doors to China, accessing government grants, building the right partnerships.',
-    tags: 'Market entry · HK grants · China access',
-  },
-]
-
 export default function Services() {
   return (
-    <section className="border-b border-[#e8e8e8]">
-      <div className="mx-auto max-w-[1200px] grid grid-cols-1 md:grid-cols-[200px_1fr]">
-        {/* Label */}
-        <div className="w-[200px] border-b md:border-b-0 md:border-r border-[#e8e8e8] p-5 md:p-10 md:pt-11 self-start flex items-start">
-          <span className="text-[12px] text-[#aaa]">What we do</span>
-        </div>
-
-        {/* Content: two service sub-columns */}
-        <FadeIn className="grid grid-cols-1 md:grid-cols-2 p-5 md:py-10 md:px-12">
-          {services.map((service, i) => (
-            <div
-              key={service.name}
-              className={`py-10 pr-10 pl-12 ${i < services.length - 1 ? 'border-b md:border-b-0 md:border-r border-[#e8e8e8]' : ''}`}
-            >
-              <p className="text-[15px] font-medium text-[#0f0f0f] mb-[14px]">{service.name}</p>
-              <p className="text-[13px] font-light text-[#666] leading-[1.75] mb-5">
-                {service.description}
+    <section style={{
+      background: '#ffffff',
+      padding: '120px 5vw',
+    }}>
+      <div style={{
+        maxWidth: '1280px',
+        margin: '0 auto',
+      }}>
+        <span style={{
+          fontSize: '11px',
+          color: '#aaa',
+          letterSpacing: '0.12em',
+          textTransform: 'uppercase' as const,
+          marginBottom: '64px',
+          display: 'block',
+          fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+        }}>
+          What we do
+        </span>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '96px',
+        }}>
+          {[
+            {
+              name: 'Investment',
+              desc: 'We deploy starting capital of US$200K alongside deep operational support, leveraging our investor network to accelerate the milestones that matter.',
+              tags: 'Seed · Series A bridge · Follow-on',
+            },
+            {
+              name: 'Consulting',
+              desc: 'For companies beyond our investment scope, we serve as your extension in Hong Kong — opening doors to China, accessing government grants, building the right partnerships.',
+              tags: 'Market entry · HK grants · China access',
+            },
+          ].map((svc, i) => (
+            <div key={i}>
+              <h3 style={{
+                fontSize: '22px',
+                fontWeight: 500,
+                color: '#0f0f0f',
+                marginBottom: '20px',
+                marginTop: 0,
+                fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+              }}>
+                {svc.name}
+              </h3>
+              <p style={{
+                fontSize: '15px',
+                fontWeight: 300,
+                color: '#666',
+                lineHeight: 1.85,
+                marginBottom: '24px',
+                marginTop: 0,
+                fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+              }}>
+                {svc.desc}
               </p>
-              <p className="text-[12px] text-[#bbb]">{service.tags}</p>
+              <span style={{
+                fontSize: '12px',
+                color: '#bbb',
+                letterSpacing: '0.04em',
+                fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+              }}>
+                {svc.tags}
+              </span>
             </div>
           ))}
-        </FadeIn>
+        </div>
       </div>
     </section>
   )
