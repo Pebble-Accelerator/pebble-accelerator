@@ -1,257 +1,352 @@
+'use client'
+
+import { useEffect, useMemo, useState } from 'react'
+import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps'
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
+import { useScrollEntranceMode } from '@/hooks/useScrollEntranceMode'
+
+type CityMarker = {
+  id: string
+  city: string
+  role: string
+  stat: string
+  coordinates: [number, number]
+}
+
 export default function About() {
+  const reduced = usePrefersReducedMotion()
+  const { ref: sectionRef, mode } = useScrollEntranceMode(!reduced)
+  const animate = !reduced && mode === 'animate'
+
+  const geographyUrl = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-10m.json'
+  const guangdongGeoJsonUrl = 'https://geo.datav.aliyun.com/areas_v3/bound/440000_full.json'
+
+  const markers: CityMarker[] = useMemo(
+    () => [
+      {
+        id: 'hongkong',
+        city: 'Hong Kong',
+        role: 'Pebble HQ',
+        stat: 'Capital + global access',
+        coordinates: [114.155, 22.285],
+      },
+      {
+        id: 'shenzhen',
+        city: 'Shenzhen',
+        role: 'Manufacturing scale-up',
+        stat: '200+ biotech firms',
+        coordinates: [114.06, 22.54],
+      },
+      {
+        id: 'guangzhou',
+        city: 'Guangzhou',
+        role: 'Clinical trials hub',
+        stat: 'Top-tier hospital network',
+        coordinates: [113.45, 23.05],
+      },
+      {
+        id: 'macau',
+        city: 'Macau',
+        role: 'Regulatory bridge',
+        stat: 'China–EU pathways',
+        coordinates: [113.5, 22.16],
+      },
+      {
+        id: 'zhuhai',
+        city: 'Zhuhai',
+        role: 'Biotech parks',
+        stat: 'Hengqin innovation zone',
+        coordinates: [113.58, 22.27],
+      },
+    ],
+    []
+  )
+
+  const [activeCity, setActiveCity] = useState<string | null>(null)
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setActiveCity(null)
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [])
+
   return (
-    <section style={{
-      background: '#F5F0E8',
-      padding: '120px 5vw',
-      position: 'relative',
-      overflow: 'hidden',
-    }}>
-      <div style={{
-        maxWidth: '1280px',
-        margin: '0 auto',
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: '80px',
-        alignItems: 'center',
-      }}>
-
-        {/* Left — quote + coordinates */}
-        <div>
-          <p style={{
-            fontFamily: 'var(--font-cormorant), Georgia, serif',
-            fontSize: 'clamp(24px, 2.8vw, 38px)',
-            fontWeight: 400,
-            fontStyle: 'italic',
-            lineHeight: 1.55,
-            color: '#0f0f0f',
-            margin: '0 0 48px 0',
-          }}>
-            Hong Kong sits at a singular crossroads — the gateway between
-            China&apos;s vast patient population and the world&apos;s deepest capital
-            markets. Pebble was built to exploit this position, backing founders
-            with the unfair advantages that come from deep local alignment.
-          </p>
-
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '16px',
-          }}>
-            <span style={{
-              fontSize: '11px',
-              color: 'rgba(0,0,0,0.3)',
-              letterSpacing: '0.12em',
-              fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-            }}>22.3193° N</span>
-            <span style={{
-              width: '24px', height: '1px',
-              background: 'rgba(0,0,0,0.15)',
-              display: 'inline-block',
-            }} />
-            <span style={{
-              fontSize: '11px',
-              color: 'rgba(0,0,0,0.3)',
-              letterSpacing: '0.12em',
-              fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-            }}>114.1694° E</span>
-            <span style={{
-              width: '24px', height: '1px',
-              background: 'rgba(0,0,0,0.15)',
-              display: 'inline-block',
-            }} />
-            <span style={{
-              fontSize: '11px',
-              color: 'rgba(0,0,0,0.3)',
-              letterSpacing: '0.12em',
-              fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-            }}>Hong Kong</span>
-          </div>
-        </div>
-
-        {/* Right — HK coastline SVG */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          opacity: 0.5,
+    <section
+      ref={sectionRef}
+      className="apac-corridor-fullbleed"
+      style={{
+        background: '#F5F0E8',
+        padding: 0,
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      <div
+        className="apac-map-wrap"
+        style={{
+          position: 'relative',
+          width: '100%',
+          minHeight: '600px',
+        }}
+      >
+        <div className="apac-intro" style={{
+          position: 'absolute',
+          top: '48px',
+          left: '48px',
+          right: 'auto',
+          zIndex: 10,
+          maxWidth: '360px',
+          color: '#0f0f0f',
+          fontFamily: 'var(--font-cormorant), Georgia, serif',
+          fontWeight: 600,
+          fontSize: '32px',
+          lineHeight: 1.35,
+          pointerEvents: 'none',
         }}>
-          <svg
-            viewBox="0 0 500 400"
-            xmlns="http://www.w3.org/2000/svg"
-            style={{
-              width: '100%',
-              maxWidth: '460px',
-              height: 'auto',
-            }}
-            fill="none"
-          >
-            {/* 
-              Hong Kong coastline — two main landmasses:
-              1. New Territories / Kowloon Peninsula (north)
-              2. Hong Kong Island (south)
-              Separated by Victoria Harbour
-              Distinctive jagged coastline with inlets
-            */}
-
-            {/* Kowloon Peninsula + New Territories */}
-            <path
-              d="
-                M 30,20
-                L 60,18 L 85,22 L 110,18 L 135,24
-                L 155,20 L 180,16 L 210,18 L 240,14
-                L 265,18 L 290,15 L 320,20 L 350,16
-                L 375,22 L 400,18 L 430,24 L 460,20
-                L 470,30 L 465,45 L 455,55 L 448,68
-                L 440,75 L 430,82 L 418,78 L 405,85
-                L 395,92 L 385,88 L 372,95 L 360,102
-                L 348,98 L 335,106 L 322,112 L 310,108
-                L 298,115 L 285,110 L 272,118 L 258,114
-                L 245,122 L 232,118 L 220,126
-                L 212,132 L 205,128 L 195,135
-                L 185,130 L 175,138 L 165,143
-                L 155,138 L 145,145 L 135,140
-                L 125,148 L 115,144 L 105,150
-                L 95,145 L 85,152 L 75,148
-                L 65,154 L 55,150 L 45,156
-                L 38,150 L 30,155 L 22,148
-                L 18,138 L 20,125 L 18,112
-                L 22,98 L 20,85 L 24,72
-                L 22,58 L 26,44 L 28,32 L 30,20 Z
-              "
-              stroke="#c8c0b0"
-              strokeWidth="1.2"
-              strokeLinejoin="round"
-              strokeLinecap="round"
-            />
-
-            {/* Victoria Harbour — water gap label area */}
-            <text
-              x="250"
-              y="188"
-              textAnchor="middle"
-              style={{
-                fontSize: '9px',
-                fill: '#c8c0b0',
-                letterSpacing: '0.2em',
-                fontFamily: 'system-ui, sans-serif',
-              }}
-            >
-              VICTORIA HARBOUR
-            </text>
-
-            {/* Hong Kong Island */}
-            <path
-              d="
-                M 85,215
-                L 95,208 L 110,204 L 125,210
-                L 140,205 L 158,200 L 175,205
-                L 192,200 L 210,196 L 228,200
-                L 245,196 L 262,200 L 278,196
-                L 295,202 L 312,198 L 328,204
-                L 342,200 L 355,208 L 365,215
-                L 370,225 L 365,235 L 355,242
-                L 342,248 L 328,252 L 312,255
-                L 295,258 L 278,260 L 262,258
-                L 245,262 L 228,260 L 210,256
-                L 192,260 L 175,256 L 158,252
-                L 142,248 L 128,242 L 115,235
-                L 102,228 L 90,222 L 85,215 Z
-              "
-              stroke="#c8c0b0"
-              strokeWidth="1.2"
-              strokeLinejoin="round"
-              strokeLinecap="round"
-            />
-
-            {/* Lantau Island — west */}
-            <path
-              d="
-                M 22,185
-                L 35,178 L 50,182 L 62,176
-                L 72,182 L 78,192 L 74,204
-                L 62,212 L 48,216 L 35,210
-                L 24,202 L 18,192 L 22,185 Z
-              "
-              stroke="#c8c0b0"
-              strokeWidth="1.2"
-              strokeLinejoin="round"
-              strokeLinecap="round"
-            />
-
-            {/* Lamma Island — south */}
-            <path
-              d="
-                M 145,285
-                L 158,280 L 170,284 L 178,292
-                L 175,302 L 165,308 L 152,305
-                L 142,298 L 140,288 L 145,285 Z
-              "
-              stroke="#c8c0b0"
-              strokeWidth="1.2"
-              strokeLinejoin="round"
-              strokeLinecap="round"
-            />
-
-            {/* Sai Kung peninsula detail — east */}
-            <path
-              d="
-                M 420,88
-                L 435,95 L 448,105 L 458,118
-                L 462,132 L 458,145 L 448,152
-                L 435,148 L 425,138 L 418,125
-                L 415,112 L 418,100 L 420,88 Z
-              "
-              stroke="#c8c0b0"
-              strokeWidth="1"
-              strokeLinejoin="round"
-              strokeLinecap="round"
-            />
-
-            {/* HK dot marker */}
-            <circle
-              cx="220"
-              cy="228"
-              r="3"
-              fill="#2D6A5A"
-              opacity="0.6"
-            />
-
-            {/* Subtle grid lines — cartographic feel */}
-            <line x1="0" y1="100" x2="500" y2="100"
-              stroke="#c8c0b0" strokeWidth="0.3"
-              strokeDasharray="4 8" opacity="0.4"/>
-            <line x1="0" y1="200" x2="500" y2="200"
-              stroke="#c8c0b0" strokeWidth="0.3"
-              strokeDasharray="4 8" opacity="0.4"/>
-            <line x1="0" y1="300" x2="500" y2="300"
-              stroke="#c8c0b0" strokeWidth="0.3"
-              strokeDasharray="4 8" opacity="0.4"/>
-            <line x1="125" y1="0" x2="125" y2="400"
-              stroke="#c8c0b0" strokeWidth="0.3"
-              strokeDasharray="4 8" opacity="0.4"/>
-            <line x1="250" y1="0" x2="250" y2="400"
-              stroke="#c8c0b0" strokeWidth="0.3"
-              strokeDasharray="4 8" opacity="0.4"/>
-            <line x1="375" y1="0" x2="375" y2="400"
-              stroke="#c8c0b0" strokeWidth="0.3"
-              strokeDasharray="4 8" opacity="0.4"/>
-
-            {/* Compass rose — minimal */}
-            <g transform="translate(460, 350)">
-              <line x1="0" y1="-14" x2="0" y2="14"
-                stroke="#c8c0b0" strokeWidth="0.8"/>
-              <line x1="-14" y1="0" x2="14" y2="0"
-                stroke="#c8c0b0" strokeWidth="0.8"/>
-              <text x="0" y="-18" textAnchor="middle"
-                style={{
-                  fontSize: '8px',
-                  fill: '#c8c0b0',
-                  fontFamily: 'system-ui',
-                }}>N</text>
-            </g>
-          </svg>
+          Pebble is built where it matters most. The Greater Bay Area connects 1.4 billion
+          patients, world-class clinical infrastructure, and tier-one capital — all within a single hour.
         </div>
 
+        <div
+          className="apac-map"
+          style={{
+            width: '100%',
+            height: '600px',
+            opacity: animate ? 0 : 1,
+            ...(animate && !reduced ? { animation: 'apacMapIn 600ms ease forwards' } : {}),
+            position: 'relative',
+            zIndex: 20,
+          }}
+          onClick={() => setActiveCity(null)}
+        >
+          <ComposableMap
+            projection="geoMercator"
+            projectionConfig={{ center: [113.85, 22.65], scale: 22000 }}
+            width={1000}
+            height={600}
+            style={{ width: '100%', height: '100%' }}
+          >
+            {/* Countries (land + borders) */}
+            <Geographies geography={geographyUrl}>
+              {({ geographies }) => (
+                <>
+                  {geographies.map((geo) => (
+                    <Geography
+                      key={geo.rsmKey}
+                      geography={geo}
+                      style={{
+                        default: {
+                          fill: '#5e7a6a',
+                          fillOpacity: 0.18,
+                          stroke: '#4a6555',
+                          strokeWidth: 0.7,
+                          outline: 'none',
+                        },
+                        hover: {
+                          fill: '#5e7a6a',
+                          fillOpacity: 0.28,
+                          stroke: '#4a6555',
+                          strokeWidth: 0.7,
+                          outline: 'none',
+                        },
+                        pressed: {
+                          fill: '#5e7a6a',
+                          fillOpacity: 0.28,
+                          stroke: '#4a6555',
+                          strokeWidth: 0.7,
+                          outline: 'none',
+                        },
+                      }}
+                    />
+                  ))}
+                </>
+              )}
+            </Geographies>
+
+            {/* Guangdong province border overlay (above countries, below markers) */}
+            <Geographies geography={guangdongGeoJsonUrl}>
+              {({ geographies }) => (
+                <>
+                  {geographies.map((geo) => (
+                    <Geography
+                      key={geo.rsmKey}
+                      geography={geo}
+                      style={{
+                        default: {
+                          fill: 'transparent',
+                          stroke: '#6b8474',
+                          strokeWidth: 0.4,
+                          strokeDasharray: '2,2',
+                          outline: 'none',
+                        },
+                        hover: {
+                          fill: 'transparent',
+                          stroke: '#6b8474',
+                          strokeWidth: 0.4,
+                          strokeDasharray: '2,2',
+                          outline: 'none',
+                        },
+                        pressed: {
+                          fill: 'transparent',
+                          stroke: '#6b8474',
+                          strokeWidth: 0.4,
+                          strokeDasharray: '2,2',
+                          outline: 'none',
+                        },
+                      }}
+                    />
+                  ))}
+                  {markers.map((m, idx) => {
+                    const isNearRight = m.coordinates[0] > 112
+                    const isNearTop = m.id === 'guangzhou' || m.coordinates[1] > 22.95
+                    const markerDelayMs = 600 + idx * 80
+                    const showCard = activeCity === m.id
+                    const cardOffset = m.id === 'guangzhou' ? 16 : 10
+                    const shouldFlipLeft = m.id !== 'guangzhou' && isNearRight
+
+                    return (
+                      <Marker
+                        key={m.id}
+                        coordinates={m.coordinates}
+                      >
+                        <g
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setActiveCity((prev) => (prev === m.id ? null : m.id))
+                          }}
+                          style={{
+                            opacity: animate ? 0 : 1,
+                            ...(animate && !reduced
+                              ? {
+                                  animation: `apacMarkerIn 240ms ease forwards`,
+                                  animationDelay: `${markerDelayMs}ms`,
+                                }
+                              : {}),
+                          }}
+                        >
+                          {/* Halo: exactly one per marker, always animating (unless reduced motion). */}
+                          <circle
+                            r={14}
+                            fill="rgba(94, 122, 106, 0.15)"
+                            opacity={0.25}
+                            style={{ pointerEvents: 'all' }}
+                          >
+                            {reduced ? null : (
+                              <>
+                                <animate
+                                  attributeName="r"
+                                  values="14;22.4"
+                                  dur="2.5s"
+                                  repeatCount="indefinite"
+                                />
+                                <animate
+                                  attributeName="opacity"
+                                  values="0.25;0"
+                                  dur="2.5s"
+                                  repeatCount="indefinite"
+                                />
+                              </>
+                            )}
+                          </circle>
+                          <circle r={7} fill="#2d3a35" stroke="#ffffff" strokeWidth={1.5} />
+                        </g>
+
+                        <foreignObject
+                          width={280}
+                          height={160}
+                          x={shouldFlipLeft ? -(280 + cardOffset) : cardOffset}
+                          y={isNearTop ? cardOffset : -(132 + cardOffset)}
+                          style={{
+                            overflow: 'visible',
+                            pointerEvents: 'none',
+                            opacity: showCard ? 1 : 0,
+                            transition: reduced
+                              ? 'none'
+                              : showCard
+                                ? 'opacity 200ms ease, transform 200ms ease'
+                                : 'opacity 150ms ease, transform 150ms ease',
+                            transform: showCard ? 'translateY(0px)' : `translateY(${isNearTop ? '-6px' : '6px'})`,
+                            visibility: showCard ? 'visible' : 'hidden',
+                          }}
+                        >
+                          <div style={{
+                            background: '#ffffff',
+                            border: '1px solid #d4d4d0',
+                            borderRadius: '6px',
+                            padding: '14px 16px',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                            pointerEvents: 'none',
+                            position: 'relative',
+                            zIndex: 50,
+                          }}>
+                            <div style={{
+                              fontFamily: 'var(--font-cormorant), Georgia, serif',
+                              fontWeight: 500,
+                              fontSize: '18px',
+                              lineHeight: 1.15,
+                              color: '#0f0f0f',
+                              marginBottom: '6px',
+                            }}>
+                              {m.city}
+                            </div>
+                            <div style={{
+                              fontSize: '11px',
+                              color: '#888',
+                              letterSpacing: '0.06em',
+                              textTransform: 'uppercase' as const,
+                              fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+                              marginBottom: '10px',
+                            }}>
+                              {m.role}
+                            </div>
+                            <div style={{
+                              fontSize: '14px',
+                              color: '#555',
+                              fontWeight: 300,
+                              lineHeight: 1.45,
+                              fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+                            }}>
+                              {m.stat}
+                            </div>
+                          </div>
+                        </foreignObject>
+                      </Marker>
+                    )
+                  })}
+                </>
+              )}
+            </Geographies>
+          </ComposableMap>
+        </div>
+
+        <style>{`
+          @media (max-width: 768px) {
+            .apac-intro {
+              position: relative !important;
+              top: auto !important;
+              left: auto !important;
+              max-width: none !important;
+              padding: 24px !important;
+              font-size: 24px !important;
+              z-index: 2 !important;
+            }
+            .apac-map { height: 560px !important; }
+            .apac-map-wrap { min-height: 0 !important; }
+          }
+
+          @media (prefers-reduced-motion: no-preference) {
+            @keyframes apacMapIn {
+              from { opacity: 0; }
+              to { opacity: 1; }
+            }
+            @keyframes apacMarkerIn {
+              from { opacity: 0; transform: translateY(6px); }
+              to { opacity: 1; transform: translateY(0); }
+            }
+          }
+        `}</style>
       </div>
     </section>
   )

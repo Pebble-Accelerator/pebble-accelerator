@@ -70,4 +70,31 @@ a { color: inherit; text-decoration: none; }
       opacity: 0;
     }
   }
+
+  @keyframes backers-marquee-scroll-left {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  .backers-marquee.is-paused .backers-marquee-track {
+    animation-play-state: paused;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backers-marquee-track {
+    animation: none !important;
+  }
+}
+
+.backers-section .backer-logo-img:hover {
+  transform: scale(1.08);
+}
+
+.backers-section .backer-logo-pill:hover .backer-logo-img {
+  transform: scale(1.08);
 }

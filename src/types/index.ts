@@ -12,4 +12,5 @@ export interface Backer {
   name: string
   type: string
   href: string
+  height?: number
 }

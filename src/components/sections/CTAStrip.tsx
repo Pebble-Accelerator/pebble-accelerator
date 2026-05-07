@@ -17,7 +17,7 @@ export default function CTAStrip() {
         <h2 style={{
           fontFamily: 'var(--font-cormorant), Georgia, serif',
           fontSize: 'clamp(36px, 4vw, 56px)',
-          fontWeight: 400,
+          fontWeight: 500,
           lineHeight: 1.2,
           letterSpacing: '-0.02em',
           color: '#ffffff',

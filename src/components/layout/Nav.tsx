@@ -140,7 +140,7 @@ export default function Nav() {
               style={{
                 fontFamily: 'var(--font-cormorant), Georgia, serif',
                 fontSize: '40px',
-                fontWeight: 400,
+                fontWeight: 500,
                 color: '#0f0f0f',
                 textDecoration: 'none',
                 padding: '16px 0',

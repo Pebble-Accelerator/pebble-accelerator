@@ -1,3 +1,5 @@
+import SectionLabelLine from '@/components/ui/SectionLabelLine'
+
 export default function WhyHK() {
   const pillars = [
     "Access to China's 1.4B patient population",
@@ -20,21 +22,22 @@ export default function WhyHK() {
         alignItems: 'start',
       }}>
         <div>
-          <span style={{
-            fontSize: '11px',
-            color: '#aaa',
-            letterSpacing: '0.12em',
-            textTransform: 'uppercase' as const,
-            marginBottom: '32px',
-            display: 'block',
-            fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-          }}>
-            Why Hong Kong
-          </span>
+          <SectionLabelLine marginBottom="32px">
+            <span style={{
+              fontSize: '11px',
+              color: '#aaa',
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase' as const,
+              fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+              flexShrink: 0,
+            }}>
+              Why Hong Kong
+            </span>
+          </SectionLabelLine>
           <h2 style={{
             fontFamily: 'var(--font-cormorant), Georgia, serif',
             fontSize: 'clamp(28px, 3vw, 38px)',
-            fontWeight: 400,
+            fontWeight: 500,
             lineHeight: 1.35,
             letterSpacing: '-0.01em',
             color: '#0f0f0f',
