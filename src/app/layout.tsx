@@ -6,7 +6,7 @@ import './globals.css'
 
 const cormorantGaramond = Cormorant_Garamond({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
+  weight: ['400', '500'],
   variable: '--font-cormorant',
   display: 'swap',
 })

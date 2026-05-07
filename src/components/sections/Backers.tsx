@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 import backers from '@/data/backers'
 import SectionLabelLine from '@/components/ui/SectionLabelLine'
@@ -10,7 +11,7 @@ const LOGO_BY_NAME: Record<string, string> = {
   'Tiger Jade Capital': '/logos/TigerJade.png?v=3',
   'Nan Fung Group': '/logos/Nanfung.png',
   Morningside: '/logos/morningside.svg?v=2',
-  'HK Cocoon': '/logos/Cocoon.jpeg?v=5',
+  'HK Cocoon': '/logos/Cocoon.jpeg',
 }
 
 export default function Backers() {
@@ -123,6 +124,7 @@ export default function Backers() {
       const src = LOGO_BY_NAME[b.name]
       const logoHeightPx = b.height || 56
       const isTigerJade = src.includes('TigerJade')
+      const isCocoon = src.includes('Cocoon.jpeg')
       return (
         <a
           key={`${b.name}-${suffix}-${i}`}
@@ -181,6 +183,26 @@ export default function Backers() {
                 }}
               />
             </div>
+          ) : isCocoon ? (
+            <Image
+              className="backer-logo-img"
+              src={src}
+              alt={b.name}
+              width={200}
+              height={56}
+              style={{
+                height: `${logoHeightPx}px`,
+                width: 'auto',
+                objectFit: 'contain',
+                opacity: 1,
+                transform: 'scale(1)',
+                transition: 'transform 200ms ease',
+                display: 'block',
+                marginBottom: 0,
+              }}
+              onMouseEnter={() => setIsLogoHovered(true)}
+              onMouseLeave={() => setIsLogoHovered(false)}
+            />
           ) : (
             <img
               className="backer-logo-img"
