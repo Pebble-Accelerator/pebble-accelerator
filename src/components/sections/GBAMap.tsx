@@ -1,9 +1,8 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
-import { useScrollEntranceMode } from '@/hooks/useScrollEntranceMode'
 
 type CityMarker = {
   id: string
@@ -13,12 +12,12 @@ type CityMarker = {
   coordinates: [number, number]
 }
 
-export default function GBAMap() {
+function GBAMap() {
   const reduced = usePrefersReducedMotion()
-  const { ref: sectionRef, mode } = useScrollEntranceMode(!reduced)
-  const animate = !reduced && mode === 'animate'
+  const animate = !reduced
 
-  const geographyUrl = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-10m.json'
+  // 50m is much smaller; at this zoom it's typically sufficient.
+  const geographyUrl = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json'
   const guangdongGeoJsonUrl = 'https://geo.datav.aliyun.com/areas_v3/bound/440000_full.json'
 
   const markers: CityMarker[] = useMemo(
@@ -63,6 +62,8 @@ export default function GBAMap() {
   )
 
   const [activeCity, setActiveCity] = useState<string | null>(null)
+  const [countriesGeo, setCountriesGeo] = useState<any | null>(null)
+  const [guangdongGeo, setGuangdongGeo] = useState<any | null>(null)
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -72,20 +73,69 @@ export default function GBAMap() {
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [])
 
+  useEffect(() => {
+    if (countriesGeo && guangdongGeo) return
+    let cancelled = false
+
+    const run = () => {
+      const fetchAll = async () => {
+        const [countriesRes, guangdongRes] = await Promise.all([
+          fetch(geographyUrl),
+          fetch(guangdongGeoJsonUrl),
+        ])
+        const [countriesJson, guangdongJson] = await Promise.all([
+          countriesRes.json(),
+          guangdongRes.json(),
+        ])
+        if (cancelled) return
+        setCountriesGeo(countriesJson)
+        setGuangdongGeo(guangdongJson)
+      }
+
+      fetchAll().catch(() => {
+        // If fetch fails, leave map blank rather than blocking scroll.
+      })
+    }
+
+    // Defer heavy JSON parse to idle time to avoid scroll jank.
+    const ric = (window as any).requestIdleCallback as
+      | ((cb: () => void, opts?: { timeout?: number }) => number)
+      | undefined
+    const cic = (window as any).cancelIdleCallback as ((id: number) => void) | undefined
+
+    let idleId: number | null = null
+    if (ric && cic) {
+      idleId = ric(run, { timeout: 2000 })
+    } else {
+      const t = window.setTimeout(run, 350)
+      return () => {
+        cancelled = true
+        window.clearTimeout(t)
+      }
+    }
+
+    return () => {
+      cancelled = true
+      if (idleId != null && cic) cic(idleId)
+    }
+  }, [countriesGeo, guangdongGeo, geographyUrl, guangdongGeoJsonUrl])
+
   return (
     <div
-      ref={sectionRef as any}
       className="apac-map"
       style={{
         width: '100%',
         height: '600px',
         opacity: animate ? 0 : 1,
-        ...(animate && !reduced ? { animation: 'apacMapIn 600ms ease forwards' } : {}),
+        ...(animate ? { animation: 'apacMapIn 600ms ease forwards' } : {}),
         position: 'relative',
         zIndex: 20,
       }}
       onClick={() => setActiveCity(null)}
     >
+      {!countriesGeo || !guangdongGeo ? (
+        <div style={{ width: '100%', height: '100%' }} aria-hidden />
+      ) : (
       <ComposableMap
         projection="geoMercator"
         projectionConfig={{ center: [113.85, 22.65], scale: 22000 }}
@@ -93,7 +143,7 @@ export default function GBAMap() {
         height={600}
         style={{ width: '100%', height: '100%' }}
       >
-        <Geographies geography={geographyUrl}>
+        <Geographies geography={countriesGeo}>
           {({ geographies }) => (
             <>
               {geographies.map((geo) => (
@@ -129,7 +179,7 @@ export default function GBAMap() {
           )}
         </Geographies>
 
-        <Geographies geography={guangdongGeoJsonUrl}>
+        <Geographies geography={guangdongGeo}>
           {({ geographies }) => (
             <>
               {geographies.map((geo) => (
@@ -287,6 +337,7 @@ export default function GBAMap() {
           )}
         </Geographies>
       </ComposableMap>
+      )}
 
       <style>{`
         @media (prefers-reduced-motion: no-preference) {
@@ -303,4 +354,6 @@ export default function GBAMap() {
     </div>
   )
 }
+
+export default React.memo(GBAMap)
 

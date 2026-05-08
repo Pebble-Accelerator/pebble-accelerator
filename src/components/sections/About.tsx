@@ -1,14 +1,26 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { useNearViewport } from '@/hooks/useNearViewport'
+import { useEffect, useRef, useState } from 'react'
+
+const GBAMap = dynamic(() => import('./GBAMap'), {
+  ssr: false,
+  loading: () => <div style={{ minHeight: '600px' }} aria-hidden />,
+})
 
 export default function About() {
-  const { ref, isNear } = useNearViewport<HTMLDivElement>({ rootMargin: '500px 0px' })
-  const GBAMap = dynamic(() => import('./GBAMap'), {
-    ssr: false,
-    loading: () => <div style={{ minHeight: '600px' }} />,
-  })
+  const sectionRef = useRef<HTMLDivElement | null>(null)
+  const [shouldLoadMap, setShouldLoadMap] = useState(false)
+
+  useEffect(() => {
+    if (shouldLoadMap) return
+    const observer = new IntersectionObserver(
+      ([entry]) => entry?.isIntersecting && setShouldLoadMap(true),
+      { rootMargin: '500px' }
+    )
+    if (sectionRef.current) observer.observe(sectionRef.current)
+    return () => observer.disconnect()
+  }, [shouldLoadMap])
 
   return (
     <section
@@ -21,7 +33,7 @@ export default function About() {
       }}
     >
       <div
-        ref={ref}
+        ref={sectionRef}
         className="apac-map-wrap"
         style={{
           position: 'relative',
@@ -47,7 +59,7 @@ export default function About() {
           patients, world-class clinical infrastructure, and tier-one capital — all within a single hour.
         </div>
 
-        {isNear ? <GBAMap /> : <div style={{ minHeight: '600px' }} />}
+        {shouldLoadMap ? <GBAMap /> : <div style={{ minHeight: '600px' }} aria-hidden />}
 
         <style>{`
           @media (max-width: 768px) {

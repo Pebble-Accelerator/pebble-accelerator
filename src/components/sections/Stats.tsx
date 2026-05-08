@@ -1,8 +1,7 @@
 'use client'
 
 import { useReducedMotion } from 'framer-motion'
-import { useLayoutEffect, useEffect, useState } from 'react'
-import { useScrollEntranceMode } from '@/hooks/useScrollEntranceMode'
+import { useEffect, useRef } from 'react'
 
 function parseStat(display: string): { target: number; suffix: string } {
   if (display.endsWith('+')) {
@@ -21,44 +20,25 @@ function easeOutCubic(t: number): number {
   return 1 - Math.pow(1 - t, 3)
 }
 
-function StatNumber({
-  numberStr,
-  animateAllowed,
-}: {
-  numberStr: string
-  animateAllowed: boolean
+function animateCount(opts: {
+  el: HTMLSpanElement
+  from: number
+  to: number
+  durationMs: number
+  suffix: string
 }) {
-  const reduced = useReducedMotion()
-  const { target, suffix } = parseStat(numberStr)
-  const [value, setValue] = useState(0)
+  const { el, from, to, durationMs, suffix } = opts
+  const start = performance.now()
 
-  const runCounter = animateAllowed && !reduced
+  const tick = (now: number) => {
+    const t = Math.min(1, (now - start) / durationMs)
+    const eased = easeOutCubic(t)
+    const value = Math.floor(from + (to - from) * eased)
+    el.textContent = `${value}${suffix}`
+    if (t < 1) requestAnimationFrame(tick)
+  }
 
-  useLayoutEffect(() => {
-    if (!runCounter) return
-    setValue(0)
-  }, [runCounter])
-
-  useEffect(() => {
-    if (!runCounter) return
-
-    let start = performance.now()
-    let frame = 0
-
-    const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / 1800)
-      const eased = easeOutCubic(t)
-      setValue(Math.round(target * eased))
-      if (t < 1) frame = requestAnimationFrame(tick)
-    }
-
-    frame = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(frame)
-  }, [runCounter, target])
-
-  if (!runCounter) return <>{numberStr}</>
-
-  return <>{`${value}${suffix}`}</>
+  requestAnimationFrame(tick)
 }
 
 export default function Stats() {
@@ -68,13 +48,67 @@ export default function Stats() {
     { number: '100m', label: 'Patient Pool by 2030' },
   ]
 
-  const framerReduced = useReducedMotion()
-  const { ref: sectionRef, mode } = useScrollEntranceMode(!framerReduced)
+  const reduced = useReducedMotion()
+  const sectionRef = useRef<HTMLElement | null>(null)
+  const hasAnimatedRef = useRef(false)
+  const numberRefs = useRef<Array<HTMLSpanElement | null>>([])
 
-  const animateNumbers = !framerReduced && mode === 'animate'
+  useEffect(() => {
+    const container = sectionRef.current
+    if (!container) return
+
+    // Always set the final values immediately if reduced-motion.
+    if (reduced) {
+      stats.forEach((stat, idx) => {
+        const el = numberRefs.current[idx]
+        if (!el) return
+        const { target, suffix } = parseStat(stat.number)
+        el.textContent = `${target}${suffix}`
+      })
+      return
+    }
+
+    if (hasAnimatedRef.current) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting || hasAnimatedRef.current) return
+        hasAnimatedRef.current = true
+
+        stats.forEach((stat, idx) => {
+          const el = numberRefs.current[idx]
+          if (!el) return
+          const { target, suffix } = parseStat(stat.number)
+
+          // Stagger starts by 200ms to avoid CPU spikes.
+          window.setTimeout(() => {
+            animateCount({
+              el,
+              from: 0,
+              to: target,
+              durationMs: 1800,
+              suffix,
+            })
+          }, idx * 200)
+        })
+
+        observer.disconnect()
+      },
+      { threshold: 0.4 }
+    )
+
+    observer.observe(container)
+    return () => observer.disconnect()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reduced])
 
   return (
-    <section ref={sectionRef} style={{ background: '#ffffff', padding: '0 5vw' }}>
+    <section ref={sectionRef} style={{
+      background: '#ffffff',
+      padding: '0 5vw',
+      contain: 'layout',
+      transform: 'translateZ(0)',
+    }}>
       <div style={{
         maxWidth: '1280px',
         margin: '0 auto',
@@ -93,11 +127,20 @@ export default function Stats() {
               fontWeight: 500,
               letterSpacing: '-0.04em',
               color: '#0f0f0f',
-              lineHeight: 1,
+              lineHeight: 1.2,
               display: 'block',
               marginBottom: '14px',
+              paddingBottom: '8px',
+              willChange: 'contents',
+              contain: 'layout style',
             }}>
-              <StatNumber numberStr={stat.number} animateAllowed={animateNumbers} />
+              <span
+                ref={(el) => {
+                  numberRefs.current[i] = el
+                }}
+              >
+                {stat.number}
+              </span>
             </span>
             <span style={{
               fontSize: '11px',
