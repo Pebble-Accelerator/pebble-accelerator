@@ -2,9 +2,13 @@
 
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import backers from '@/data/backers'
 import SectionLabelLine from '@/components/ui/SectionLabelLine'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const LOGO_BY_NAME: Record<string, string> = {
   'Tiger Med Group': '/logos/tigermed.png',
@@ -14,9 +18,17 @@ const LOGO_BY_NAME: Record<string, string> = {
   'HK Cocoon': '/logos/Cocoon.jpeg',
 }
 
-export default function Backers() {
+type BackersProps = {
+  embedded?: boolean
+}
+
+export default function Backers({ embedded = false }: BackersProps) {
   const reduced = usePrefersReducedMotion()
+  const sectionRef = useRef<HTMLElement | null>(null)
+  const labelRef = useRef<HTMLDivElement | null>(null)
+  const logoRefs = useRef<(HTMLAnchorElement | null)[]>([])
   const trackRef = useRef<HTMLDivElement>(null)
+  const [marqueeStarted, setMarqueeStarted] = useState(reduced)
   const [isLogoHovered, setIsLogoHovered] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const startXRef = useRef(0)
@@ -29,6 +41,70 @@ export default function Backers() {
   const suppressClickRef = useRef(false)
   const dragMovedPxRef = useRef(0)
   const [renderTranslateX, setRenderTranslateX] = useState(0)
+
+  useEffect(() => {
+    const section = sectionRef.current
+    const label = labelRef.current
+    const logos = logoRefs.current.filter(Boolean) as HTMLAnchorElement[]
+    if (!section || !label || logos.length === 0) return
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const triggers: ScrollTrigger[] = []
+
+    if (prefersReduced || reduced) {
+      gsap.set(label, { opacity: 1, y: 0 })
+      gsap.set(logos, { opacity: 1, y: 0 })
+      setMarqueeStarted(true)
+      return
+    }
+
+    gsap.set(label, { opacity: 0, y: 12, willChange: 'transform' })
+    gsap.set(logos, { opacity: 0, y: 12, willChange: 'transform' })
+
+    const labelTween = gsap.to(label, {
+      opacity: 1,
+      y: 0,
+      duration: 0.8,
+      ease: 'power1.out',
+      delay: 0.1,
+      scrollTrigger: {
+        trigger: section,
+        scroller: '.snap-container',
+        start: 'center 80%',
+        once: true,
+      },
+      onComplete: () => {
+        label.style.willChange = 'auto'
+      },
+    })
+    if (labelTween.scrollTrigger) triggers.push(labelTween.scrollTrigger)
+
+    const logosTween = gsap.to(logos, {
+      opacity: 1,
+      y: 0,
+      duration: 0.8,
+      ease: 'power1.out',
+      delay: 0.1,
+      stagger: 0.15,
+      scrollTrigger: {
+        trigger: section,
+        scroller: '.snap-container',
+        start: 'center 80%',
+        once: true,
+      },
+      onComplete: () => {
+        logos.forEach((logo) => {
+          logo.style.willChange = 'auto'
+        })
+        setMarqueeStarted(true)
+      },
+    })
+    if (logosTween.scrollTrigger) triggers.push(logosTween.scrollTrigger)
+
+    return () => {
+      triggers.forEach((t) => t.kill())
+    }
+  }, [reduced])
 
   useEffect(() => {
     if (reduced) return
@@ -46,6 +122,7 @@ export default function Backers() {
 
   useEffect(() => {
     if (reduced) return
+    if (!marqueeStarted) return
     const speedPxPerSec = 40
 
     const tick = (ts: number) => {
@@ -61,7 +138,6 @@ export default function Backers() {
 
       if (!isDragging && !isLogoHovered) {
         translateXRef.current -= speedPxPerSec * dtSec
-        // Seamless wrap through duplicated set
         if (translateXRef.current <= -half) translateXRef.current += half
         if (translateXRef.current > 0) translateXRef.current -= half
         setRenderTranslateX(translateXRef.current)
@@ -76,12 +152,11 @@ export default function Backers() {
       rafRef.current = null
       lastTsRef.current = null
     }
-  }, [reduced, isDragging, isLogoHovered])
+  }, [reduced, isDragging, isLogoHovered, marqueeStarted])
 
   const normalizeTranslate = (x: number) => {
     const half = halfWidthRef.current
     if (!half) return x
-    // keep within (-half, 0]
     while (x <= -half) x += half
     while (x > 0) x -= half
     return x
@@ -111,7 +186,6 @@ export default function Backers() {
 
   const endDrag = () => {
     setIsDragging(false)
-    // allow click again after this event loop tick
     window.setTimeout(() => {
       suppressClickRef.current = false
       didDragRef.current = false
@@ -119,15 +193,20 @@ export default function Backers() {
     }, 0)
   }
 
-  const links = (suffix: string) =>
+  const links = (suffix: string, indexOffset: number) =>
     backers.map((b, i) => {
       const src = LOGO_BY_NAME[b.name]
       const logoHeightPx = b.height || 56
       const isTigerJade = src.includes('TigerJade')
       const isCocoon = src.includes('Cocoon.jpeg')
+      const logoIndex = indexOffset + i
+
       return (
         <a
           key={`${b.name}-${suffix}-${i}`}
+          ref={(el) => {
+            logoRefs.current[logoIndex] = el
+          }}
           href={b.href}
           target="_blank"
           rel="noopener noreferrer"
@@ -222,15 +301,17 @@ export default function Backers() {
               onMouseLeave={() => setIsLogoHovered(false)}
             />
           )}
-          <span style={{
-            marginTop: '10px',
-            textAlign: 'center' as const,
-            fontSize: '11px',
-            letterSpacing: '0.06em',
-            color: '#999',
-            display: 'block',
-            fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-          }}>
+          <span
+            style={{
+              marginTop: '10px',
+              textAlign: 'center' as const,
+              fontSize: '11px',
+              letterSpacing: '0.06em',
+              color: '#999',
+              display: 'block',
+              fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+            }}
+          >
             {b.type}
           </span>
         </a>
@@ -239,37 +320,54 @@ export default function Backers() {
 
   return (
     <section
-      className="backers-section"
+      ref={sectionRef}
+      className={
+        embedded ? 'backers-section backers-section--embedded' : 'snap-section backers-section'
+      }
       style={{
-        background: '#ffffff',
-        padding: '40px 5vw',
+        background: '#f5efe4',
+        padding: '0 5vw',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        boxSizing: 'border-box',
+        ...(embedded ? { flex: 1, minHeight: 0, height: 'auto' } : {}),
       }}
     >
-      <div style={{
-        maxWidth: '1280px',
-        margin: '0 auto',
-      }}>
-        <SectionLabelLine marginBottom="48px">
-          <span style={{
-            fontSize: '11px',
-            color: '#aaa',
-            letterSpacing: '0.12em',
-            textTransform: 'uppercase' as const,
-            fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-            flexShrink: 0,
-          }}>
-            Backed by
-          </span>
-        </SectionLabelLine>
+      <div
+        style={{
+          maxWidth: '1280px',
+          margin: '0 auto',
+          width: '100%',
+        }}
+      >
+        <div ref={labelRef}>
+          <SectionLabelLine marginBottom="48px">
+            <span
+              style={{
+                fontSize: '11px',
+                color: '#aaa',
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase' as const,
+                fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+                flexShrink: 0,
+              }}
+            >
+              Backed by
+            </span>
+          </SectionLabelLine>
+        </div>
 
         {reduced ? (
-          <div style={{
-            display: 'flex',
-            flexWrap: 'wrap' as const,
-            gap: '0',
-            alignItems: 'flex-start',
-          }}>
-            {links('static')}
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap' as const,
+              gap: '0',
+              alignItems: 'flex-start',
+            }}
+          >
+            {links('static', 0)}
           </div>
         ) : (
           <div
@@ -320,11 +418,9 @@ export default function Backers() {
               onTouchEnd={() => endDrag()}
               onTouchCancel={() => endDrag()}
             >
-              <div style={{ display: 'flex', flexDirection: 'row' }}>
-                {links('a')}
-              </div>
+              <div style={{ display: 'flex', flexDirection: 'row' }}>{links('a', 0)}</div>
               <div style={{ display: 'flex', flexDirection: 'row' }} aria-hidden>
-                {links('b')}
+                {links('b', backers.length)}
               </div>
             </div>
           </div>

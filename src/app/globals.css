@@ -40,17 +40,13 @@ button { cursor: pointer; }
 a { color: inherit; text-decoration: none; }
 
 @media (prefers-reduced-motion: no-preference) {
+  /* Founders underline: stroke-dash draw only (no opacity — avoids compositor jitter). */
   @keyframes drawOval {
-    0% {
+    from {
       stroke-dashoffset: 1100;
-      opacity: 0;
     }
-    8% {
-      opacity: 1;
-    }
-    100% {
+    to {
       stroke-dashoffset: 0;
-      opacity: 1;
     }
   }
 
@@ -89,6 +85,11 @@ a { color: inherit; text-decoration: none; }
   .backers-marquee-track {
     animation: none !important;
   }
+
+  .hero-founders-draw {
+    stroke-dashoffset: 0 !important;
+    animation: none !important;
+  }
 }
 
 .backers-section .backer-logo-img:hover {
@@ -98,3 +99,201 @@ a { color: inherit; text-decoration: none; }
 .backers-section .backer-logo-pill:hover .backer-logo-img {
   transform: scale(1.08);
 }
+
+.apac-map {
+  background-color: #f5efe4;
+}
+
+.apac-map svg.rsm-svg {
+  background: #f5efe4 !important;
+  background-color: #f5efe4 !important;
+}
+
+/* Pause expensive halo animations while the map is off-screen (scroll performance). */
+.apac-map:not(.apac-map-in-view) .apac-halo {
+  animation: none !important;
+  opacity: 0.28;
+}
+.snap-container {
+  height: 100vh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.snap-section {
+  scroll-snap-align: start;
+  height: 100vh;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+@supports (-webkit-touch-callout: none) {
+  .snap-section {
+    height: -webkit-fill-available;
+    min-height: -webkit-fill-available;
+  }
+}
+
+@keyframes heroChevronIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes heroChevronBob {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(5px);
+  }
+}
+
+.hero-scroll-chevron {
+  opacity: 0;
+  animation:
+    heroChevronIn 0.8s ease 1.2s forwards,
+    heroChevronBob 1.8s ease-in-out 2s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-scroll-chevron {
+    animation: heroChevronIn 0.8s ease 1.2s forwards;
+  }
+}
+
+/* Stats overlay on map */
+.stats-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  background: rgba(245, 239, 228, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 24px 5vw;
+  box-sizing: border-box;
+}
+
+.stats-grid {
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 0;
+}
+
+.stats-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 0 24px;
+  border-right: 1px solid #c8d4c4;
+  opacity: 1;
+  transform: none;
+  min-width: 0;
+}
+
+.stats-item:first-child {
+  padding-left: 0;
+}
+
+.stats-item:last-child {
+  border-right: none;
+  padding-right: 0;
+}
+
+.stats-number {
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-size: 64px;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  color: #0f0f0f;
+  line-height: 1.1;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.stats-label {
+  font-size: 11px;
+  color: #999;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  display: block;
+  font-family: var(--font-ibm-plex-sans), system-ui, sans-serif;
+}
+
+/* Combined What We Do + Backers */
+.combined-services-backers {
+  background: #f5efe4;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.combined-services-backers__top {
+  flex: 0 0 60%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.combined-services-backers__bottom {
+  flex: 0 0 40%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.combined-services-backers__divider {
+  flex-shrink: 0;
+  height: 1px;
+  background: #d4cfc2;
+  border: none;
+  margin: 0;
+}
+
+.services-section--embedded,
+.backers-section--embedded {
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .combined-services-backers {
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+    scroll-snap-align: start;
+  }
+
+  .combined-services-backers__top,
+  .combined-services-backers__bottom {
+    flex: none;
+    height: auto;
+    min-height: auto;
+  }
+
+  .stats-number {
+    font-size: 48px;
+  }
+
+  .stats-item {
+    padding: 0 12px;
+  }
+}
+

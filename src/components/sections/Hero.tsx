@@ -1,25 +1,42 @@
 'use client'
+
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 
 export default function Hero() {
+  const scrollToNext = () => {
+    const container = document.querySelector('.snap-container') as HTMLElement | null
+    const stats = document.getElementById('stats-section')
+    if (container && stats) {
+      container.scrollTo({ top: stats.offsetTop, behavior: 'smooth' })
+    }
+  }
+
   return (
-    <section style={{
-      position: 'relative',
-      minHeight: '100vh',
-      overflow: 'hidden',
-      background: '#F5F0E8',
-      display: 'flex',
-      alignItems: 'flex-start',
-      paddingTop: '60px',
-    }}>
-      <div style={{
-        position: 'absolute',
-        top: 0, left: 0, right: 0, bottom: 0,
-        overflow: 'hidden',
-        pointerEvents: 'none',
-        zIndex: 0,
-      }}>
+    <section
+      id="hero-section"
+      className="snap-section"
+      style={{
+        position: 'relative',
+        background: '#F5F0E8',
+        display: 'flex',
+        alignItems: 'flex-start',
+        paddingTop: '64px',
+        boxSizing: 'border-box',
+      }}
+    >
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          overflow: 'hidden',
+          pointerEvents: 'none',
+          zIndex: 0,
+        }}
+      >
         <svg
           width="100%"
           height="100%"
@@ -45,17 +62,19 @@ export default function Hero() {
         </svg>
       </div>
 
-      <div style={{
-        maxWidth: '1280px',
-        margin: '0 auto',
-        paddingTop: '140px',
-        paddingBottom: '100px',
-        paddingLeft: '5vw',
-        paddingRight: '5vw',
-        width: '100%',
-        position: 'relative',
-        zIndex: 1,
-      }}>
+      <div
+        style={{
+          maxWidth: '1280px',
+          margin: '0 auto',
+          paddingTop: '76px',
+          paddingBottom: '100px',
+          paddingLeft: '5vw',
+          paddingRight: '5vw',
+          width: '100%',
+          position: 'relative',
+          zIndex: 1,
+        }}
+      >
         <motion.h1
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
@@ -73,11 +92,13 @@ export default function Hero() {
           }}
         >
           We back the{' '}
-          <span style={{ 
-            position: 'relative', 
-            display: 'inline-block',
-            whiteSpace: 'nowrap',
-          }}>
+          <span
+            style={{
+              position: 'relative',
+              display: 'inline-block',
+              whiteSpace: 'nowrap',
+            }}
+          >
             founders
             <svg
               viewBox="0 0 340 100"
@@ -94,6 +115,7 @@ export default function Hero() {
               }}
             >
               <path
+                className="hero-founders-draw"
                 d="M 30,50 
        C 20,15 80,-5 170,2 
        C 260,8 325,20 328,50 
@@ -107,12 +129,17 @@ export default function Hero() {
                 style={{
                   strokeDasharray: 1100,
                   strokeDashoffset: 1100,
-                  animation: 'drawOval 1.6s cubic-bezier(0.4,0,0.2,1) 0.6s forwards',
+                  animation:
+                    'drawOval 1.4s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards',
+                  animationIterationCount: 1,
+                  animationFillMode: 'forwards',
                 }}
               />
             </svg>
           </span>
-          {' '}<br />redefining medicine.
+          {' '}
+          <br />
+          redefining medicine.
         </motion.h1>
 
         <motion.p
@@ -129,9 +156,9 @@ export default function Hero() {
             fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
           }}
         >
-          Pebble is a boutique accelerator building Hong Kong into a global
-          biomedical nexus — bridging the world&apos;s largest patient population
-          with the capital and expertise to reach them.
+          Pebble is a boutique accelerator building Hong Kong into a global biomedical nexus —
+          bridging the world&apos;s largest patient population with the capital and expertise to
+          reach them.
         </motion.p>
 
         <motion.div
@@ -140,27 +167,68 @@ export default function Hero() {
           transition={{ duration: 0.5, delay: 0.5 }}
           style={{ display: 'flex', alignItems: 'center', gap: '36px' }}
         >
-          <Link href="/portfolio" style={{
-            fontSize: '14px',
-            fontWeight: 500,
-            color: '#2D6A5A',
-            textDecoration: 'underline',
-            textUnderlineOffset: '4px',
-            fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-          }}>
+          <Link
+            href="/portfolio"
+            style={{
+              fontSize: '14px',
+              fontWeight: 500,
+              color: '#2D6A5A',
+              textDecoration: 'underline',
+              textUnderlineOffset: '4px',
+              fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+            }}
+          >
             View portfolio
           </Link>
-          <Link href="/consulting" style={{
-            fontSize: '14px',
-            color: '#888',
-            fontWeight: 300,
-            fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-            textDecoration: 'none',
-          }}>
+          <Link
+            href="/consulting"
+            style={{
+              fontSize: '14px',
+              color: '#888',
+              fontWeight: 300,
+              fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+              textDecoration: 'none',
+            }}
+          >
             How we work →
           </Link>
         </motion.div>
       </div>
+
+      <button
+        type="button"
+        className="hero-scroll-chevron"
+        aria-label="Scroll to stats"
+        onClick={scrollToNext}
+        style={{
+          position: 'absolute',
+          bottom: '32px',
+          left: '50%',
+          zIndex: 2,
+          background: 'none',
+          border: 'none',
+          padding: 0,
+          cursor: 'pointer',
+          lineHeight: 0,
+        }}
+      >
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden
+        >
+          <path
+            d="M6 9l6 6 6-6"
+            stroke="#2d3a35"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </button>
     </section>
   )
 }

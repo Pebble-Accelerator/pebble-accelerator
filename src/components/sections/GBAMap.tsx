@@ -1,69 +1,97 @@
 'use client'
 
-import React, { useEffect, useMemo, useState } from 'react'
-import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps'
+import 'mapbox-gl/dist/mapbox-gl.css'
+
+import React, { useEffect, useRef, useState } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import Map, { Marker, Popup } from 'react-map-gl/mapbox'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
+import Stats from './Stats'
+
+gsap.registerPlugin(ScrollTrigger)
 
 type CityMarker = {
   id: string
   city: string
   role: string
   stat: string
-  coordinates: [number, number]
+  longitude: number
+  latitude: number
 }
+
+const CITIES: CityMarker[] = [
+  {
+    id: 'guangzhou',
+    city: 'Guangzhou',
+    role: 'Clinical trials hub',
+    stat: 'Top-tier hospital network',
+    longitude: 113.45,
+    latitude: 23.05,
+  },
+  {
+    id: 'shenzhen',
+    city: 'Shenzhen',
+    role: 'Manufacturing scale-up',
+    stat: '200+ biotech firms',
+    longitude: 114.06,
+    latitude: 22.54,
+  },
+  {
+    id: 'hongkong',
+    city: 'Hong Kong',
+    role: 'Pebble HQ',
+    stat: 'Capital + global access',
+    longitude: 114.155,
+    latitude: 22.285,
+  },
+  {
+    id: 'macau',
+    city: 'Macau',
+    role: 'Regulatory bridge',
+    stat: 'China-EU pathways',
+    longitude: 113.5,
+    latitude: 22.16,
+  },
+  {
+    id: 'zhuhai',
+    city: 'Zhuhai',
+    role: 'Biotech parks',
+    stat: 'Hengqin innovation zone',
+    longitude: 113.58,
+    latitude: 22.27,
+  },
+]
+
+const DOT_ORDER = ['guangzhou', 'shenzhen', 'hongkong', 'macau', 'zhuhai'] as const
 
 function GBAMap() {
   const reduced = usePrefersReducedMotion()
-  const animate = !reduced
-
-  // 50m is much smaller; at this zoom it's typically sufficient.
-  const geographyUrl = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json'
-  const guangdongGeoJsonUrl = 'https://geo.datav.aliyun.com/areas_v3/bound/440000_full.json'
-
-  const markers: CityMarker[] = useMemo(
-    () => [
-      {
-        id: 'hongkong',
-        city: 'Hong Kong',
-        role: 'Pebble HQ',
-        stat: 'Capital + global access',
-        coordinates: [114.155, 22.285],
-      },
-      {
-        id: 'shenzhen',
-        city: 'Shenzhen',
-        role: 'Manufacturing scale-up',
-        stat: '200+ biotech firms',
-        coordinates: [114.06, 22.54],
-      },
-      {
-        id: 'guangzhou',
-        city: 'Guangzhou',
-        role: 'Clinical trials hub',
-        stat: 'Top-tier hospital network',
-        coordinates: [113.45, 23.05],
-      },
-      {
-        id: 'macau',
-        city: 'Macau',
-        role: 'Regulatory bridge',
-        stat: 'China–EU pathways',
-        coordinates: [113.5, 22.16],
-      },
-      {
-        id: 'zhuhai',
-        city: 'Zhuhai',
-        role: 'Biotech parks',
-        stat: 'Hengqin innovation zone',
-        coordinates: [113.58, 22.27],
-      },
-    ],
-    []
-  )
-
   const [activeCity, setActiveCity] = useState<string | null>(null)
-  const [countriesGeo, setCountriesGeo] = useState<any | null>(null)
-  const [guangdongGeo, setGuangdongGeo] = useState<any | null>(null)
+  const [mapLoaded, setMapLoaded] = useState(false)
+  const [mapReady, setMapReady] = useState(false)
+  const [shouldLoadMap, setShouldLoadMap] = useState(false)
+
+  const sectionRef = useRef<HTMLDivElement | null>(null)
+  const mapContainerRef = useRef<HTMLDivElement | null>(null)
+  const introRef = useRef<HTMLDivElement | null>(null)
+  const dotRefs = useRef<Record<string, HTMLDivElement | null>>({})
+
+  const active = CITIES.find((c) => c.id === activeCity)
+
+  useEffect(() => {
+    if (shouldLoadMap) return
+    const snapContainer = document.querySelector('.snap-container')
+    const observer = new IntersectionObserver(
+      ([entry]) => entry?.isIntersecting && setShouldLoadMap(true),
+      {
+        root: snapContainer instanceof HTMLElement ? snapContainer : null,
+        rootMargin: '250px',
+      }
+    )
+    if (sectionRef.current) observer.observe(sectionRef.current)
+    return () => observer.disconnect()
+  }, [shouldLoadMap])
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -74,286 +102,335 @@ function GBAMap() {
   }, [])
 
   useEffect(() => {
-    if (countriesGeo && guangdongGeo) return
-    let cancelled = false
+    if (!mapReady || !shouldLoadMap) return
 
-    const run = () => {
-      const fetchAll = async () => {
-        const [countriesRes, guangdongRes] = await Promise.all([
-          fetch(geographyUrl),
-          fetch(guangdongGeoJsonUrl),
-        ])
-        const [countriesJson, guangdongJson] = await Promise.all([
-          countriesRes.json(),
-          guangdongRes.json(),
-        ])
-        if (cancelled) return
-        setCountriesGeo(countriesJson)
-        setGuangdongGeo(guangdongJson)
-      }
+    const container = mapContainerRef.current
+    const intro = introRef.current
+    const dots = DOT_ORDER.map((id) => dotRefs.current[id]).filter(
+      Boolean
+    ) as HTMLDivElement[]
 
-      fetchAll().catch(() => {
-        // If fetch fails, leave map blank rather than blocking scroll.
-      })
+    if (!container || dots.length !== DOT_ORDER.length) return
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const triggers: ScrollTrigger[] = []
+
+    if (prefersReduced || reduced) {
+      if (intro) gsap.set(intro, { opacity: 1, x: 0 })
+      gsap.set(dots, { opacity: 1, scale: 1 })
+      return
     }
 
-    // Defer heavy JSON parse to idle time to avoid scroll jank.
-    const ric = (window as any).requestIdleCallback as
-      | ((cb: () => void, opts?: { timeout?: number }) => number)
-      | undefined
-    const cic = (window as any).cancelIdleCallback as ((id: number) => void) | undefined
+    if (intro) gsap.set(intro, { opacity: 0, x: -16, willChange: 'transform' })
+    gsap.set(dots, { opacity: 0, scale: 0, willChange: 'transform' })
 
-    let idleId: number | null = null
-    if (ric && cic) {
-      idleId = ric(run, { timeout: 2000 })
-    } else {
-      const t = window.setTimeout(run, 350)
-      return () => {
-        cancelled = true
-        window.clearTimeout(t)
-      }
+    const tl = gsap.timeline({
+      delay: 0.1,
+      scrollTrigger: {
+        trigger: container,
+        scroller: '.snap-container',
+        start: 'center 80%',
+        once: true,
+      },
+    })
+
+    if (intro) {
+      tl.to(
+        intro,
+        {
+          opacity: 1,
+          x: 0,
+          duration: 0.8,
+          ease: 'power1.out',
+          onComplete: () => {
+            intro.style.willChange = 'auto'
+          },
+        },
+        0
+      )
     }
+
+    dots.forEach((dot, i) => {
+      tl.to(
+        dot,
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 0.8,
+          ease: 'power1.out',
+          onComplete: () => {
+            dot.style.willChange = 'auto'
+          },
+        },
+        i * 0.15
+      )
+    })
+
+    if (tl.scrollTrigger) triggers.push(tl.scrollTrigger)
 
     return () => {
-      cancelled = true
-      if (idleId != null && cic) cic(idleId)
+      triggers.forEach((t) => t.kill())
     }
-  }, [countriesGeo, guangdongGeo, geographyUrl, guangdongGeoJsonUrl])
+  }, [mapReady, reduced, shouldLoadMap])
 
   return (
-    <div
-      className="apac-map"
+    <section
+      ref={sectionRef}
+      className="snap-section apac-corridor-fullbleed"
       style={{
-        width: '100%',
-        height: '600px',
-        opacity: animate ? 0 : 1,
-        ...(animate ? { animation: 'apacMapIn 600ms ease forwards' } : {}),
+        background: '#f5efe4',
+        padding: 0,
         position: 'relative',
-        zIndex: 20,
+        boxSizing: 'border-box',
       }}
-      onClick={() => setActiveCity(null)}
     >
-      {!countriesGeo || !guangdongGeo ? (
-        <div style={{ width: '100%', height: '100%' }} aria-hidden />
-      ) : (
-      <ComposableMap
-        projection="geoMercator"
-        projectionConfig={{ center: [113.85, 22.65], scale: 22000 }}
-        width={1000}
-        height={600}
-        style={{ width: '100%', height: '100%' }}
+      <div
+        ref={mapContainerRef}
+        className="apac-map"
+        style={{
+          width: '100%',
+          height: '100vh',
+          position: 'relative',
+          overflow: 'hidden',
+          background: '#f5efe4',
+        }}
+        onClick={() => setActiveCity(null)}
       >
-        <Geographies geography={countriesGeo}>
-          {({ geographies }) => (
-            <>
-              {geographies.map((geo) => (
-                <Geography
-                  key={geo.rsmKey}
-                  geography={geo}
+        {shouldLoadMap ? (
+          <Map
+            mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
+            mapStyle="mapbox://styles/kh-chen/cmp6m5igl002001sc3g662ejb"
+            initialViewState={{
+              longitude: 113.85,
+              latitude: 22.6,
+              zoom: 8.5,
+            }}
+            style={{ width: '100%', height: '100%', background: '#f5efe4' }}
+            reuseMaps
+            dragPan={false}
+            dragRotate={false}
+            scrollZoom={false}
+            touchZoomRotate={false}
+            doubleClickZoom={false}
+            keyboard={false}
+            attributionControl
+            onLoad={() => {
+              setMapLoaded(true)
+              setMapReady(true)
+            }}
+            onClick={() => setActiveCity(null)}
+          >
+            {CITIES.map((m) => (
+              <Marker
+                key={m.id}
+                longitude={m.longitude}
+                latitude={m.latitude}
+                anchor="center"
+                onClick={(e) => {
+                  e.originalEvent.stopPropagation()
+                  setActiveCity((prev) => (prev === m.id ? null : m.id))
+                }}
+              >
+                <div
                   style={{
-                    default: {
-                      fill: '#5e7a6a',
-                      fillOpacity: 0.18,
-                      stroke: '#4a6555',
-                      strokeWidth: 0.7,
-                      outline: 'none',
-                    },
-                    hover: {
-                      fill: '#5e7a6a',
-                      fillOpacity: 0.28,
-                      stroke: '#4a6555',
-                      strokeWidth: 0.7,
-                      outline: 'none',
-                    },
-                    pressed: {
-                      fill: '#5e7a6a',
-                      fillOpacity: 0.28,
-                      stroke: '#4a6555',
-                      strokeWidth: 0.7,
-                      outline: 'none',
-                    },
+                    position: 'relative',
+                    width: '14px',
+                    height: '14px',
+                    cursor: 'pointer',
+                    zIndex: 30,
                   }}
-                />
-              ))}
-            </>
-          )}
-        </Geographies>
+                >
+                  <div
+                    aria-hidden
+                    style={{
+                      position: 'absolute',
+                      left: '50%',
+                      top: '50%',
+                      width: '28px',
+                      height: '28px',
+                      borderRadius: '50%',
+                      background: 'rgba(94, 122, 106, 0.12)',
+                      transform: 'translate(-50%, -50%)',
+                      pointerEvents: 'none',
+                      animation: reduced ? 'none' : 'pulseHalo 2.5s ease-out infinite',
+                    }}
+                  />
+                  <div
+                    ref={(el) => {
+                      dotRefs.current[m.id] = el
+                    }}
+                    style={{
+                      position: 'relative',
+                      zIndex: 2,
+                      width: '14px',
+                      height: '14px',
+                      borderRadius: '50%',
+                      background: '#2d3a35',
+                      border: '2px solid #ffffff',
+                    }}
+                  />
+                </div>
+              </Marker>
+            ))}
 
-        <Geographies geography={guangdongGeo}>
-          {({ geographies }) => (
-            <>
-              {geographies.map((geo) => (
-                <Geography
-                  key={geo.rsmKey}
-                  geography={geo}
+            {active ? (
+              <Popup
+                longitude={active.longitude}
+                latitude={active.latitude}
+                anchor="bottom"
+                offset={12}
+                closeButton={false}
+                closeOnClick={false}
+                className="gba-city-popup"
+              >
+                <div
                   style={{
-                    default: {
-                      fill: 'transparent',
-                      stroke: '#6b8474',
-                      strokeWidth: 0.4,
-                      strokeDasharray: '2,2',
-                      outline: 'none',
-                    },
-                    hover: {
-                      fill: 'transparent',
-                      stroke: '#6b8474',
-                      strokeWidth: 0.4,
-                      strokeDasharray: '2,2',
-                      outline: 'none',
-                    },
-                    pressed: {
-                      fill: 'transparent',
-                      stroke: '#6b8474',
-                      strokeWidth: 0.4,
-                      strokeDasharray: '2,2',
-                      outline: 'none',
-                    },
+                    background: '#ffffff',
+                    border: '1px solid #d4d4d0',
+                    borderRadius: '6px',
+                    padding: '14px 16px',
+                    minWidth: '200px',
+                    position: 'relative',
+                    zIndex: 50,
                   }}
-                />
-              ))}
+                >
+                  <div
+                    style={{
+                      fontFamily: 'var(--font-cormorant), Georgia, serif',
+                      fontWeight: 500,
+                      fontSize: '18px',
+                      lineHeight: 1.15,
+                      color: '#0f0f0f',
+                      marginBottom: '6px',
+                    }}
+                  >
+                    {active.city}
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+                      fontSize: '11px',
+                      color: '#888',
+                      letterSpacing: '0.06em',
+                      textTransform: 'uppercase',
+                      marginBottom: '10px',
+                    }}
+                  >
+                    {active.role}
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+                      fontSize: '14px',
+                      color: '#555',
+                      fontWeight: 300,
+                      lineHeight: 1.45,
+                    }}
+                  >
+                    {active.stat}
+                  </div>
+                </div>
+              </Popup>
+            ) : null}
+          </Map>
+        ) : (
+          <div style={{ width: '100%', height: '100%', background: '#f5efe4' }} aria-hidden />
+        )}
 
-              {markers.map((m, idx) => {
-                const isNearRight = m.coordinates[0] > 112
-                const isNearTop = m.id === 'guangzhou' || m.coordinates[1] > 22.95
-                const markerDelayMs = 600 + idx * 80
-                const showCard = activeCity === m.id
-                const cardOffset = m.id === 'guangzhou' ? 16 : 10
-                const shouldFlipLeft = m.id !== 'guangzhou' && isNearRight
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 10,
+            background: '#f5efe4',
+            opacity: mapLoaded ? 0 : 1,
+            pointerEvents: mapLoaded ? 'none' : 'auto',
+            transition: 'opacity 0.8s ease',
+          }}
+          aria-hidden={mapLoaded}
+        />
 
-                return (
-                  <Marker key={m.id} coordinates={m.coordinates}>
-                    <g
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setActiveCity((prev) => (prev === m.id ? null : m.id))
-                      }}
-                      style={{
-                        opacity: animate ? 0 : 1,
-                        ...(animate && !reduced
-                          ? {
-                              animation: `apacMarkerIn 240ms ease forwards`,
-                              animationDelay: `${markerDelayMs}ms`,
-                            }
-                          : {}),
-                      }}
-                    >
-                      <circle
-                        r={14}
-                        fill="rgba(94, 122, 106, 0.15)"
-                        opacity={0.25}
-                        style={{ pointerEvents: 'all' }}
-                      >
-                        {reduced ? null : (
-                          <>
-                            <animate
-                              attributeName="r"
-                              values="14;22.4"
-                              dur="2.5s"
-                              repeatCount="indefinite"
-                            />
-                            <animate
-                              attributeName="opacity"
-                              values="0.25;0"
-                              dur="2.5s"
-                              repeatCount="indefinite"
-                            />
-                          </>
-                        )}
-                      </circle>
-                      <circle r={7} fill="#2d3a35" stroke="#ffffff" strokeWidth={1.5} />
-                    </g>
+        <div className="gba-stats-band">
+          <p ref={introRef} className="gba-stats-band__intro">
+            Pebble is built at the center of Asia&apos;s biomedical corridor — where 1.4 billion
+            patients, world-class clinical infrastructure, and tier-one capital converge.
+          </p>
+          <Stats />
+        </div>
 
-                    <foreignObject
-                      width={280}
-                      height={160}
-                      x={shouldFlipLeft ? -(280 + cardOffset) : cardOffset}
-                      y={isNearTop ? cardOffset : -(132 + cardOffset)}
-                      style={{
-                        overflow: 'visible',
-                        pointerEvents: 'none',
-                        opacity: showCard ? 1 : 0,
-                        transition: reduced
-                          ? 'none'
-                          : showCard
-                            ? 'opacity 200ms ease, transform 200ms ease'
-                            : 'opacity 150ms ease, transform 150ms ease',
-                        transform: showCard ? 'translateY(0px)' : `translateY(${isNearTop ? '-6px' : '6px'})`,
-                        visibility: showCard ? 'visible' : 'hidden',
-                      }}
-                    >
-                      <div
-                        style={{
-                          background: '#ffffff',
-                          border: '1px solid #d4d4d0',
-                          borderRadius: '6px',
-                          padding: '14px 16px',
-                          boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-                          pointerEvents: 'none',
-                          position: 'relative',
-                          zIndex: 50,
-                        }}
-                      >
-                        <div
-                          style={{
-                            fontFamily: 'var(--font-cormorant), Georgia, serif',
-                            fontWeight: 500,
-                            fontSize: '18px',
-                            lineHeight: 1.15,
-                            color: '#0f0f0f',
-                            marginBottom: '6px',
-                          }}
-                        >
-                          {m.city}
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '11px',
-                            color: '#888',
-                            letterSpacing: '0.06em',
-                            textTransform: 'uppercase',
-                            fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-                            marginBottom: '10px',
-                          }}
-                        >
-                          {m.role}
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '14px',
-                            color: '#555',
-                            fontWeight: 300,
-                            lineHeight: 1.45,
-                            fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-                          }}
-                        >
-                          {m.stat}
-                        </div>
-                      </div>
-                    </foreignObject>
-                  </Marker>
-                )
-              })}
-            </>
-          )}
-        </Geographies>
-      </ComposableMap>
-      )}
-
-      <style>{`
-        @media (prefers-reduced-motion: no-preference) {
-          @keyframes apacMapIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        <style>{`
+          @keyframes pulseHalo {
+            0% {
+              opacity: 0.5;
+              transform: translate(-50%, -50%) scale(1);
+            }
+            100% {
+              opacity: 0;
+              transform: translate(-50%, -50%) scale(1.8);
+            }
           }
-          @keyframes apacMarkerIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
+          .gba-city-popup .mapboxgl-popup-content {
+            padding: 0;
+            background: transparent;
+            box-shadow: none;
+            z-index: 50;
           }
-        }
-      `}</style>
-    </div>
+          .gba-city-popup .mapboxgl-popup-tip {
+            display: none;
+          }
+          .gba-stats-band {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 20;
+            padding: 28px 5vw 24px;
+            background: rgba(245, 239, 228, 0.92);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-sizing: border-box;
+          }
+          .gba-stats-band .stats-overlay {
+            position: static;
+            bottom: auto;
+            left: auto;
+            right: auto;
+            z-index: auto;
+            padding: 0;
+            background: transparent;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+          }
+          .gba-stats-band__intro {
+            font-family: var(--font-cormorant), Georgia, serif;
+            font-size: 28px;
+            font-weight: 600;
+            line-height: 1.3;
+            color: #e8703a;
+            max-width: 680px;
+            text-align: left;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(212, 207, 194, 0.6);
+            margin: 0 0 20px;
+          }
+          @media (max-width: 768px) {
+            .gba-stats-band {
+              padding: 20px 24px 18px;
+            }
+            .gba-stats-band__intro {
+              font-size: 17px;
+            }
+            .gba-stats-band .stats-number {
+              font-size: 48px;
+            }
+            .gba-stats-band .stats-label {
+              font-size: 9px;
+            }
+          }
+        `}</style>
+      </div>
+    </section>
   )
 }
 
 export default React.memo(GBAMap)
-

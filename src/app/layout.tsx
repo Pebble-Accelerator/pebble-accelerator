@@ -38,6 +38,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${cormorantGaramond.variable} ${ibmPlexSans.variable}`}>
+      <head>
+        <link rel="preconnect" href="https://api.mapbox.com" />
+        <link rel="preconnect" href="https://events.mapbox.com" />
+        <link rel="dns-prefetch" href="https://api.mapbox.com" />
+      </head>
       <body className={ibmPlexSans.className}>
         <Nav />
         <main className="min-w-0">{children}</main>

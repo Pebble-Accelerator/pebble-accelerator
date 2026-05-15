@@ -1,12 +1,7 @@
 'use client'
 
-import dynamic from 'next/dynamic'
 import { useEffect, useRef, useState } from 'react'
-
-const GBAMap = dynamic(() => import('./GBAMap'), {
-  ssr: false,
-  loading: () => <div style={{ minHeight: '600px' }} aria-hidden />,
-})
+import GBAMap from './GBAMap'
 
 export default function About() {
   const sectionRef = useRef<HTMLDivElement | null>(null)
@@ -14,9 +9,13 @@ export default function About() {
 
   useEffect(() => {
     if (shouldLoadMap) return
+    const snapContainer = document.querySelector('.snap-container')
     const observer = new IntersectionObserver(
       ([entry]) => entry?.isIntersecting && setShouldLoadMap(true),
-      { rootMargin: '500px' }
+      {
+        root: snapContainer instanceof HTMLElement ? snapContainer : null,
+        rootMargin: '250px',
+      }
     )
     if (sectionRef.current) observer.observe(sectionRef.current)
     return () => observer.disconnect()
@@ -24,12 +23,12 @@ export default function About() {
 
   return (
     <section
-      className="apac-corridor-fullbleed"
+      className="snap-section apac-corridor-fullbleed"
       style={{
-        background: '#F5F0E8',
+        background: '#f5efe4',
         padding: 0,
         position: 'relative',
-        overflow: 'hidden',
+        boxSizing: 'border-box',
       }}
     >
       <div
@@ -38,28 +37,16 @@ export default function About() {
         style={{
           position: 'relative',
           width: '100%',
-          minHeight: '600px',
+          height: '100%',
+          minHeight: '100%',
+          background: '#f5efe4',
         }}
       >
-        <div className="apac-intro" style={{
-          position: 'absolute',
-          top: '48px',
-          left: '48px',
-          right: 'auto',
-          zIndex: 10,
-          maxWidth: '360px',
-          color: '#0f0f0f',
-          fontFamily: 'var(--font-cormorant), Georgia, serif',
-          fontWeight: 500,
-          fontSize: '32px',
-          lineHeight: 1.35,
-          pointerEvents: 'none',
-        }}>
-          Pebble is built where it matters most. The Greater Bay Area connects 1.4 billion
-          patients, world-class clinical infrastructure, and tier-one capital — all within a single hour.
-        </div>
-
-        {shouldLoadMap ? <GBAMap /> : <div style={{ minHeight: '600px' }} aria-hidden />}
+        {shouldLoadMap ? (
+          <GBAMap />
+        ) : (
+          <div style={{ width: '100%', height: '100%', background: '#f5efe4' }} aria-hidden />
+        )}
 
         <style>{`
           @media (max-width: 768px) {
@@ -67,13 +54,14 @@ export default function About() {
               position: relative !important;
               top: auto !important;
               left: auto !important;
-              max-width: none !important;
+              max-width: 100% !important;
               padding: 24px !important;
-              font-size: 24px !important;
+              font-size: 22px !important;
               z-index: 2 !important;
             }
-            .apac-map { height: 560px !important; }
-            .apac-map-wrap { min-height: 0 !important; }
+            .apac-map-wrap {
+              min-height: 0 !important;
+            }
           }
         `}</style>
       </div>

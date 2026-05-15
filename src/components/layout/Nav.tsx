@@ -19,6 +19,7 @@ export default function Nav() {
         top: 0,
         left: 0,
         right: 0,
+        width: '100%',
         zIndex: 100,
         background: 'rgba(245,240,232,0.96)',
         backdropFilter: 'blur(8px)',
