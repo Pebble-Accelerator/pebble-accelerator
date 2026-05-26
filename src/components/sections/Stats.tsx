@@ -12,7 +12,11 @@ const stats = [
   { number: '100m', label: 'Patient Pool by 2030' },
 ]
 
-export default function Stats() {
+type StatsProps = {
+  band?: boolean
+}
+
+export default function Stats({ band = false }: StatsProps) {
   const sectionRef = useRef<HTMLDivElement | null>(null)
   const numberRefs = useRef<(HTMLSpanElement | null)[]>([])
 
@@ -21,10 +25,12 @@ export default function Stats() {
     const numbers = numberRefs.current.filter(Boolean) as HTMLSpanElement[]
     if (!section || numbers.length === 0) return
 
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const items = section.querySelectorAll<HTMLElement>('.stats-item')
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-    if (reduced) {
+    // Band sits inside a snap slide — ScrollTrigger often never fires after snap,
+    // leaving numbers stuck at opacity 0. Always show immediately in band mode.
+    if (band || reduced) {
       gsap.set(items, { opacity: 1, y: 0 })
       gsap.set(numbers, { opacity: 1, y: 0 })
       return
@@ -32,6 +38,12 @@ export default function Stats() {
 
     gsap.set(items, { opacity: 1, y: 0 })
     gsap.set(numbers, { opacity: 0, y: 12, willChange: 'transform' })
+
+    const snapScroller = document.querySelector('.snap-container')
+    if (!snapScroller) {
+      gsap.set(numbers, { opacity: 1, y: 0 })
+      return
+    }
 
     const triggers: ScrollTrigger[] = []
 
@@ -47,8 +59,8 @@ export default function Stats() {
           delay: 0.1 + i * 0.15,
           scrollTrigger: {
             trigger: section,
-            scroller: '.snap-container',
-            start: 'center 80%',
+            scroller: snapScroller,
+            start: 'top 95%',
             once: true,
           },
           onComplete: () => {
@@ -62,11 +74,36 @@ export default function Stats() {
     return () => {
       triggers.forEach((t) => t.kill())
     }
-  }, [])
+  }, [band])
 
   return (
-    <div id="stats-section" ref={sectionRef} className="stats-section stats-overlay">
-      <div className="stats-grid">
+    <div
+      id="stats-section"
+      ref={sectionRef}
+      className={band ? 'stats-section stats-band' : 'stats-section stats-overlay'}
+      style={
+        band
+          ? {
+              padding: 0,
+              paddingTop: 0,
+              margin: 0,
+              marginTop: 0,
+            }
+          : undefined
+      }
+    >
+      <div
+        className="stats-grid"
+        style={
+          band
+            ? {
+                height: '100%',
+                alignItems: 'center',
+                margin: 0,
+              }
+            : undefined
+        }
+      >
         {stats.map((stat, i) => (
           <div key={stat.label} className="stats-item">
             <span

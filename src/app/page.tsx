@@ -1,9 +1,28 @@
 import Hero from '@/components/sections/Hero'
 import GBAMap from '@/components/sections/GBAMap'
+import Stats from '@/components/sections/Stats'
 import Services from '@/components/sections/Services'
 import Backers from '@/components/sections/Backers'
 import WhyHK from '@/components/sections/WhyHK'
 import CTAStrip from '@/components/sections/CTAStrip'
+import Footer from '@/components/layout/Footer'
+
+const snapSectionStyle = {
+  scrollSnapAlign: 'start' as const,
+  scrollMarginTop: 60,
+  height: '100vh',
+  minHeight: '100vh',
+  flexShrink: 0,
+  boxSizing: 'border-box' as const,
+}
+
+const bandDivider = {
+  height: '1px',
+  flexShrink: 0,
+  background: '#d4cfc2',
+  border: 'none',
+  margin: 0,
+} as const
 
 export default function Home() {
   return (
@@ -13,56 +32,144 @@ export default function Home() {
         style={{
           height: '100vh',
           overflowY: 'scroll',
-          scrollSnapType: 'y mandatory',
-          scrollBehavior: 'smooth',
+          scrollSnapType: 'y proximity',
           WebkitOverflowScrolling: 'touch',
+          background: '#f5efe4',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
-        <Hero />
-        <GBAMap />
-        <section
-          className="snap-section combined-services-backers"
+        <div
           style={{
+            scrollSnapAlign: 'start',
+            scrollMarginTop: '60px',
             height: '100vh',
             minHeight: '100vh',
+            overflow: 'hidden',
+            flexShrink: 0,
+          }}
+        >
+          <Hero />
+        </div>
+        <div
+          style={{
+            scrollSnapAlign: 'start',
+            scrollMarginTop: '60px',
+            height: '100vh',
+            minHeight: '100vh',
+            overflow: 'hidden',
+            flexShrink: 0,
+          }}
+        >
+          <GBAMap />
+        </div>
+        <section
+          className="snap-section combined-slide"
+          style={{
+            ...snapSectionStyle,
             display: 'flex',
             flexDirection: 'column',
             background: '#f5efe4',
             overflow: 'hidden',
+            borderTop: 'none',
+            paddingTop: 0,
+            paddingLeft: '5vw',
+            paddingRight: '5vw',
           }}
         >
           <div
+            className="combined-slide__stats"
             style={{
-              flex: '0 0 55%',
+              flex: '0 0 25%',
               overflow: 'hidden',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
               minHeight: 0,
+              width: '100%',
+              background: '#f5efe4',
+            }}
+          >
+            <Stats band />
+          </div>
+          <div style={bandDivider} aria-hidden />
+          <div
+            className="combined-slide__services"
+            style={{
+              flex: '0 0 35%',
+              overflow: 'hidden',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: 0,
+              width: '100%',
+              background: '#f5efe4',
             }}
           >
             <Services embedded />
           </div>
+          <div style={bandDivider} aria-hidden />
           <div
+            className="combined-slide__backers"
             style={{
-              height: '1px',
-              flexShrink: 0,
-              background: '#d4cfc2',
-            }}
-            aria-hidden
-          />
-          <div
-            style={{
-              flex: 1,
+              flex: '0 0 40%',
               overflow: 'hidden',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
               minHeight: 0,
+              width: '100%',
               background: '#f5efe4',
+              paddingBottom: '32px',
             }}
           >
             <Backers embedded />
           </div>
         </section>
-      </div>
 
-      <WhyHK />
-      <CTAStrip />
+        <div className="snap-final-group">
+          <section
+            className="final-snap-slide"
+            style={{
+              height: '100vh',
+              minHeight: '100vh',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              boxSizing: 'border-box',
+              background: '#f5efe4',
+            }}
+          >
+          <div
+            className="final-snap-slide__why"
+            style={{
+              flex: '0 0 58%',
+              overflow: 'hidden',
+              display: 'flex',
+              alignItems: 'center',
+              minHeight: 0,
+              background: '#f5efe4',
+            }}
+          >
+            <WhyHK embedded />
+          </div>
+          <div
+            className="final-snap-slide__cta"
+            style={{
+              flex: '0 0 42%',
+              overflow: 'hidden',
+              display: 'flex',
+              alignItems: 'center',
+              minHeight: 0,
+              background: '#0f0f0f',
+            }}
+          >
+            <CTAStrip embedded />
+          </div>
+          </section>
+          <Footer />
+        </div>
+      </div>
     </>
   )
 }

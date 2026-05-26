@@ -1,103 +1,90 @@
 import FadeIn from '@/components/ui/FadeIn'
-import Button from '@/components/ui/Button'
 
-const labelCol =
-  'self-start p-6 uppercase tracking-[0.04em] md:px-12 md:pb-12 md:pl-12 md:pr-10 md:pt-[52px]'
-const labelText = 'text-[12px] font-normal text-[#aaa]'
-const contentCol = 'p-6 md:p-12 md:pb-12 md:pl-14 md:pr-12 md:pt-12'
+const fieldClassName =
+  'w-full border-0 border-b border-solid border-[#d4cfc2] bg-transparent py-3 text-[15px] text-[#1a1a1a] outline-none placeholder:text-[#aaa] focus:border-[#0f0f0f]'
 
 export default function ContactPage() {
   return (
-    <div style={{ paddingTop: '60px' }}>
-    <section>
-      <div className="mx-auto grid max-w-[1200px] grid-cols-1 md:grid-cols-[220px_1fr]">
-        <div className={labelCol}>
-          <span className={labelText}>Contact</span>
-        </div>
+    <div
+      style={{
+        paddingTop: '80px',
+        paddingLeft: '5vw',
+        paddingRight: '5vw',
+        paddingBottom: '48px',
+        maxWidth: '1400px',
+        margin: '0 auto',
+      }}
+    >
+      <p className="mb-10 text-[12px] font-normal uppercase tracking-[0.04em] text-[#aaa]">
+        Contact
+      </p>
 
-        <FadeIn delay={0.1} className={contentCol}>
-          <div className="grid grid-cols-1 gap-16 md:grid-cols-2 md:gap-16">
-            <div>
-              <h1 className="mb-4 font-display text-[48px] font-normal leading-[1.1] tracking-[-0.02em] text-[#0f0f0f] md:text-[56px]">
-                Let&apos;s talk.
-              </h1>
-              <p className="mb-6 text-[14px] font-light leading-[1.8] text-[#555]">
-                We hear from founders building the next generation of biomedical companies,
-                international teams seeking a foothold in Hong Kong and Greater China, and potential
-                clinical and institutional partners looking to collaborate. If any of these describe
-                you, we want to hear from you.
-              </p>
-              <a
-                href="https://linkedin.com/company/pebbleaccelerator"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[13px] text-[#888] transition-colors duration-150 hover:text-[#0f0f0f]"
-              >
-                Connect on LinkedIn →
-              </a>
-            </div>
-
-            <div>
-              <form action="mailto:hello@pebbleaccelerator.com" method="POST">
-                <div className="mb-6">
-                  <label className="mb-1.5 block text-[12px] font-normal text-[#888]">
-                    Full name
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    required
-                    className="w-full border-b border-[#e8e8e8] bg-transparent pb-2.5 pt-2.5 text-[14px] font-light text-[#0f0f0f] outline-none transition-colors duration-150 focus:border-[#0f0f0f]"
-                  />
-                </div>
-
-                <div className="mb-6">
-                  <label className="mb-1.5 block text-[12px] font-normal text-[#888]">
-                    Company
-                  </label>
-                  <input
-                    type="text"
-                    name="company"
-                    className="w-full border-b border-[#e8e8e8] bg-transparent pb-2.5 pt-2.5 text-[14px] font-light text-[#0f0f0f] outline-none transition-colors duration-150 focus:border-[#0f0f0f]"
-                  />
-                </div>
-
-                <div className="mb-6">
-                  <label className="mb-1.5 block text-[12px] font-normal text-[#888]">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    required
-                    className="w-full border-b border-[#e8e8e8] bg-transparent pb-2.5 pt-2.5 text-[14px] font-light text-[#0f0f0f] outline-none transition-colors duration-150 focus:border-[#0f0f0f]"
-                  />
-                </div>
-
-                <div className="mb-8">
-                  <label className="mb-1.5 block text-[12px] font-normal text-[#888]">
-                    Message
-                  </label>
-                  <textarea
-                    name="message"
-                    rows={5}
-                    required
-                    className="w-full resize-none border-b border-[#e8e8e8] bg-transparent pb-2.5 pt-2.5 text-[14px] font-light text-[#0f0f0f] outline-none transition-colors duration-150 focus:border-[#0f0f0f]"
-                  />
-                </div>
-
-                <Button
-                  variant="primary"
-                  label="Send message"
-                  type="submit"
-                  className="w-full text-center hover:bg-[#333]"
-                />
-              </form>
-            </div>
+      <FadeIn>
+        <div className="flex flex-col gap-12 md:flex-row md:gap-[80px]">
+          <div className="md:w-[45%] md:shrink-0">
+            <h1
+              className="mb-4 font-display font-medium leading-[1.1] tracking-[-0.02em] text-[#0f0f0f]"
+              style={{ fontSize: 'clamp(36px, 4vw, 56px)' }}
+            >
+              Let&apos;s talk.
+            </h1>
+            <p className="mb-6 text-[14px] font-light leading-[1.8] text-[#555]">
+              We hear from founders building the next generation of biomedical companies,
+              international teams seeking a foothold in Hong Kong and Greater China, and potential
+              clinical and institutional partners looking to collaborate. If any of these describe
+              you, we want to hear from you.
+            </p>
+            <a
+              href="https://linkedin.com/company/pebbleaccelerator"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[13px] text-[#888] transition-colors duration-150 hover:text-[#0f0f0f]"
+            >
+              Connect on LinkedIn →
+            </a>
           </div>
-        </FadeIn>
-      </div>
-    </section>
+
+          <div className="min-w-0 md:w-[55%] md:flex-1">
+            <form action="mailto:hello@pebbleaccelerator.com" method="POST">
+              <div className="mb-6">
+                <label className="mb-1.5 block text-[12px] font-normal text-[#888]">
+                  Full name
+                </label>
+                <input type="text" name="name" required className={fieldClassName} />
+              </div>
+
+              <div className="mb-6">
+                <label className="mb-1.5 block text-[12px] font-normal text-[#888]">
+                  Company
+                </label>
+                <input type="text" name="company" className={fieldClassName} />
+              </div>
+
+              <div className="mb-6">
+                <label className="mb-1.5 block text-[12px] font-normal text-[#888]">
+                  Email
+                </label>
+                <input type="email" name="email" required className={fieldClassName} />
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-[12px] font-normal text-[#888]">
+                  Message
+                </label>
+                <textarea name="message" rows={5} required className={`${fieldClassName} resize-none`} />
+              </div>
+
+              <button
+                type="submit"
+                className="mt-8 w-full border-0 bg-[#1a1a1a] py-4 text-[12px] font-normal uppercase tracking-[0.12em] text-white transition-colors duration-150 hover:bg-[#333]"
+                style={{ borderRadius: 0 }}
+              >
+                Send message
+              </button>
+            </form>
+          </div>
+        </div>
+      </FadeIn>
     </div>
   )
 }

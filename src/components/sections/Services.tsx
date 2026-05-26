@@ -35,42 +35,49 @@ export default function Services({ embedded = false }: ServicesProps) {
     const label = labelRef.current
     const leftCol = leftColRef.current
     const rightCol = rightColRef.current
-    if (!section || !label || !leftCol || !rightCol) return
+    if (!section || !leftCol || !rightCol) return
+    if (!embedded && !label) return
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const triggers: ScrollTrigger[] = []
 
     if (reduced) {
-      gsap.set([label, leftCol, rightCol], { opacity: 1, x: 0, y: 0 })
+      if (label) gsap.set(label, { opacity: 1, x: 0, y: 0 })
+      gsap.set([leftCol, rightCol], { opacity: 1, x: 0, y: 0 })
       return
     }
 
-    gsap.set(label, { opacity: 0, y: 16, willChange: 'transform' })
-    gsap.set(leftCol, { opacity: 0, x: -32, willChange: 'transform' })
-    gsap.set(rightCol, { opacity: 0, x: 32, willChange: 'transform' })
+    const snapScroller = document.querySelector('.snap-container')
+    if (!snapScroller) return
 
-    const labelTween = gsap.to(label, {
-      opacity: 1,
-      y: 0,
-      duration: 0.6,
-      ease: 'power2.out',
-      scrollTrigger: {
-        trigger: section,
-        scroller: '.snap-container',
-        start: 'top 85%',
-        once: true,
-      },
-      onComplete: () => {
-        label.style.willChange = 'auto'
-      },
-    })
-    if (labelTween.scrollTrigger) triggers.push(labelTween.scrollTrigger)
+    if (label) gsap.set(label, { opacity: 0, y: 12, willChange: 'transform' })
+    gsap.set(leftCol, { opacity: 0, x: -24, willChange: 'transform' })
+    gsap.set(rightCol, { opacity: 0, x: 24, willChange: 'transform' })
+
+    if (label) {
+      const labelTween = gsap.to(label, {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: section,
+          scroller: snapScroller,
+          start: 'top 95%',
+          once: true,
+        },
+        onComplete: () => {
+          label.style.willChange = 'auto'
+        },
+      })
+      if (labelTween.scrollTrigger) triggers.push(labelTween.scrollTrigger)
+    }
 
     const columnsTween = gsap.timeline({
       scrollTrigger: {
         trigger: section,
-        scroller: '.snap-container',
-        start: 'top 85%',
+        scroller: snapScroller,
+        start: 'top 95%',
         once: true,
       },
     })
@@ -108,12 +115,116 @@ export default function Services({ embedded = false }: ServicesProps) {
     return () => {
       triggers.forEach((t) => t.kill())
     }
-  }, [])
+  }, [embedded])
+
+  if (embedded) {
+    return (
+      <section
+        ref={sectionRef}
+        className="services-section services-section--embedded"
+        style={{
+          background: '#f5efe4',
+          height: '100%',
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          boxSizing: 'border-box',
+          border: 'none',
+          padding: 0,
+        }}
+      >
+        <div ref={labelRef} className="services-embedded-label">
+          What we do
+        </div>
+        <div className="services-embedded-columns">
+          <div ref={leftColRef} style={{ flex: 1, maxWidth: 'none', minWidth: 0 }}>
+            <h3
+              style={{
+                fontFamily: 'var(--font-cormorant), Georgia, serif',
+                fontSize: '32px',
+                fontWeight: 500,
+                color: '#0f0f0f',
+                margin: '0 0 16px',
+                lineHeight: 1.2,
+              }}
+            >
+              {services[0].name}
+            </h3>
+            <p
+              style={{
+                fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+                fontSize: '14px',
+                fontWeight: 300,
+                color: '#666',
+                lineHeight: 1.7,
+                maxWidth: '440px',
+                margin: 0,
+              }}
+            >
+              {services[0].desc}
+            </p>
+            <span
+              style={{
+                display: 'block',
+                marginTop: '16px',
+                fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+                fontSize: '11px',
+                color: '#5e7a6a',
+                letterSpacing: '0.04em',
+              }}
+            >
+              {services[0].tags}
+            </span>
+          </div>
+          <div className="services-embedded-divider" aria-hidden />
+          <div ref={rightColRef} style={{ flex: 1, maxWidth: 'none', minWidth: 0 }}>
+            <h3
+              style={{
+                fontFamily: 'var(--font-cormorant), Georgia, serif',
+                fontSize: '32px',
+                fontWeight: 500,
+                color: '#0f0f0f',
+                margin: '0 0 16px',
+                lineHeight: 1.2,
+              }}
+            >
+              {services[1].name}
+            </h3>
+            <p
+              style={{
+                fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+                fontSize: '14px',
+                fontWeight: 300,
+                color: '#666',
+                lineHeight: 1.7,
+                maxWidth: '440px',
+                margin: 0,
+              }}
+            >
+              {services[1].desc}
+            </p>
+            <span
+              style={{
+                display: 'block',
+                marginTop: '16px',
+                fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+                fontSize: '11px',
+                color: '#5e7a6a',
+                letterSpacing: '0.04em',
+              }}
+            >
+              {services[1].tags}
+            </span>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section
       ref={sectionRef}
-      className={embedded ? 'services-section services-section--embedded' : 'snap-section services-section'}
+      className="snap-section services-section"
       style={{
         background: '#f5efe4',
         padding: '0 5vw',
@@ -121,7 +232,6 @@ export default function Services({ embedded = false }: ServicesProps) {
         flexDirection: 'column',
         justifyContent: 'center',
         boxSizing: 'border-box',
-        ...(embedded ? { flex: 1, minHeight: 0, height: 'auto' } : {}),
       }}
     >
       <div
