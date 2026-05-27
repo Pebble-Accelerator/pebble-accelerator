@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -21,6 +21,8 @@ const LOGO_BY_NAME: Record<string, string> = {
 
 type BackersProps = {
   embedded?: boolean
+  /** Thin horizontal logo strip for SaltaGen slide bottom band */
+  variant?: 'default' | 'band'
 }
 
 const captionStandalone: CSSProperties = {
@@ -33,7 +35,296 @@ const captionStandalone: CSSProperties = {
   fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
 }
 
-export default function Backers({ embedded = false }: BackersProps) {
+const bandLabelStyle: CSSProperties = {
+  fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+  fontSize: '11px',
+  fontWeight: 400,
+  letterSpacing: '0.12em',
+  textTransform: 'uppercase',
+  color: '#888',
+  flexShrink: 0,
+  whiteSpace: 'nowrap',
+}
+
+const bandLogoStyle: CSSProperties = {
+  maxHeight: '48px',
+  height: 'auto',
+  width: 'auto',
+  objectFit: 'contain',
+  display: 'block',
+}
+
+function BackersBandLogo({
+  b,
+  src,
+  logoStyle = bandLogoStyle,
+}: {
+  b: (typeof backers)[number]
+  src: string
+  logoStyle?: CSSProperties
+}) {
+  const isTigerJade = src.includes('TigerJade')
+  const isCocoon = src.includes('Cocoon.jpeg')
+
+  const logoNode = isCocoon ? (
+    <Image src={src} alt={b.name} width={200} height={48} style={logoStyle} />
+  ) : (
+    <img src={src} alt={b.name} style={logoStyle} />
+  )
+
+  return (
+    <a
+      href={b.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{
+        textDecoration: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: '1 1 0',
+        minWidth: 0,
+      }}
+    >
+      {isTigerJade ? (
+        <div
+          style={{
+            background: '#1a1a1a',
+            borderRadius: '4px',
+            padding: '10px 18px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          {logoNode}
+        </div>
+      ) : (
+        logoNode
+      )}
+    </a>
+  )
+}
+
+const bandLogoStyleResponsive: CSSProperties = {
+  ...bandLogoStyle,
+  maxHeight: 'clamp(64px, 6vw, 72px)',
+}
+
+function BackersBand() {
+  const scrollRef = useRef<HTMLDivElement | null>(null)
+  const [canScrollLeft, setCanScrollLeft] = useState(false)
+  const [canScrollRight, setCanScrollRight] = useState(false)
+
+  const updateScrollButtons = () => {
+    const el = scrollRef.current
+    if (!el) {
+      setCanScrollLeft(false)
+      setCanScrollRight(false)
+      return
+    }
+
+    const atLeft = el.scrollLeft <= 0
+    const atRight = el.scrollLeft + el.clientWidth >= el.scrollWidth - 1
+
+    setCanScrollLeft(!atLeft)
+    setCanScrollRight(!atRight)
+  }
+
+  useEffect(() => {
+    updateScrollButtons()
+    const el = scrollRef.current
+    if (!el) return
+
+    const onScroll = () => updateScrollButtons()
+    el.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', updateScrollButtons)
+
+    return () => {
+      el.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', updateScrollButtons)
+    }
+  }, [])
+
+  const scrollByAmount = 350
+
+  return (
+    <>
+      <div
+        className="backers-band"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          width: '100%',
+          maxWidth: '1280px',
+          margin: '0 auto',
+          paddingRight: '40px',
+          height: '100%',
+          gap: '0',
+          boxSizing: 'border-box',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            flexShrink: 0,
+          }}
+        >
+          <span style={bandLabelStyle}>Backed by</span>
+          <div
+            aria-hidden
+            style={{
+              width: '1px',
+              height: '32px',
+              background: '#d4cfc2',
+              flexShrink: 0,
+              marginLeft: '28px',
+              marginRight: '28px',
+            }}
+          />
+        </div>
+
+        <div
+          style={{
+            flex: '1 1 auto',
+            minWidth: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+          }}
+        >
+          <button
+            type="button"
+            aria-label="Scroll backers left"
+            aria-disabled={!canScrollLeft}
+            disabled={!canScrollLeft}
+            className="backers-band-arrow backers-band-arrow--left"
+            onClick={() => {
+              const el = scrollRef.current
+              if (!el) return
+              el.scrollBy({ left: -scrollByAmount, behavior: 'smooth' })
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
+              <path
+                d="M8.7 3.2L4.4 7l4.3 3.8"
+                stroke="#1a1a1a"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+
+          <div
+            ref={scrollRef}
+            className="backers-band-scroll"
+            style={{
+              overflowX: 'auto',
+              overflowY: 'hidden',
+              scrollBehavior: 'smooth',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'clamp(48px, 4vw, 64px)',
+              flex: '0 1 auto',
+              minWidth: 0,
+              padding: 0,
+            }}
+          >
+            {backers.map((b) => {
+              const src = LOGO_BY_NAME[b.name]
+              return (
+                <BackersBandLogo
+                  key={b.name}
+                  b={b}
+                  src={src}
+                  logoStyle={bandLogoStyleResponsive}
+                />
+              )
+            })}
+          </div>
+
+          <button
+            type="button"
+            aria-label="Scroll backers right"
+            aria-disabled={!canScrollRight}
+            disabled={!canScrollRight}
+            className="backers-band-arrow backers-band-arrow--right"
+            onClick={() => {
+              const el = scrollRef.current
+              if (!el) return
+              el.scrollBy({ left: scrollByAmount, behavior: 'smooth' })
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
+              <path
+                d="M5.3 3.2L9.6 7l-4.3 3.8"
+                stroke="#1a1a1a"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <style jsx>{`
+        .backers-band-scroll {
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        .backers-band-scroll::-webkit-scrollbar {
+          display: none;
+        }
+
+        .backers-band-arrow {
+          width: 36px;
+          height: 36px;
+          border-radius: 9999px;
+          border: 1px solid #d4cfc2;
+          background: transparent;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0;
+          cursor: pointer;
+          transition: border-color 150ms ease, transform 100ms ease, opacity 150ms ease;
+          flex-shrink: 0;
+        }
+
+        .backers-band-arrow--left {
+          margin-right: 18px;
+        }
+
+        .backers-band-arrow--right {
+          margin-left: 18px;
+        }
+
+        .backers-band-arrow:hover {
+          border-color: #1a1a1a;
+        }
+
+        .backers-band-arrow:active {
+          transform: scale(0.95);
+        }
+
+        .backers-band-arrow:focus-visible {
+          outline: 2px solid #5e7a6a;
+          outline-offset: 2px;
+        }
+
+        .backers-band-arrow:disabled {
+          opacity: 0.3;
+          pointer-events: none;
+        }
+      `}</style>
+    </>
+  )
+}
+
+export default function Backers({ embedded = false, variant = 'default' }: BackersProps) {
   const reduced = usePrefersReducedMotion()
   const sectionRef = useRef<HTMLElement | null>(null)
   const labelRef = useRef<HTMLDivElement | null>(null)
@@ -165,6 +456,10 @@ export default function Backers({ embedded = false }: BackersProps) {
     )
   }
 
+  if (variant === 'band') {
+    return <BackersBand />
+  }
+
   if (embedded) {
     return (
       <section
@@ -172,19 +467,26 @@ export default function Backers({ embedded = false }: BackersProps) {
         className="backers-section backers-section--embedded"
         style={{
           background: '#f5efe4',
-          height: '100%',
+          height: '100vh',
+          maxHeight: '100vh',
           width: '100%',
           display: 'flex',
           flexDirection: 'column',
           boxSizing: 'border-box',
           border: 'none',
-          padding: 0,
+          overflow: 'hidden',
+          paddingTop: '60px',
+          paddingLeft: '5vw',
+          paddingRight: '5vw',
+          paddingBottom: '20px',
         }}
       >
-        <div ref={labelRef} className="backers-embedded-label">
-          Backed by
+        <div className="backers-embedded-inner">
+          <div ref={labelRef} className="backers-embedded-label">
+            Backed by
+          </div>
+          <div className="backers-embedded-row">{backers.map((b, i) => renderLogo(b, i))}</div>
         </div>
-        <div className="backers-embedded-row">{backers.map((b, i) => renderLogo(b, i))}</div>
       </section>
     )
   }
