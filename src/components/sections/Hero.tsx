@@ -3,25 +3,33 @@
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 
+const heroStats = [
+  { number: '18+', label: 'Companies Financed' },
+  { number: '30+', label: 'Companies Accelerated' },
+  {
+    number: '100%',
+    label: "Coverage of Hong Kong's Hospitals and universities",
+  },
+]
+
 export default function Hero() {
-  const scrollToNext = () => {
-    const container = document.querySelector('.snap-container') as HTMLElement | null
-    const stats = document.getElementById('stats-section')
-    if (container && stats) {
-      container.scrollTo({ top: stats.offsetTop, behavior: 'smooth' })
+  const scrollToStats = () => {
+    const wrapper = document.querySelector('.hero-snap-wrapper') as HTMLElement | null
+    const stats = document.getElementById('hero-stats')
+    if (wrapper && stats) {
+      const top = stats.offsetTop - 24
+      wrapper.scrollTo({ top, behavior: 'smooth' })
     }
   }
 
   return (
     <section
       id="hero-section"
-      className="snap-section"
+      className="hero-section"
       style={{
         position: 'relative',
         background: '#F5F0E8',
-        display: 'flex',
-        alignItems: 'flex-start',
-        paddingTop: '64px',
+        minHeight: '100vh',
         boxSizing: 'border-box',
       }}
     >
@@ -64,10 +72,8 @@ export default function Hero() {
 
       <div
         style={{
-          maxWidth: '1280px',
-          margin: '0 auto',
-          paddingTop: '76px',
-          paddingBottom: '100px',
+          paddingTop: '64px',
+          paddingBottom: '120px',
           paddingLeft: '5vw',
           paddingRight: '5vw',
           width: '100%',
@@ -81,17 +87,16 @@ export default function Hero() {
           transition={{ duration: 0.7, ease: 'easeOut', delay: 0.1 }}
           style={{
             fontFamily: 'var(--font-cormorant), Georgia, serif',
-            fontSize: 'clamp(48px, 6.5vw, 88px)',
+            fontSize: 'clamp(52px, 8vw, 104px)',
             fontWeight: 500,
-            lineHeight: 1.06,
-            letterSpacing: '-0.03em',
-            color: '#0f0f0f',
-            maxWidth: '860px',
-            marginBottom: '36px',
-            marginTop: 0,
+            lineHeight: 1.05,
+            letterSpacing: '-0.02em',
+            color: '#1a1a1a',
+            maxWidth: '900px',
+            margin: 0,
           }}
         >
-          We back the{' '}
+          An avalanche starts from one{' '}
           <span
             style={{
               position: 'relative',
@@ -99,7 +104,7 @@ export default function Hero() {
               whiteSpace: 'nowrap',
             }}
           >
-            founders
+            pebble.
             <svg
               viewBox="0 0 340 100"
               xmlns="http://www.w3.org/2000/svg"
@@ -108,8 +113,8 @@ export default function Hero() {
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -51%) rotate(-2deg)',
-                width: '130%',
-                height: '220%',
+                width: '118%',
+                height: '200%',
                 overflow: 'visible',
                 pointerEvents: 'none',
               }}
@@ -137,22 +142,39 @@ export default function Hero() {
               />
             </svg>
           </span>
-          {' '}
-          <br />
-          redefining medicine.
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: 'easeOut', delay: 0.3 }}
+          transition={{ duration: 0.6, ease: 'easeOut', delay: 0.25 }}
           style={{
-            fontSize: '17px',
+            fontFamily: 'var(--font-cormorant), Georgia, serif',
+            fontSize: '22px',
+            fontStyle: 'italic',
+            fontWeight: 400,
+            color: '#2d3a35',
+            lineHeight: 1.4,
+            marginTop: '24px',
+            marginBottom: 0,
+            maxWidth: '900px',
+          }}
+        >
+          Ideas that change the world start in a lab.
+        </motion.p>
+
+        <motion.p
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: 'easeOut', delay: 0.35 }}
+          style={{
+            fontSize: '15px',
             fontWeight: 300,
             color: '#555',
             lineHeight: 1.8,
-            maxWidth: '500px',
-            marginBottom: '48px',
+            maxWidth: '560px',
+            marginTop: '20px',
+            marginBottom: 0,
             fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
           }}
         >
@@ -165,10 +187,16 @@ export default function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.5 }}
-          style={{ display: 'flex', alignItems: 'center', gap: '36px' }}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '36px',
+            marginTop: '36px',
+            flexWrap: 'wrap',
+          }}
         >
           <Link
-            href="/portfolio"
+            href="/contact"
             style={{
               fontSize: '14px',
               fontWeight: 500,
@@ -178,14 +206,16 @@ export default function Hero() {
               fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
             }}
           >
-            View portfolio
+            Talk to Pebble
           </Link>
           <Link
             href="/consulting"
             style={{
-              fontSize: '14px',
+              fontSize: '12px',
               color: '#888',
-              fontWeight: 300,
+              fontWeight: 400,
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
               fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
               textDecoration: 'none',
             }}
@@ -193,42 +223,103 @@ export default function Hero() {
             How we work →
           </Link>
         </motion.div>
-      </div>
 
-      <button
-        type="button"
-        className="hero-scroll-chevron"
-        aria-label="Scroll to stats"
-        onClick={scrollToNext}
-        style={{
-          position: 'absolute',
-          bottom: '32px',
-          left: '50%',
-          zIndex: 2,
-          background: 'none',
-          border: 'none',
-          padding: 0,
-          cursor: 'pointer',
-          lineHeight: 0,
-        }}
-      >
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden
+        <button
+          type="button"
+          className="hero-scroll-chevron"
+          aria-label="Scroll to stats"
+          onClick={scrollToStats}
+          style={{
+            display: 'block',
+            position: 'sticky',
+            bottom: '32px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 2,
+            background: 'none',
+            border: 'none',
+            padding: 0,
+            cursor: 'pointer',
+            lineHeight: 0,
+            marginTop: '48px',
+            marginBottom: '8px',
+          }}
         >
-          <path
-            d="M6 9l6 6 6-6"
-            stroke="#2d3a35"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </button>
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden
+          >
+            <path
+              d="M6 9l6 6 6-6"
+              stroke="#2d3a35"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+
+        <div
+          id="hero-stats"
+          className="hero-stats"
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'stretch',
+            marginTop: '80px',
+            width: '100%',
+            maxWidth: '1280px',
+          }}
+        >
+          {heroStats.map((stat, i) => (
+            <div
+              key={stat.label}
+              className="hero-stats__item"
+              style={{
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+                justifyContent: 'center',
+                padding: i === 0 ? '0 48px 0 0' : '0 48px',
+                borderRight: i < heroStats.length - 1 ? '1px solid #d4cfc2' : 'none',
+                minWidth: 0,
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: 'var(--font-cormorant), Georgia, serif',
+                  fontSize: '72px',
+                  fontWeight: 500,
+                  color: '#0f0f0f',
+                  lineHeight: 1,
+                  letterSpacing: '-0.04em',
+                }}
+              >
+                {stat.number}
+              </span>
+              <span
+                style={{
+                  marginTop: '8px',
+                  fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+                  fontSize: '11px',
+                  fontWeight: 400,
+                  color: '#999',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.12em',
+                  lineHeight: 1.4,
+                }}
+              >
+                {stat.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
     </section>
   )
 }

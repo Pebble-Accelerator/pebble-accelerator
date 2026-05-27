@@ -1,6 +1,5 @@
 import Hero from '@/components/sections/Hero'
 import GBAMap from '@/components/sections/GBAMap'
-import Stats from '@/components/sections/Stats'
 import Services from '@/components/sections/Services'
 import Backers from '@/components/sections/Backers'
 import WhyHK from '@/components/sections/WhyHK'
@@ -40,13 +39,15 @@ export default function Home() {
         }}
       >
         <div
+          className="hero-snap-wrapper"
           style={{
             scrollSnapAlign: 'start',
             scrollMarginTop: '60px',
             height: '100vh',
             minHeight: '100vh',
-            overflow: 'hidden',
+            overflowY: 'auto',
             flexShrink: 0,
+            overscrollBehavior: 'contain',
           }}
         >
           <Hero />
@@ -78,25 +79,9 @@ export default function Home() {
           }}
         >
           <div
-            className="combined-slide__stats"
-            style={{
-              flex: '0 0 25%',
-              overflow: 'hidden',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              minHeight: 0,
-              width: '100%',
-              background: '#f5efe4',
-            }}
-          >
-            <Stats band />
-          </div>
-          <div style={bandDivider} aria-hidden />
-          <div
             className="combined-slide__services"
             style={{
-              flex: '0 0 35%',
+              flex: '0 0 50%',
               overflow: 'hidden',
               display: 'flex',
               alignItems: 'center',
@@ -112,7 +97,7 @@ export default function Home() {
           <div
             className="combined-slide__backers"
             style={{
-              flex: '0 0 40%',
+              flex: '0 0 50%',
               overflow: 'hidden',
               display: 'flex',
               alignItems: 'center',

@@ -184,6 +184,17 @@ body:has(.snap-container) > footer {
   }
 }
 
+.hero-snap-wrapper {
+  scroll-snap-align: start;
+  scroll-margin-top: 60px;
+}
+
+.hero-section {
+  height: auto;
+  min-height: 100vh;
+  overflow: visible;
+}
+
 .hero-scroll-chevron {
   opacity: 0;
   animation:
