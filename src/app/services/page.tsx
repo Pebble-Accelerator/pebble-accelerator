@@ -7,7 +7,7 @@ export const metadata = {
     'Primary investment and secondary consulting for biomedical companies in the Greater Bay Area.',
 }
 
-export default function ConsultingPage() {
+export default function ServicesPage() {
   return (
     <>
       <main style={{ backgroundColor: '#f5efe4' }}>

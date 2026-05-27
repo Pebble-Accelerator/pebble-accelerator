@@ -3,22 +3,16 @@
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 
-const heroStats = [
-  { number: '18+', label: 'Companies Financed' },
-  { number: '30+', label: 'Companies Accelerated' },
-  {
-    number: '100%',
-    label: "Coverage of Hong Kong's Hospitals and universities",
-  },
-]
-
 export default function Hero() {
-  const scrollToStats = () => {
-    const wrapper = document.querySelector('.hero-snap-wrapper') as HTMLElement | null
-    const stats = document.getElementById('hero-stats')
-    if (wrapper && stats) {
-      const top = stats.offsetTop - 24
-      wrapper.scrollTo({ top, behavior: 'smooth' })
+  const scrollToNext = () => {
+    const container = document.querySelector('.snap-container') as HTMLElement | null
+    const heroWrapper = document.querySelector('.hero-snap-wrapper')
+    const nextSlide = heroWrapper?.nextElementSibling as HTMLElement | null
+    if (container && nextSlide) {
+      const containerTop = container.getBoundingClientRect().top
+      const slideTop = nextSlide.getBoundingClientRect().top
+      const top = container.scrollTop + (slideTop - containerTop)
+      container.scrollTo({ top })
     }
   }
 
@@ -28,9 +22,14 @@ export default function Hero() {
       className="hero-section"
       style={{
         position: 'relative',
-        background: '#F5F0E8',
+        height: '100vh',
         minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        padding: '0 5vw',
         boxSizing: 'border-box',
+        overflow: 'visible',
       }}
     >
       <div
@@ -70,17 +69,7 @@ export default function Hero() {
         </svg>
       </div>
 
-      <div
-        style={{
-          paddingTop: '64px',
-          paddingBottom: '120px',
-          paddingLeft: '5vw',
-          paddingRight: '5vw',
-          width: '100%',
-          position: 'relative',
-          zIndex: 1,
-        }}
-      >
+      <div style={{ position: 'relative', zIndex: 1, width: '100%' }}>
         <motion.h1
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
@@ -223,103 +212,46 @@ export default function Hero() {
             How we work →
           </Link>
         </motion.div>
-
-        <button
-          type="button"
-          className="hero-scroll-chevron"
-          aria-label="Scroll to stats"
-          onClick={scrollToStats}
-          style={{
-            display: 'block',
-            position: 'sticky',
-            bottom: '32px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            zIndex: 2,
-            background: 'none',
-            border: 'none',
-            padding: 0,
-            cursor: 'pointer',
-            lineHeight: 0,
-            marginTop: '48px',
-            marginBottom: '8px',
-          }}
-        >
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden
-          >
-            <path
-              d="M6 9l6 6 6-6"
-              stroke="#2d3a35"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
-
-        <div
-          id="hero-stats"
-          className="hero-stats"
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'stretch',
-            marginTop: '80px',
-            width: '100%',
-            maxWidth: '1280px',
-          }}
-        >
-          {heroStats.map((stat, i) => (
-            <div
-              key={stat.label}
-              className="hero-stats__item"
-              style={{
-                flex: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'flex-start',
-                justifyContent: 'center',
-                padding: i === 0 ? '0 48px 0 0' : '0 48px',
-                borderRight: i < heroStats.length - 1 ? '1px solid #d4cfc2' : 'none',
-                minWidth: 0,
-              }}
-            >
-              <span
-                style={{
-                  fontFamily: 'var(--font-cormorant), Georgia, serif',
-                  fontSize: '72px',
-                  fontWeight: 500,
-                  color: '#0f0f0f',
-                  lineHeight: 1,
-                  letterSpacing: '-0.04em',
-                }}
-              >
-                {stat.number}
-              </span>
-              <span
-                style={{
-                  marginTop: '8px',
-                  fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-                  fontSize: '11px',
-                  fontWeight: 400,
-                  color: '#999',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.12em',
-                  lineHeight: 1.4,
-                }}
-              >
-                {stat.label}
-              </span>
-            </div>
-          ))}
-        </div>
       </div>
+
+      <button
+        type="button"
+        className="hero-scroll-chevron"
+        aria-label="Scroll to next section"
+        onClick={scrollToNext}
+        style={{
+          position: 'absolute',
+          bottom: '32px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 2,
+          padding: 0,
+          cursor: 'pointer',
+          lineHeight: 0,
+          outline: 'none',
+          border: 'none',
+          background: 'transparent',
+          appearance: 'none',
+          WebkitAppearance: 'none',
+        }}
+      >
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden
+        >
+          <path
+            d="M6 9l6 6 6-6"
+            stroke="#2d3a35"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </button>
     </section>
   )
 }

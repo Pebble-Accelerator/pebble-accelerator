@@ -11,9 +11,10 @@ export default function CTAStrip({ embedded = false }: CTAStripProps) {
         background: '#0f0f0f',
         padding: embedded ? '0 5vw' : '120px 5vw',
         width: '100%',
-        height: embedded ? '100%' : 'auto',
-        display: embedded ? 'flex' : 'block',
-        alignItems: embedded ? 'center' : undefined,
+        height: embedded ? '100vh' : 'auto',
+        minHeight: embedded ? '100vh' : undefined,
+        display: 'flex',
+        alignItems: 'center',
         boxSizing: 'border-box',
       }}
     >
