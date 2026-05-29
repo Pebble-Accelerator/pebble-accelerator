@@ -130,77 +130,48 @@ export default function Services({ embedded = false }: ServicesProps) {
           width: '100%',
           display: 'flex',
           flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'stretch',
           boxSizing: 'border-box',
           border: 'none',
           overflow: 'hidden',
           paddingTop: '60px',
+          paddingBottom: '60px',
           paddingLeft: '5vw',
           paddingRight: '5vw',
-          paddingBottom: '20px',
         }}
       >
         <div
+          className="services-embedded-cluster"
           style={{
-            flex: 1,
-            minHeight: 0,
+            width: '100%',
+            maxWidth: '1280px',
+            margin: '0 auto',
             display: 'flex',
             flexDirection: 'column',
-            width: '100%',
           }}
         >
-          {/* Zone 1: editorial label + teaser */}
-          <div style={{ flex: '0 0 35%', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
-            <div ref={labelRef} className="services-embedded-label">
-              What we do
-            </div>
-
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 0.82fr',
-                columnGap: 'clamp(24px, 5vw, 72px)',
-                alignItems: 'center',
-                width: '100%',
-              }}
-            >
-              <h2
-                style={{
-                  fontFamily: 'var(--font-cormorant), Georgia, serif',
-                  fontSize: 'clamp(48px, 5vw, 72px)',
-                  fontWeight: 500,
-                  lineHeight: 1.05,
-                  letterSpacing: '-0.02em',
-                  color: '#1a1a1a',
-                  margin: 0,
-                }}
-              >
-                How we work.
-                <br />
-                <span style={{ fontStyle: 'italic', color: '#2d3a35' }}>
-                  Capital, then consulting.
-                </span>
-              </h2>
-
-              <p
-                style={{
-                  fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-                  fontSize: '15px',
-                  fontWeight: 300,
-                  color: '#1a1a1a',
-                  lineHeight: 1.65,
-                  maxWidth: '500px',
-                  margin: 0,
-                }}
-              >
-                Pebble offers two routes for biomedical founders building in Hong Kong — direct
-                investment with a year of hands-on operational support, or consulting on retainer for
-                companies beyond our investment mandate. Same operators, same network, different doors.
-              </p>
-            </div>
+          <div ref={labelRef} className="services-embedded-label" style={{ marginBottom: '20px' }}>
+            What we do
           </div>
 
-          {/* Zone 2: existing Investment + Consulting block */}
-          <div style={{ flex: '0 0 50%', minHeight: 0, display: 'flex', alignItems: 'center' }}>
+          <h2
+            style={{
+              fontFamily: 'var(--font-cormorant), Georgia, serif',
+              fontSize: 'clamp(40px, 4.2vw, 62px)',
+              lineHeight: 1.05,
+              letterSpacing: '-0.02em',
+              margin: '0 0 56px',
+              maxWidth: '100%',
+            }}
+          >
+            <span style={{ fontWeight: 400, color: '#1a1a1a' }}>How we work.</span>{' '}
+            <span style={{ fontStyle: 'italic', fontWeight: 500, color: '#5e7a6a' }}>
+              Bespoke, not batched.
+            </span>
+          </h2>
+
+          <div style={{ marginBottom: '56px' }}>
             <div className="services-embedded-columns">
               <div ref={leftColRef} style={{ flex: 1, maxWidth: 'none', minWidth: 0 }}>
                 <h3
@@ -228,18 +199,6 @@ export default function Services({ embedded = false }: ServicesProps) {
                 >
                   {services[0].desc}
                 </p>
-                <span
-                  style={{
-                    display: 'block',
-                    marginTop: '16px',
-                    fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-                    fontSize: '11px',
-                    color: '#5e7a6a',
-                    letterSpacing: '0.04em',
-                  }}
-                >
-                  {services[0].tags}
-                </span>
               </div>
               <div className="services-embedded-divider" aria-hidden />
               <div ref={rightColRef} style={{ flex: 1, maxWidth: 'none', minWidth: 0 }}>
@@ -268,85 +227,64 @@ export default function Services({ embedded = false }: ServicesProps) {
                 >
                   {services[1].desc}
                 </p>
-                <span
-                  style={{
-                    display: 'block',
-                    marginTop: '16px',
-                    fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-                    fontSize: '11px',
-                    color: '#5e7a6a',
-                    letterSpacing: '0.04em',
-                  }}
-                >
-                  {services[1].tags}
-                </span>
               </div>
             </div>
           </div>
 
-          {/* Zone 3: outbound link */}
-          <div
+          <Link
+            href="/services"
+            className="services-full-link"
             style={{
-              flex: '0 0 15%',
-              minHeight: 0,
-              display: 'flex',
-              alignItems: 'flex-end',
-              width: '100%',
+              display: 'inline-flex',
+              alignItems: 'baseline',
+              gap: '4px',
+              fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+              fontSize: '11px',
+              fontWeight: 400,
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+              color: '#1a1a1a',
+              textDecoration: 'none',
+              transition: 'color 150ms ease',
+              cursor: 'pointer',
+              alignSelf: 'flex-start',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = '#5e7a6a'
+              const underline = e.currentTarget.querySelector('[data-underline]') as
+                | HTMLElement
+                | null
+              if (underline) underline.style.borderBottomColor = '#5e7a6a'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = '#1a1a1a'
+              const underline = e.currentTarget.querySelector('[data-underline]') as
+                | HTMLElement
+                | null
+              if (underline) underline.style.borderBottomColor = '#1a1a1a'
             }}
           >
-            <Link
-              href="/services"
-              className="services-full-link"
+            <span
+              data-underline
               style={{
-                display: 'inline-flex',
-                alignItems: 'baseline',
-                gap: '4px',
-                fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-                fontSize: '11px',
-                fontWeight: 400,
-                letterSpacing: '0.12em',
-                textTransform: 'uppercase',
-                color: '#1a1a1a',
-                textDecoration: 'none',
-                transition: 'color 150ms ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = '#5e7a6a'
-                const underline = e.currentTarget.querySelector('[data-underline]') as
-                  | HTMLElement
-                  | null
-                if (underline) underline.style.borderBottomColor = '#5e7a6a'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = '#1a1a1a'
-                const underline = e.currentTarget.querySelector('[data-underline]') as
-                  | HTMLElement
-                  | null
-                if (underline) underline.style.borderBottomColor = '#1a1a1a'
+                borderBottom: '1px solid #1a1a1a',
+                paddingBottom: '2px',
+                transition: 'border-color 150ms ease',
               }}
             >
-              <span
-                data-underline
-                style={{
-                  borderBottom: '1px solid #1a1a1a',
-                  paddingBottom: '2px',
-                  transition: 'border-color 150ms ease',
-                }}
-              >
-                VIEW FULL SERVICES
-              </span>
-              <span aria-hidden>→</span>
-            </Link>
-          </div>
-
-          <style jsx>{`
-            .services-full-link:focus-visible {
-              outline: 2px solid #5e7a6a;
-              outline-offset: 2px;
-              border-radius: 4px;
-            }
-          `}</style>
+              SEE HOW WE WORK
+            </span>
+            <span aria-hidden>→</span>
+          </Link>
         </div>
+
+        <style jsx>{`
+          .services-full-link:focus-visible {
+            outline: 2px solid #5e7a6a;
+            outline-offset: 2px;
+            border-radius: 4px;
+          }
+        `}</style>
       </section>
     )
   }

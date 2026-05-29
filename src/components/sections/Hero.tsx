@@ -93,28 +93,30 @@ export default function Hero() {
               whiteSpace: 'nowrap',
             }}
           >
-            pebble.
+            pebble
             <svg
-              viewBox="0 0 340 100"
+              viewBox="0 0 260 72"
               xmlns="http://www.w3.org/2000/svg"
+              aria-hidden
               style={{
                 position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -51%) rotate(-2deg)',
-                width: '118%',
-                height: '200%',
+                left: '-0.02em',
+                top: '0.12em',
+                width: 'calc(100% + 0.1em)',
+                height: '1em',
                 overflow: 'visible',
                 pointerEvents: 'none',
+                transform: 'rotate(-1.5deg)',
+                transformOrigin: '50% 55%',
               }}
             >
               <path
                 className="hero-founders-draw"
-                d="M 30,50 
-       C 20,15 80,-5 170,2 
-       C 260,8 325,20 328,50 
-       C 331,78 265,98 170,96 
-       C 75,94 40,85 30,50 Z"
+                d="M 22,38
+       C 16,14 62,6 130,8
+       C 198,10 244,20 248,38
+       C 252,56 198,66 130,64
+       C 62,62 28,56 22,38 Z"
                 fill="none"
                 stroke="#2D6A5A"
                 strokeWidth="2.5"
@@ -130,7 +132,7 @@ export default function Hero() {
                 }}
               />
             </svg>
-          </span>
+          </span>.
         </motion.h1>
 
         <motion.p

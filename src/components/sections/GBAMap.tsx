@@ -5,7 +5,7 @@ import 'mapbox-gl/dist/mapbox-gl.css'
 import React, { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import Map, { Marker } from 'react-map-gl/mapbox'
+import Map, { AttributionControl, Marker } from 'react-map-gl/mapbox'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -127,7 +127,7 @@ function GBAMap() {
         height: '100vh',
         display: 'flex',
         alignItems: 'center',
-        padding: 0,
+        padding: '0 5vw',
         width: '100%',
         boxSizing: 'border-box',
         overflow: 'hidden',
@@ -135,74 +135,82 @@ function GBAMap() {
     >
       <div
         style={{
+          width: '100%',
+          maxWidth: '1280px',
+          margin: '0 auto',
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
-          width: '100%',
-          height: '100%',
+          gap: 'clamp(48px, 5vw, 72px)',
+          boxSizing: 'border-box',
         }}
       >
         <div
           style={{
-            flex: '0 0 40%',
-            width: '40%',
+            flex: '0 0 42%',
+            maxWidth: '42%',
+            minWidth: 0,
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
-            padding: '0 0 0 5vw',
+            alignSelf: 'stretch',
+            minHeight: 'min(560px, calc(100vh - 140px))',
             boxSizing: 'border-box',
           }}
         >
-          <p
-            style={{
-              fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-              fontSize: '10px',
-              fontWeight: 400,
-              textTransform: 'uppercase',
-              letterSpacing: '0.12em',
-              color: '#888',
-              margin: '0 0 24px',
-            }}
-          >
-            Greater Bay Area
-          </p>
+          <div>
+            <p
+              style={{
+                fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+                fontSize: '11px',
+                fontWeight: 400,
+                textTransform: 'uppercase',
+                letterSpacing: '0.12em',
+                color: '#888',
+                margin: '0 0 20px',
+              }}
+            >
+              Greater Bay Area
+            </p>
 
-          <h2
-            style={{
-              fontFamily: 'var(--font-cormorant), Georgia, serif',
-              fontSize: '36px',
-              fontWeight: 500,
-              lineHeight: 1.25,
-              color: '#1a1a1a',
-              maxWidth: '340px',
-              margin: 0,
-            }}
-          >
-            Pebble is built at the center of Asia&apos;s biomedical corridor.
-          </h2>
+            <h2
+              style={{
+                fontFamily: 'var(--font-cormorant), Georgia, serif',
+                fontSize: 'clamp(32px, 3.2vw, 40px)',
+                fontWeight: 500,
+                lineHeight: 1.15,
+                letterSpacing: '-0.02em',
+                color: '#1a1a1a',
+                margin: 0,
+              }}
+            >
+              Pebble is built at the center of Asia&apos;s biomedical corridor.
+            </h2>
 
-          <p
-            style={{
-              fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-              fontSize: '14px',
-              fontWeight: 300,
-              color: '#666',
-              lineHeight: 1.7,
-              maxWidth: '320px',
-              marginTop: '16px',
-              marginBottom: 0,
-            }}
-          >
-            Where 1.4 billion patients, world-class clinical infrastructure, and tier-one capital
-            converge within a 90-minute radius.
-          </p>
+            <p
+              style={{
+                fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+                fontSize: '14px',
+                fontWeight: 300,
+                color: '#666',
+                lineHeight: 1.7,
+                maxWidth: '460px',
+                marginTop: '16px',
+                marginBottom: 0,
+              }}
+            >
+              Where 1.4 billion patients, world-class clinical infrastructure, and tier-one capital
+              converge within a 90-minute radius.
+            </p>
+          </div>
 
           <div
             style={{
               display: 'flex',
               flexDirection: 'column',
-              gap: '20px',
-              marginTop: '40px',
+              gap: '14px',
+              marginTop: 'auto',
+              paddingTop: '28px',
             }}
           >
             {MAP_STATS.map((stat) => (
@@ -238,22 +246,21 @@ function GBAMap() {
 
         <div
           style={{
-            flex: '0 0 60%',
-            width: '60%',
-            padding: '24px 5vw 24px 24px',
-            boxSizing: 'border-box',
-            height: '100%',
+            flex: '1 1 58%',
+            minWidth: 0,
             display: 'flex',
             alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
           <div
             ref={mapCardRef}
+            className="apac-map-card"
             style={{
               position: 'relative',
               borderRadius: '12px',
               overflow: 'hidden',
-              height: 'calc(100vh - 48px)',
+              height: 'min(560px, calc(100vh - 140px))',
               width: '100%',
               border: '1px solid #d4cfc2',
               boxShadow: '0 4px 32px rgba(0,0,0,0.08)',
@@ -276,12 +283,14 @@ function GBAMap() {
                 touchZoomRotate={false}
                 doubleClickZoom={false}
                 keyboard={false}
-                attributionControl
+                attributionControl={false}
+                logoPosition="bottom-left"
                 onLoad={() => {
                   setMapLoaded(true)
                   setMapReady(true)
                 }}
               >
+                <AttributionControl compact position="bottom-right" />
                 {CITIES.map((m) => {
                   const labelOnLeft = m.labelSide === 'left'
                   return (
@@ -355,6 +364,64 @@ function GBAMap() {
       <style>{`
         .apac-map .mapboxgl-marker {
           z-index: 10;
+        }
+
+        .apac-map-card .mapboxgl-ctrl-bottom-left,
+        .apac-map-card .mapboxgl-ctrl-bottom-right {
+          z-index: 2;
+        }
+
+        .apac-map-card .mapboxgl-ctrl-logo {
+          opacity: 0.7;
+          transition: opacity 0.2s ease;
+        }
+
+        .apac-map-card .mapboxgl-ctrl-logo:hover {
+          opacity: 1;
+        }
+
+        .apac-map-card .mapboxgl-ctrl-attrib {
+          background: transparent;
+          margin: 8px;
+        }
+
+        .apac-map-card .mapboxgl-ctrl-attrib.mapboxgl-compact {
+          min-height: 24px;
+        }
+
+        .apac-map-card .mapboxgl-ctrl-attrib-button {
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          background-color: rgba(245, 239, 228, 0.85);
+          border: 1px solid #d4cfc2;
+          box-shadow: none;
+          transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .apac-map-card .mapboxgl-ctrl-attrib-button:hover {
+          background-color: rgba(245, 239, 228, 1);
+          border-color: #888;
+        }
+
+        .apac-map-card .mapboxgl-ctrl-attrib-button:focus-visible {
+          outline: 2px solid #5e7a6a;
+          outline-offset: 2px;
+        }
+
+        .apac-map-card .mapboxgl-ctrl-attrib-inner {
+          font-family: var(--font-ibm-plex-sans), system-ui, sans-serif;
+          font-size: 11px;
+          color: #888;
+          background: #f5efe4;
+          border: 1px solid #d4cfc2;
+          border-radius: 4px;
+          padding: 6px 10px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .apac-map-card .mapboxgl-ctrl-attrib-inner a {
+          color: #888;
         }
       `}</style>
     </section>

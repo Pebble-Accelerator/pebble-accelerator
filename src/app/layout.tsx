@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Cormorant_Garamond, IBM_Plex_Sans } from 'next/font/google'
 import Nav from '@/components/layout/Nav'
 import Footer from '@/components/layout/Footer'
+import NoiseOverlay from '@/components/ui/NoiseOverlay'
 import './globals.css'
 
 const cormorantGaramond = Cormorant_Garamond({
@@ -44,8 +45,9 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://api.mapbox.com" />
       </head>
       <body className={ibmPlexSans.className}>
+        <NoiseOverlay />
         <Nav />
-        <main className="min-w-0">{children}</main>
+        <main className="min-w-0 relative z-[2]">{children}</main>
         <Footer />
       </body>
     </html>

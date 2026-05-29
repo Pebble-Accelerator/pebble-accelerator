@@ -1,6 +1,6 @@
 'use client'
 
-import Image from 'next/image' // TODO: replace saltagenlogo.jpg with a transparent PNG or cream-fill SVG at /public/logos/saltagen-cream.{png,svg} when available
+import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 import Backers from '@/components/sections/Backers'
@@ -16,27 +16,20 @@ const SALTAGEN_LOGO_HEIGHT = 515
 const bullets = [
   {
     number: '01',
-    content: (
-      <>
-        Founded 2017. Based in Hong Kong, deal flow across <em>APAC and North America</em>.
-      </>
-    ),
+    content:
+      'Founded October 2017. Cross-Pacific deal flow between North America and Asia.',
   },
   {
     number: '02',
-    content: (
-      <>
-        Pebble <em>sources and accelerates</em>. SaltaGen brings follow-on capital and global reach.
-      </>
-    ),
+    content: 'Verticals: bioscience, biomedical, AI/ML, media, education tech.',
   },
   {
     number: '03',
-    content: (
-      <>
-        A <em>Domain Partner</em> shared between firms — same operators, same network.
-      </>
-    ),
+    content: 'Looks for defensibility and patentable technology.',
+  },
+  {
+    number: '04',
+    content: 'A working venture-scaling conduit across the Pacific into Asia.',
   },
 ]
 
@@ -58,64 +51,11 @@ function SaltaGenVisual({ embedded, withBand }: { embedded: boolean; withBand: b
         aspectRatio: '4 / 5',
         borderRadius: '12px',
         border: '1px solid #d4cfc2',
-        boxShadow: '0 4px 32px rgba(0,0,0,0.08)',
-        background: '#2d3a35',
+        background: 'transparent',
         overflow: 'hidden',
         marginLeft: withBand ? 'auto' : 'auto',
       }}
     >
-      <span
-        style={{
-          position: 'absolute',
-          top: '16px',
-          left: '16px',
-          fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-          fontSize: '10px',
-          fontWeight: 400,
-          letterSpacing: '0.12em',
-          textTransform: 'uppercase',
-          color: 'rgba(245,239,228,0.5)',
-          zIndex: 2,
-        }}
-      >
-        SaltaGen · Est. 2017
-      </span>
-
-      <div
-        style={{
-          position: 'absolute',
-          bottom: '16px',
-          right: '16px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          zIndex: 2,
-        }}
-      >
-        <span
-          style={{
-            width: '8px',
-            height: '8px',
-            borderRadius: '50%',
-            background: '#E8703A',
-            flexShrink: 0,
-          }}
-          aria-hidden
-        />
-        <span
-          style={{
-            fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-            fontSize: '10px',
-            fontWeight: 400,
-            letterSpacing: '0.12em',
-            textTransform: 'uppercase',
-            color: 'rgba(245,239,228,0.65)',
-          }}
-        >
-          Affiliated Partner
-        </span>
-      </div>
-
       <div
         style={{
           position: 'absolute',
@@ -123,24 +63,24 @@ function SaltaGenVisual({ embedded, withBand }: { embedded: boolean; withBand: b
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '12%',
+          padding: '4%',
           boxSizing: 'border-box',
         }}
       >
         {!logoMissing ? (
           <Image
-            src="/images/saltagenlogo.jpg"
+            // saltagen-ventures_logo-2.png — white bg on cream card, used as-is (no filter).
+            // TODO: swap for a transparent-background PNG/SVG to remove the white rectangle.
+            src="/logos/saltagen-ventures_logo-2.png"
             alt="SaltaGen Ventures"
             width={SALTAGEN_LOGO_WIDTH}
             height={SALTAGEN_LOGO_HEIGHT}
             quality={100}
             style={{
-              width: '72%',
+              width: '92%',
               height: 'auto',
               maxWidth: '100%',
               objectFit: 'contain',
-              filter: 'invert(1) brightness(0.95)',
-              opacity: 0.92,
             }}
             onError={() => setLogoMissing(true)}
           />
@@ -151,7 +91,7 @@ function SaltaGenVisual({ embedded, withBand }: { embedded: boolean; withBand: b
               fontSize: '48px',
               fontStyle: 'italic',
               fontWeight: 500,
-              color: '#f5efe4',
+              color: '#1a1a1a',
               lineHeight: 1,
             }}
           >
@@ -305,7 +245,7 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
                     style={{
                       fontWeight: 500,
                       fontStyle: 'italic',
-                      color: '#2d3a35',
+                      color: '#5e7a6a',
                     }}
                   >
                     Our sister fund.
@@ -315,7 +255,7 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
                 <p
                   style={{
                     fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-                    fontSize: withBand ? '13px' : embedded ? '14px' : '15px',
+                    fontSize: withBand ? '17px' : embedded ? '17px' : '18px',
                     fontWeight: 300,
                     color: '#1a1a1a',
                     lineHeight: withBand ? 1.55 : embedded ? 1.6 : 1.75,
@@ -324,10 +264,10 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
                     flexShrink: 0,
                   }}
                 >
-                  SaltaGen is an early-stage venture firm founded in 2017, focused on deep biotech across
-                  North America and Asia. Pebble works alongside SaltaGen as its Hong Kong scout and
-                  accelerator — sourcing university spin-outs, accelerating them through their first year,
-                  and warming them for SaltaGen and other institutional capital.
+                  Founded in October 2017, SaltaGen Ventures is an early-stage venture firm investing in
+                  science- and technology-based startups across bioscience, biomedical, AI & machine
+                  learning, media and education tech — run by operators with decades on both sides of the
+                  Pacific.
                 </p>
 
                 <div style={{ maxWidth: withBand ? 'none' : '520px', flexShrink: 0, width: '100%' }}>
@@ -346,7 +286,7 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
                         style={{
                           fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
                           fontSize: '11px',
-                          color: '#888',
+                          color: '#E8703A',
                           letterSpacing: '0.08em',
                           flexShrink: 0,
                           paddingTop: '2px',
@@ -358,7 +298,7 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
                         style={{
                           margin: 0,
                           fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-                          fontSize: withBand ? '13px' : embedded ? '14px' : '15px',
+                          fontSize: withBand ? '16px' : embedded ? '16px' : '17px',
                           fontWeight: 300,
                           color: '#1a1a1a',
                           lineHeight: 1.5,
