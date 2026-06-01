@@ -1,19 +1,18 @@
-export type CompanyStage = 'Seed' | 'Series A' | 'Series B' | 'Growth' | 'Pre-Seed'
-
-export type PortfolioSector = 'Therapeutics' | 'Diagnostics' | 'Devices' | 'Platform'
+export type PortfolioFilterGroup =
+  | 'Therapeutics'
+  | 'Diagnostics'
+  | 'Devices'
+  | 'Pharma'
+  | 'Platform'
 
 export interface Company {
   id: string
   slug: string
   name: string
-  sector: PortfolioSector
+  category: string
+  filterGroup: PortfolioFilterGroup
   oneLiner: string
-  workingOn: string
-  location: string
-  stage: CompanyStage
-  stageLabel: string
-  status: 'portfolio' | 'accelerated'
-  href?: string
+  section: 'current' | 'legacy'
 }
 
 export interface Backer {

@@ -16,6 +16,7 @@ type CityMarker = {
   longitude: number
   latitude: number
   labelSide?: 'left' | 'right'
+  labelOffset?: { x: number; y: number }
 }
 
 const CITIES: CityMarker[] = [
@@ -26,19 +27,34 @@ const CITIES: CityMarker[] = [
     city: 'Hong Kong',
     longitude: 114.155,
     latitude: 22.285,
-    labelSide: 'left',
+    labelSide: 'right',
+    labelOffset: { x: 10, y: 6 },
   },
-  { id: 'macau', city: 'Macau', longitude: 113.5, latitude: 22.16 },
-  { id: 'zhuhai', city: 'Zhuhai', longitude: 113.58, latitude: 22.27 },
+  {
+    id: 'macau',
+    city: 'Macau',
+    longitude: 113.5,
+    latitude: 22.16,
+    labelSide: 'left',
+    labelOffset: { x: -6, y: 16 },
+  },
+  {
+    id: 'zhuhai',
+    city: 'Zhuhai',
+    longitude: 113.58,
+    latitude: 22.27,
+    labelSide: 'right',
+    labelOffset: { x: 0, y: 16 },
+  },
 ]
 
 const DOT_ORDER = ['guangzhou', 'shenzhen', 'hongkong', 'macau', 'zhuhai'] as const
 
 const MAP_STATS = [
-  { number: '18+', label: 'Companies Financed' },
-  { number: '30+', label: 'Companies Accelerated' },
-  { number: '100%', label: 'HK Hospital Coverage' },
-]
+  { number: '28+', label: 'COMPANIES BACKED', color: '#5e7a6a' },
+  { number: '6', label: 'SECTORS OF MEDICINE', color: '#5e7a6a' },
+  { number: '100%', label: 'HK HOSPITAL COVERAGE', color: '#E8703A' },
+] as const
 
 function GBAMap() {
   const reduced = usePrefersReducedMotion()
@@ -147,8 +163,8 @@ function GBAMap() {
       >
         <div
           style={{
-            flex: '0 0 42%',
-            maxWidth: '42%',
+            flex: '0 0 40%',
+            maxWidth: '40%',
             minWidth: 0,
             display: 'flex',
             flexDirection: 'column',
@@ -159,43 +175,34 @@ function GBAMap() {
           }}
         >
           <div>
-            <p
-              style={{
-                fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-                fontSize: '11px',
-                fontWeight: 400,
-                textTransform: 'uppercase',
-                letterSpacing: '0.12em',
-                color: '#888',
-                margin: '0 0 20px',
-              }}
-            >
-              Greater Bay Area
-            </p>
-
             <h2
               style={{
                 fontFamily: 'var(--font-cormorant), Georgia, serif',
-                fontSize: 'clamp(32px, 3.2vw, 40px)',
+                fontSize: 'clamp(40px, 4.2vw, 64px)',
                 fontWeight: 500,
-                lineHeight: 1.15,
+                lineHeight: 1.07,
                 letterSpacing: '-0.02em',
                 color: '#1a1a1a',
                 margin: 0,
               }}
             >
-              Pebble is built at the center of Asia&apos;s biomedical corridor.
+              <span style={{ fontWeight: 500, fontStyle: 'normal', color: '#1a1a1a' }}>
+                Pebble is built at the center of Asia&apos;s{' '}
+              </span>
+              <span style={{ fontWeight: 500, fontStyle: 'italic', color: '#5e7a6a' }}>
+                biomedical corridor.
+              </span>
             </h2>
 
             <p
               style={{
                 fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-                fontSize: '14px',
+                fontSize: '15px',
                 fontWeight: 300,
-                color: '#666',
+                color: '#1a1a1a',
                 lineHeight: 1.7,
                 maxWidth: '460px',
-                marginTop: '16px',
+                marginTop: '18px',
                 marginBottom: 0,
               }}
             >
@@ -206,39 +213,55 @@ function GBAMap() {
 
           <div
             style={{
+              flex: 1,
+              minHeight: 0,
               display: 'flex',
               flexDirection: 'column',
-              gap: '14px',
-              marginTop: 'auto',
-              paddingTop: '28px',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              marginTop: 'clamp(24px, 3vh, 40px)',
+              paddingTop: 'clamp(20px, 2.5vh, 32px)',
+              width: '100%',
             }}
           >
             {MAP_STATS.map((stat) => (
-              <div key={stat.label}>
-                <div
+              <div
+                key={stat.label}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'baseline',
+                  gap: '18px',
+                  maxWidth: '100%',
+                }}
+              >
+                <span
                   style={{
                     fontFamily: 'var(--font-cormorant), Georgia, serif',
-                    fontSize: '32px',
+                    fontSize: 'clamp(48px, 5vw, 76px)',
                     fontWeight: 500,
-                    color: '#0f0f0f',
+                    color: stat.color,
                     lineHeight: 1,
+                    flexShrink: 0,
                   }}
                 >
                   {stat.number}
-                </div>
-                <div
+                </span>
+                <span
                   style={{
-                    marginTop: '4px',
                     fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-                    fontSize: '10px',
+                    fontSize: '11px',
                     fontWeight: 400,
-                    color: '#999',
+                    color: '#888',
                     textTransform: 'uppercase',
-                    letterSpacing: '0.08em',
+                    letterSpacing: '0.12em',
+                    lineHeight: 1.2,
+                    flex: 1,
+                    minWidth: 0,
                   }}
                 >
                   {stat.label}
-                </div>
+                </span>
               </div>
             ))}
           </div>
@@ -309,28 +332,31 @@ function GBAMap() {
                           flexDirection: labelOnLeft ? 'row-reverse' : 'row',
                           alignItems: 'center',
                           gap: '6px',
-                          transform: labelOnLeft ? 'translateX(-50%)' : 'translateX(4px)',
+                          transform: `translate(${m.labelOffset?.x ?? (labelOnLeft ? -50 : 4)}px, ${
+                            m.labelOffset?.y ?? 0
+                          }px)`,
                         }}
                       >
                         <div
                           style={{
-                            width: '8px',
-                            height: '8px',
+                            width: '11px',
+                            height: '11px',
                             borderRadius: '50%',
                             background: '#2d3a35',
-                            border: '1.5px solid white',
+                            border: '1.5px solid rgba(245,239,228,0.95)',
                             flexShrink: 0,
                           }}
                         />
                         <span
                           style={{
                             fontFamily: 'var(--font-cormorant), Georgia, serif',
-                            fontSize: '13px',
+                            fontSize: '17px',
                             fontWeight: 500,
                             color: '#1a1a1a',
-                            background: 'rgba(245,239,228,0.85)',
-                            padding: '2px 6px',
-                            borderRadius: '3px',
+                            background: 'rgba(245,239,228,0.95)',
+                            padding: '4px 10px',
+                            borderRadius: '4px',
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
                             whiteSpace: 'nowrap',
                             lineHeight: 1.2,
                           }}

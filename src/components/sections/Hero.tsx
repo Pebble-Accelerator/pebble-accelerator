@@ -1,9 +1,32 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 
+const PEBBLE_PATH_D =
+  'M 16 50 C 8 36, 18 20, 64 14 C 104 8, 158 10, 204 18 C 234 26, 242 42, 236 58 C 228 74, 188 86, 122 88 C 60 88, 24 76, 16 50 Z'
+
 export default function Hero() {
+  const pebblePathRef = useRef<SVGPathElement>(null)
+
+  useEffect(() => {
+    const path = pebblePathRef.current
+    if (!path) return
+
+    const length = Math.ceil(path.getTotalLength())
+    path.style.strokeDasharray = `${length}`
+    path.style.setProperty('--hero-pebble-len', `${length}`)
+
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduced) {
+      path.style.strokeDashoffset = '0'
+      return
+    }
+
+    path.style.strokeDashoffset = `${length}`
+  }, [])
+
   const scrollToNext = () => {
     const container = document.querySelector('.snap-container') as HTMLElement | null
     const heroWrapper = document.querySelector('.hero-snap-wrapper')
@@ -88,51 +111,64 @@ export default function Hero() {
           An avalanche starts from one{' '}
           <span
             style={{
-              position: 'relative',
-              display: 'inline-block',
+              display: 'inline-flex',
+              alignItems: 'baseline',
               whiteSpace: 'nowrap',
+              marginLeft: '8px',
             }}
           >
-            pebble
-            <svg
-              viewBox="0 0 260 72"
-              xmlns="http://www.w3.org/2000/svg"
-              aria-hidden
+            <span
               style={{
-                position: 'absolute',
-                left: '-0.02em',
-                top: '0.12em',
-                width: 'calc(100% + 0.1em)',
-                height: '1em',
-                overflow: 'visible',
-                pointerEvents: 'none',
-                transform: 'rotate(-1.5deg)',
-                transformOrigin: '50% 55%',
+                position: 'relative',
+                display: 'inline-block',
+                isolation: 'isolate',
               }}
             >
-              <path
-                className="hero-founders-draw"
-                d="M 22,38
-       C 16,14 62,6 130,8
-       C 198,10 244,20 248,38
-       C 252,56 198,66 130,64
-       C 62,62 28,56 22,38 Z"
-                fill="none"
-                stroke="#2D6A5A"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+              <svg
+                viewBox="0 0 248 96"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden
                 style={{
-                  strokeDasharray: 1100,
-                  strokeDashoffset: 1100,
-                  animation:
-                    'drawOval 1.4s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards',
-                  animationIterationCount: 1,
-                  animationFillMode: 'forwards',
+                  position: 'absolute',
+                  left: '50%',
+                  top: '50%',
+                  zIndex: 0,
+                  width: 'calc(100% + 0.44em)',
+                  height: 'calc(1em + 0.3em)',
+                  overflow: 'visible',
+                  pointerEvents: 'none',
+                  transformOrigin: 'center center',
+                  transform: 'translate(-50%, -50%) rotate(-1deg) scale(1.1)',
                 }}
-              />
-            </svg>
-          </span>.
+              >
+                <path
+                  ref={pebblePathRef}
+                  className="hero-founders-draw hero-pebble-draw"
+                  d={PEBBLE_PATH_D}
+                  fill="none"
+                  stroke="#5e7a6a"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <span
+                className="hero-pebble-text-stack"
+                style={{
+                  position: 'relative',
+                  display: 'inline-grid',
+                  gridTemplateAreas: '"stack"',
+                  zIndex: 1,
+                }}
+              >
+                <span className="hero-pebble-halo" aria-hidden>
+                  pebble
+                </span>
+                <span className="hero-pebble-word">pebble</span>
+              </span>
+            </span>
+            <span className="hero-headline-period">.</span>
+          </span>
         </motion.h1>
 
         <motion.p
@@ -254,6 +290,62 @@ export default function Hero() {
           />
         </svg>
       </button>
+
+      <style>{`
+        .hero-pebble-text-stack {
+          font: inherit;
+          letter-spacing: inherit;
+        }
+
+        .hero-pebble-halo,
+        .hero-pebble-word {
+          grid-area: stack;
+          font: inherit;
+          letter-spacing: inherit;
+          line-height: inherit;
+        }
+
+        .hero-pebble-halo {
+          z-index: 1;
+          pointer-events: none;
+          user-select: none;
+          color: transparent;
+          -webkit-text-fill-color: transparent;
+          -webkit-text-stroke: 8px #f5efe4;
+          paint-order: stroke;
+        }
+
+        .hero-pebble-word {
+          position: relative;
+          z-index: 2;
+          color: #1a1a1a;
+        }
+
+        .hero-headline-period {
+          flex-shrink: 0;
+          /* Stone right overflow (~0.24em at 1.1 scale) + tight punctuation gap */
+          margin-left: calc(0.32em + 8px);
+          font: inherit;
+          letter-spacing: inherit;
+          line-height: inherit;
+          color: #1a1a1a;
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+          @keyframes heroPebbleDraw {
+            from {
+              stroke-dashoffset: var(--hero-pebble-len, 900);
+            }
+            to {
+              stroke-dashoffset: 0;
+            }
+          }
+
+          .hero-pebble-draw {
+            animation: heroPebbleDraw 1.4s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
+          }
+        }
+      `}</style>
     </section>
   )
 }

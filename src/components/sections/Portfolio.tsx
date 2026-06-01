@@ -11,7 +11,7 @@ interface Props {
 }
 
 function CompanyRow({ company, isFirst }: { company: Company; isFirst: boolean }) {
-  const href = company.href ?? '/portfolio'
+  const href = `/portfolio/${company.slug}`
 
   return (
     <Link
@@ -25,15 +25,12 @@ function CompanyRow({ company, isFirst }: { company: Company; isFirst: boolean }
           {company.name}
         </span>
         <span className="shrink-0 text-[10px] font-medium uppercase tracking-[0.08em] text-[#2D6A5A]">
-          {company.sector}
+          {company.category}
         </span>
       </div>
       <div className="flex min-w-0 shrink-0 items-baseline justify-end gap-10">
         <span className="hidden max-w-[400px] text-right text-[13px] font-light text-[#888] md:block">
           {company.oneLiner}
-        </span>
-        <span className="min-w-[80px] shrink-0 whitespace-nowrap text-right text-[12px] text-[#bbb]">
-          {company.location}
         </span>
       </div>
     </Link>
@@ -46,7 +43,7 @@ export default function Portfolio({ limit }: Props) {
 
   const companies = limit !== undefined ? portfolio.slice(0, limit) : portfolio
   const showViewAll = limit !== undefined
-  const sectors = ['All', ...Array.from(new Set(portfolio.map((c) => c.sector)))]
+  const sectors = ['All', ...Array.from(new Set(portfolio.map((c) => c.filterGroup)))]
 
   return (
     <section
@@ -165,12 +162,12 @@ export default function Portfolio({ limit }: Props) {
                       Math.abs((rippleIndex % 3) - col)
                     : null
                 const isFiltered =
-                  activeSector !== 'All' && company.sector !== activeSector
+                  activeSector !== 'All' && company.filterGroup !== activeSector
 
                 return (
                   <Link
                     key={company.id}
-                    href={company.href ?? '/portfolio'}
+                    href={`/portfolio/${company.slug}`}
                     onMouseEnter={() => setRippleIndex(i)}
                     onMouseLeave={() => setRippleIndex(null)}
                     style={{
@@ -229,7 +226,7 @@ export default function Portfolio({ limit }: Props) {
                         color: '#5e7a6a',
                       }}
                     >
-                      {company.sector} · {company.stage}
+                      {company.category}
                     </span>
                   </Link>
                 )
