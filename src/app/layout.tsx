@@ -47,7 +47,7 @@ export default function RootLayout({
       <body className={ibmPlexSans.className}>
         <NoiseOverlay />
         <Nav />
-        <main className="min-w-0 relative z-[2]">{children}</main>
+        <main className="min-w-0 relative z-[2] flex flex-1 flex-col">{children}</main>
         <Footer />
       </body>
     </html>

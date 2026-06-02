@@ -52,7 +52,7 @@ const DOT_ORDER = ['guangzhou', 'shenzhen', 'hongkong', 'macau', 'zhuhai'] as co
 
 const MAP_STATS = [
   { number: '28+', label: 'COMPANIES BACKED', color: '#5e7a6a' },
-  { number: '6', label: 'SECTORS OF MEDICINE', color: '#5e7a6a' },
+  { number: '3', label: 'FIELDS OF MEDICINE', color: '#5e7a6a' },
   { number: '100%', label: 'HK HOSPITAL COVERAGE', color: '#E8703A' },
 ] as const
 

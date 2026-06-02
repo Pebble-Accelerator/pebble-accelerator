@@ -1,9 +1,9 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
-import { useMemo, useState } from 'react'
-import { currentPortfolio, legacyPortfolio } from '@/data/portfolio'
-import type { Company, PortfolioFilterGroup } from '@/types'
+import { useEffect, useMemo, useState } from 'react'
+import { portfolioCompanies, darkenBlockColor, getMedicalBucket } from '@/data/portfolio'
+import type { MedicalBucket } from '@/data/portfolio'
+import type { Company } from '@/types'
 import { fadeUpStyle, useFadeUpReveal } from '@/components/ui/useFadeUpReveal'
 
 const labelStyle: React.CSSProperties = {
@@ -15,69 +15,98 @@ const labelStyle: React.CSSProperties = {
   color: '#888',
 }
 
-const BLOCK_PALETTE = ['#2d3a35', '#8e7886', '#E8703A', '#5e7a6a', '#1a1a1a'] as const
+/** Four reader-friendly pills (+ ALL). LEGACY is an overlay, not a medical bucket. */
+const MEDICAL_BUCKETS: MedicalBucket[] = ['Therapeutics', 'Diagnostics', 'Platform']
 
-const FILTER_GROUPS: PortfolioFilterGroup[] = [
-  'Therapeutics',
-  'Diagnostics',
-  'Devices',
-  'Pharma',
-  'Platform',
-]
+type PortfolioFilter = 'ALL' | MedicalBucket | 'LEGACY'
 
-const COLOR_INDEX_SOURCE = [...currentPortfolio, ...legacyPortfolio]
-
-function blockColorForCompany(companyId: string): string {
-  const index = COLOR_INDEX_SOURCE.findIndex((c) => c.id === companyId)
-  const i = index >= 0 ? index : 0
-  return BLOCK_PALETTE[i % BLOCK_PALETTE.length]
+const BUCKET_LABELS: Record<MedicalBucket, string> = {
+  Therapeutics: 'THERAPEUTICS',
+  Diagnostics: 'DIAGNOSTICS',
+  Platform: 'PLATFORM',
 }
 
-type SectorFilter = 'ALL' | PortfolioFilterGroup
+const LOGO_GHOST_SIZE = {
+  width: '84%',
+  height: '84%',
+  scale: 1.55,
+} as const
 
-function buildFilterPills(companies: Company[]): { key: SectorFilter; label: string; count: number }[] {
-  const pills: { key: SectorFilter; label: string; count: number }[] = [
+/** Deterministic bleed positions — cycle by block index. No rotation, fixed size. */
+const LOGO_CROP_VARIANTS = [
+  // Upper-right bleed (default)
+  {
+    top: '-18%',
+    right: '-34%',
+    left: 'auto',
+    transformOrigin: '100% 0%',
+    maskPosition: 'left center',
+  },
+  // Centered (more emblematic marks)
+  {
+    top: '6%',
+    right: '10%',
+    left: 'auto',
+    transformOrigin: '50% 50%',
+    maskPosition: 'center',
+  },
+  // Upper-center (wordmarks)
+  {
+    top: '-26%',
+    right: 'auto',
+    left: '10%',
+    transformOrigin: '50% 0%',
+    maskPosition: 'center',
+  },
+] as const
+
+const LOGO_GHOST_OPACITY = 0.22
+
+/** KA Imaging — literal mask values (zoom past 100% to crop wordmark from 500×250 asset). */
+const KA_IMAGING_MASK_SIZE = '160%'
+const KA_IMAGING_MASK_POSITION = 'left -15% bottom 35%'
+const KA_IMAGING_GHOST_OPACITY = 0.32
+
+function buildFilterPills(companies: Company[]): { key: PortfolioFilter; label: string; count: number }[] {
+  // ALL = distinct companies (the data already holds one row per company, no dual-era duplicates).
+  const pills: { key: PortfolioFilter; label: string; count: number }[] = [
     { key: 'ALL', label: 'ALL', count: companies.length },
   ]
 
-  const labels: Record<PortfolioFilterGroup, string> = {
-    Therapeutics: 'THERAPEUTICS',
-    Diagnostics: 'DIAGNOSTICS',
-    Devices: 'DEVICES',
-    Pharma: 'PHARMA',
-    Platform: 'PLATFORM',
+  // Medical-bucket counts INCLUDE legacy companies — legacy is an overlay, not a removal.
+  for (const bucket of MEDICAL_BUCKETS) {
+    const count = companies.filter((c) => getMedicalBucket(c) === bucket).length
+    if (count > 0) {
+      pills.push({ key: bucket, label: BUCKET_LABELS[bucket], count })
+    }
   }
 
-  for (const group of FILTER_GROUPS) {
-    const count = companies.filter((c) => c.filterGroup === group).length
-    if (count > 0) {
-      pills.push({ key: group, label: labels[group], count })
-    }
+  const legacyCount = companies.filter((c) => c.legacyFilter).length
+  if (legacyCount > 0) {
+    pills.push({ key: 'LEGACY', label: 'LEGACY', count: legacyCount })
   }
 
   return pills
 }
 
+function matchesFilter(company: Company, filter: PortfolioFilter): boolean {
+  if (filter === 'ALL') return true
+  if (filter === 'LEGACY') return company.legacyFilter
+  return getMedicalBucket(company) === filter
+}
+
 const STAGGER_MS = 100
 
 export default function PortfolioEditorial() {
-  const router = useRouter()
-  const [activeFilter, setActiveFilter] = useState<SectorFilter>('ALL')
+  const [activeFilter, setActiveFilter] = useState<PortfolioFilter>('ALL')
   const { ref: revealRef, revealed, reduced } = useFadeUpReveal()
 
-  const sectorFilters = useMemo(() => buildFilterPills(currentPortfolio), [])
+  const filterPills = useMemo(() => buildFilterPills(portfolioCompanies), [])
 
-  const filteredCurrent = useMemo(() => {
-    if (activeFilter === 'ALL') return currentPortfolio
-    return currentPortfolio.filter((c) => c.filterGroup === activeFilter)
-  }, [activeFilter])
-
-  const handleBlockClick = (slug: string) => {
-    // TODO: implement /portfolio/[slug] detail pages when routes exist
-    router.push(`/portfolio/${slug}`)
-  }
-
-  const legacyStaggerBase = 300 + filteredCurrent.length * STAGGER_MS + 200
+  const filteredCompanies = useMemo(
+    () => portfolioCompanies.filter((c) => matchesFilter(c, activeFilter)),
+    [activeFilter]
+  )
 
   return (
     <div ref={revealRef}>
@@ -108,16 +137,6 @@ export default function PortfolioEditorial() {
           </h1>
         </div>
 
-        <p
-          style={{
-            ...labelStyle,
-            ...fadeUpStyle(revealed, reduced, 120),
-            marginBottom: '20px',
-          }}
-        >
-          CURRENT PORTFOLIO
-        </p>
-
         <div
           style={{
             ...fadeUpStyle(revealed, reduced, 150),
@@ -129,7 +148,7 @@ export default function PortfolioEditorial() {
           }}
         >
           <span style={{ ...labelStyle, marginRight: '8px' }}>FILTER</span>
-          {sectorFilters.map(({ key, label, count }) => {
+          {filterPills.map(({ key, label, count }) => {
             const isActive = activeFilter === key
             return (
               <button
@@ -164,53 +183,12 @@ export default function PortfolioEditorial() {
         </div>
 
         <div className="portfolio-company-grid">
-          {filteredCurrent.map((company, gridIndex) => (
+          {filteredCompanies.map((company, gridIndex) => (
             <CompanyBlock
               key={company.id}
               company={company}
-              backgroundColor={blockColorForCompany(company.id)}
+              variantIndex={gridIndex}
               revealStyle={fadeUpStyle(revealed, reduced, 300 + gridIndex * STAGGER_MS)}
-              onClick={() => handleBlockClick(company.slug)}
-            />
-          ))}
-        </div>
-
-        <div
-          style={{
-            marginTop: '96px',
-            marginBottom: '40px',
-            ...fadeUpStyle(revealed, reduced, legacyStaggerBase - 100),
-          }}
-        >
-          <p style={{ ...labelStyle, marginBottom: '16px' }}>LEGACY PORTFOLIO</p>
-          <p
-            style={{
-              fontFamily: 'var(--font-cormorant), Georgia, serif',
-              fontSize: 'clamp(22px, 2.5vw, 28px)',
-              fontWeight: 500,
-              lineHeight: 1.3,
-              color: '#1a1a1a',
-              margin: 0,
-              maxWidth: '480px',
-            }}
-          >
-            Earlier bets, realized and matured.
-          </p>
-        </div>
-
-        <div className="portfolio-company-grid">
-          {legacyPortfolio.map((company, gridIndex) => (
-            <CompanyBlock
-              key={company.id}
-              company={company}
-              legacy
-              backgroundColor={blockColorForCompany(company.id)}
-              revealStyle={fadeUpStyle(
-                revealed,
-                reduced,
-                legacyStaggerBase + gridIndex * STAGGER_MS
-              )}
-              onClick={() => handleBlockClick(company.slug)}
             />
           ))}
         </div>
@@ -234,78 +212,153 @@ export default function PortfolioEditorial() {
   )
 }
 
-function CompanyBlock({
-  company,
-  backgroundColor,
-  revealStyle,
-  onClick,
-  legacy = false,
+function LogoGhost({
+  logoSrc,
+  toneColor,
+  variantIndex,
+  companySlug,
 }: {
-  company: Company
-  backgroundColor: string
-  revealStyle: React.CSSProperties
-  onClick: () => void
-  legacy?: boolean
+  logoSrc: string
+  toneColor: string
+  variantIndex: number
+  companySlug: string
 }) {
-  const [hovered, setHovered] = useState(false)
+  const variant = LOGO_CROP_VARIANTS[variantIndex % LOGO_CROP_VARIANTS.length]
+  const maskUrl = `url("${logoSrc}")`
+
+  useEffect(() => {
+    if (companySlug !== 'ka-imaging') return
+    console.log('[KA Imaging logo mask]', {
+      maskSize: KA_IMAGING_MASK_SIZE,
+      maskPosition: KA_IMAGING_MASK_POSITION,
+    })
+  }, [companySlug])
+
+  if (companySlug === 'ka-imaging') {
+    return (
+      <div
+        aria-hidden
+        className="portfolio-logo-ghost portfolio-logo-ghost--ka-imaging"
+        data-company="ka-imaging"
+        data-mask-size={KA_IMAGING_MASK_SIZE}
+        data-mask-position={KA_IMAGING_MASK_POSITION}
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: toneColor,
+          opacity: KA_IMAGING_GHOST_OPACITY,
+          WebkitMaskImage: maskUrl,
+          maskImage: maskUrl,
+          WebkitMaskSize: KA_IMAGING_MASK_SIZE,
+          maskSize: KA_IMAGING_MASK_SIZE,
+          WebkitMaskRepeat: 'no-repeat',
+          maskRepeat: 'no-repeat',
+          WebkitMaskPosition: KA_IMAGING_MASK_POSITION,
+          maskPosition: KA_IMAGING_MASK_POSITION,
+          pointerEvents: 'none',
+          zIndex: 0,
+        }}
+      />
+    )
+  }
 
   return (
-    <div style={revealStyle}>
-      <article
-        role="button"
-        tabIndex={0}
-        onClick={onClick}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault()
-            onClick()
-          }
-        }}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
+    <div
+      aria-hidden
+      className="portfolio-logo-ghost"
+      style={{
+        position: 'absolute',
+        width: LOGO_GHOST_SIZE.width,
+        height: LOGO_GHOST_SIZE.height,
+        top: variant.top,
+        right: variant.right,
+        left: variant.left,
+        backgroundColor: toneColor,
+        opacity: LOGO_GHOST_OPACITY,
+        WebkitMaskImage: maskUrl,
+        maskImage: maskUrl,
+        WebkitMaskSize: 'contain',
+        maskSize: 'contain',
+        WebkitMaskRepeat: 'no-repeat',
+        maskRepeat: 'no-repeat',
+        WebkitMaskPosition: variant.maskPosition,
+        maskPosition: variant.maskPosition,
+        transform: `scale(${LOGO_GHOST_SIZE.scale})`,
+        transformOrigin: variant.transformOrigin,
+        pointerEvents: 'none',
+        zIndex: 0,
+      }}
+    />
+  )
+}
+
+function CompanyBlock({
+  company,
+  revealStyle,
+  variantIndex,
+}: {
+  company: Company
+  revealStyle: React.CSSProperties
+  variantIndex: number
+}) {
+  const [hovered, setHovered] = useState(false)
+  const isLinked = Boolean(company.website)
+  const logoTone = darkenBlockColor(company.blockColor, 26)
+
+  const blockStyle: React.CSSProperties = {
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
+    alignItems: 'stretch',
+    aspectRatio: '4 / 3',
+    width: '100%',
+    background: `linear-gradient(to top right, ${company.blockColor} 0%, ${company.blockColorDark} 100%)`,
+    boxSizing: 'border-box',
+    padding: 'clamp(24px, 4vw, 40px)',
+    overflow: 'hidden',
+    textDecoration: 'none',
+    color: 'inherit',
+    cursor: isLinked ? 'pointer' : 'default',
+    transform: hovered && isLinked ? 'scale(1.01)' : 'scale(1)',
+    filter: hovered && isLinked ? 'brightness(1.05)' : 'none',
+    transition: 'transform 0.25s ease, filter 0.25s ease',
+  }
+
+  const inner = (
+    <>
+      {company.logo ? (
+        <LogoGhost
+          logoSrc={company.logo}
+          toneColor={logoTone}
+          variantIndex={variantIndex}
+          companySlug={company.slug}
+        />
+      ) : null}
+
+      <div
         style={{
           position: 'relative',
-          aspectRatio: '4 / 3',
-          height: '100%',
-          backgroundColor,
-          cursor: 'pointer',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'flex-end',
-          padding: 'clamp(24px, 4vw, 40px)',
-          boxSizing: 'border-box',
-          overflow: 'hidden',
-          transform: hovered ? 'scale(1.01)' : 'scale(1)',
-          filter: legacy
-            ? hovered
-              ? 'brightness(1.04)'
-              : 'brightness(0.94) saturate(0.92)'
-            : hovered
-              ? 'brightness(1.06)'
-              : 'none',
-          transition: 'transform 0.25s ease, filter 0.25s ease',
+          zIndex: 1,
+          textAlign: 'left',
+          maxWidth: '72%',
         }}
       >
-        {legacy && (
-          <span
-            style={{
-              position: 'absolute',
-              top: 'clamp(20px, 3vw, 32px)',
-              left: 'clamp(20px, 3vw, 32px)',
-              fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-              fontSize: '9px',
-              fontWeight: 500,
-              letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-              color: 'rgba(245, 239, 228, 0.55)',
-            }}
-          >
-            LEGACY
-          </span>
-        )}
-
-        <div style={{ flex: 1, minHeight: 0 }} aria-hidden />
-
+        <h2
+          style={{
+            fontFamily: 'var(--font-cormorant), Georgia, serif',
+            fontSize: 'clamp(26px, 3vw, 36px)',
+            fontWeight: 500,
+            lineHeight: 1.1,
+            letterSpacing: '-0.02em',
+            color: '#f5efe4',
+            margin: '0 0 8px',
+          }}
+        >
+          {company.name}
+        </h2>
         <p
           style={{
             fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
@@ -314,64 +367,40 @@ function CompanyBlock({
             letterSpacing: '0.12em',
             textTransform: 'uppercase',
             color: 'rgba(245, 239, 228, 0.7)',
-            margin: '0 0 12px',
-          }}
-        >
-          {company.category.toUpperCase()}
-        </p>
-
-        <h2
-          style={{
-            fontFamily: 'var(--font-cormorant), Georgia, serif',
-            fontSize: 'clamp(32px, 4vw, 52px)',
-            fontWeight: 500,
-            lineHeight: 1.05,
-            letterSpacing: '-0.02em',
-            color: '#f5efe4',
-            margin: '0 0 12px',
-          }}
-        >
-          {company.name}
-        </h2>
-
-        <p
-          style={{
-            fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-            fontSize: '14px',
-            fontWeight: 400,
-            lineHeight: 1.5,
-            color: 'rgba(245, 239, 228, 0.75)',
             margin: 0,
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-            opacity: hovered ? 1 : 0.85,
-            transition: 'opacity 0.2s ease',
+            lineHeight: 1.35,
           }}
         >
-          {company.oneLiner}
+          {company.category}
         </p>
+      </div>
+    </>
+  )
 
-        <span
-          style={{
-            position: 'absolute',
-            top: 'clamp(20px, 3vw, 32px)',
-            right: 'clamp(20px, 3vw, 32px)',
-            fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-            fontSize: '11px',
-            fontWeight: 400,
-            letterSpacing: '0.12em',
-            textTransform: 'uppercase',
-            color: '#f5efe4',
-            opacity: hovered ? 1 : 0,
-            transform: hovered ? 'translateX(0)' : 'translateX(-4px)',
-            transition: 'opacity 0.2s ease, transform 0.2s ease',
-          }}
+  return (
+    <div style={revealStyle}>
+      {isLinked ? (
+        <a
+          href={company.website}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={blockStyle}
+          aria-label={`${company.name} — opens website in a new tab`}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
         >
-          READ CASE STUDY →
-        </span>
-      </article>
+          {inner}
+        </a>
+      ) : (
+        <div
+          style={blockStyle}
+          aria-label={company.name}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+        >
+          {inner}
+        </div>
+      )}
     </div>
   )
 }

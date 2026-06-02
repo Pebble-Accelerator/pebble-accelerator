@@ -34,6 +34,9 @@ body {
 
 body {
   color: #0f0f0f;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 img { display: block; max-width: 100%; }
 button { cursor: pointer; }

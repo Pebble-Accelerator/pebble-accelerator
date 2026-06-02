@@ -4,6 +4,7 @@ import Services from '@/components/sections/Services'
 import SaltaGen from '@/components/sections/SaltaGen'
 import CTAStrip from '@/components/sections/CTAStrip'
 import Footer from '@/components/layout/Footer'
+import HomeScrollController from '@/components/home/HomeScrollController'
 
 const snapWrapperStyle = {
   height: '100vh',
@@ -27,7 +28,7 @@ export default function Home() {
         }}
       >
         <div
-          className="hero-snap-wrapper"
+          className="hero-snap-wrapper home-slide"
           style={{
             height: '100vh',
             minHeight: '100vh',
@@ -39,6 +40,7 @@ export default function Home() {
           <Hero />
         </div>
         <div
+          className="home-slide"
           style={{
             height: '100vh',
             minHeight: '100vh',
@@ -48,19 +50,22 @@ export default function Home() {
         >
           <GBAMap />
         </div>
-        <div style={snapWrapperStyle}>
+        <div className="home-slide" style={snapWrapperStyle}>
           <Services embedded />
         </div>
 
-        <div style={snapWrapperStyle}>
+        <div className="home-slide" style={snapWrapperStyle}>
           <SaltaGen embedded />
         </div>
 
-        <div style={snapWrapperStyle}>
+        <div className="home-slide" style={snapWrapperStyle}>
           <CTAStrip embedded />
         </div>
-        <Footer />
+        <div className="home-slide">
+          <Footer />
+        </div>
       </div>
+      <HomeScrollController />
     </>
   )
 }

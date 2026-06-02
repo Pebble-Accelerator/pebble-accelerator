@@ -30,7 +30,7 @@ function CompanyRow({ company, isFirst }: { company: Company; isFirst: boolean }
       </div>
       <div className="flex min-w-0 shrink-0 items-baseline justify-end gap-10">
         <span className="hidden max-w-[400px] text-right text-[13px] font-light text-[#888] md:block">
-          {company.oneLiner}
+          {company.category}
         </span>
       </div>
     </Link>
@@ -212,7 +212,7 @@ export default function Portfolio({ limit }: Props) {
                         color: '#666666',
                       }}
                     >
-                      {company.oneLiner}
+                      {company.category}
                     </span>
                     <span
                       style={{

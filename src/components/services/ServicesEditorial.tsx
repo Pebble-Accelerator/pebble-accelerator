@@ -11,14 +11,6 @@ const labelStyle: React.CSSProperties = {
   color: '#888',
 }
 
-const consultingPills = [
-  'MARKET ENTRY',
-  'HK GRANTS',
-  'HOSPITAL ACCESS',
-  'BD INTROS',
-  'TIGERMED CRO',
-]
-
 function TimelineCol({
   label,
   children,
@@ -36,7 +28,7 @@ function TimelineCol({
           letterSpacing: '0.12em',
           textTransform: 'uppercase',
           color: '#E8703A',
-          margin: '0 0 12px',
+          margin: '0 0 16px',
         }}
       >
         {label}
@@ -71,16 +63,14 @@ export default function ServicesEditorial() {
         paddingBottom: '80px',
       }}
     >
-      <section style={{ padding: '80px 0 64px' }}>
-        <p style={{ ...labelStyle, marginBottom: '32px' }}>SERVICES · 04</p>
-
+      <section style={{ paddingTop: 'clamp(100px, 28vh, 300px)', paddingBottom: 0 }}>
         <div
           className="services-editorial-hero"
           style={{
             display: 'flex',
             flexWrap: 'wrap',
             gap: '48px 5%',
-            marginBottom: '72px',
+            marginBottom: 'clamp(88px, 12vh, 160px)',
             alignItems: 'flex-start',
           }}
         >
@@ -137,57 +127,41 @@ export default function ServicesEditorial() {
           style={{
             ...fadeUpStyle(revealed, reduced, 300),
             display: 'flex',
-            gap: '24px',
+            flexDirection: 'column',
+            gap: 'clamp(32px, 4vw, 56px)',
             alignItems: 'stretch',
+            width: '100%',
           }}
         >
           <div
             style={{
-              flex: '1 1 58%',
-              minWidth: 0,
+              width: '100%',
               backgroundColor: '#2d3a35',
               borderRadius: '8px',
-              padding: '48px',
+              padding: 'clamp(48px, 5vw, 56px)',
             }}
           >
-            <div
+            <p
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                marginBottom: '28px',
+                fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+                fontSize: '10px',
+                fontWeight: 500,
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                color: '#E8703A',
+                margin: '0 0 36px',
               }}
             >
-              <span
-                style={{
-                  width: '6px',
-                  height: '6px',
-                  borderRadius: '50%',
-                  backgroundColor: '#E8703A',
-                  flexShrink: 0,
-                }}
-              />
-              <span
-                style={{
-                  fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-                  fontSize: '10px',
-                  fontWeight: 500,
-                  letterSpacing: '0.12em',
-                  textTransform: 'uppercase',
-                  color: '#E8703A',
-                }}
-              >
-                ★ PRIMARY · INVESTMENT + 12 MONTHS ALONGSIDE
-              </span>
-            </div>
+              INVESTMENT + 12 MONTHS ALONGSIDE
+            </p>
             <h2
               style={{
                 fontFamily: 'var(--font-cormorant), Georgia, serif',
-                fontSize: 'clamp(32px, 3.5vw, 48px)',
+                fontSize: 'clamp(36px, 4vw, 56px)',
                 fontWeight: 500,
                 lineHeight: 1.15,
                 color: '#f5efe4',
-                margin: '0 0 24px',
+                margin: '0 0 32px',
                 maxWidth: '520px',
               }}
             >
@@ -201,7 +175,7 @@ export default function ServicesEditorial() {
                 lineHeight: 1.65,
                 color: 'rgba(245, 239, 228, 0.85)',
                 maxWidth: '560px',
-                margin: '0 0 32px',
+                margin: '0 0 40px',
               }}
             >
               Capital is the door — the year that follows is the work. We help structure HK government
@@ -211,7 +185,8 @@ export default function ServicesEditorial() {
             <div
               style={{
                 borderTop: '1px solid rgba(245, 239, 228, 0.15)',
-                paddingTop: '28px',
+                marginTop: '8px',
+                paddingTop: '48px',
               }}
             >
               <div
@@ -219,7 +194,7 @@ export default function ServicesEditorial() {
                 style={{
                   display: 'flex',
                   flexWrap: 'wrap',
-                  gap: '28px 32px',
+                  gap: '40px clamp(40px, 6vw, 72px)',
                 }}
               >
                 <TimelineCol label="MONTH 01">
@@ -263,25 +238,24 @@ export default function ServicesEditorial() {
 
           <div
             style={{
-              flex: '1 1 42%',
-              minWidth: 0,
+              width: '100%',
               backgroundColor: '#e8e0d0',
               border: '1px solid #d4cfc2',
               borderRadius: '8px',
-              padding: '36px',
+              padding: 'clamp(48px, 5vw, 56px)',
               display: 'flex',
               flexDirection: 'column',
             }}
           >
-            <p style={{ ...labelStyle, marginBottom: '20px' }}>SECONDARY · CONSULTING</p>
+            <p style={{ ...labelStyle, marginBottom: '28px' }}>CONSULTING</p>
             <h2
               style={{
                 fontFamily: 'var(--font-cormorant), Georgia, serif',
-                fontSize: 'clamp(26px, 2.8vw, 36px)',
+                fontSize: 'clamp(30px, 3.2vw, 44px)',
                 fontWeight: 500,
                 lineHeight: 1.2,
                 color: '#1a1a1a',
-                margin: '0 0 20px',
+                margin: '0 0 28px',
               }}
             >
               For companies beyond our investment scope, the{' '}
@@ -293,50 +267,17 @@ export default function ServicesEditorial() {
                 fontSize: '15px',
                 lineHeight: 1.65,
                 color: '#1a1a1a',
-                margin: '0 0 28px',
+                margin: 0,
               }}
             >
               On retainer, we run market entry, HK grant applications, hospital access, and partner
               introductions — for companies we&apos;d back if our mandate fit. Same operators, same
               network.
             </p>
-            <div
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '8px',
-                marginTop: 'auto',
-              }}
-            >
-              {consultingPills.map((pill) => (
-                <span
-                  key={pill}
-                  style={{
-                    fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-                    fontSize: '10px',
-                    letterSpacing: '0.1em',
-                    textTransform: 'uppercase',
-                    color: '#1a1a1a',
-                    padding: '5px 14px',
-                    borderRadius: '999px',
-                    border: '1px solid #d4cfc2',
-                  }}
-                >
-                  {pill}
-                </span>
-              ))}
-            </div>
           </div>
         </div>
       </section>
 
-      <style jsx>{`
-        @media (max-width: 900px) {
-          .services-cards-row {
-            flex-direction: column;
-          }
-        }
-      `}</style>
     </div>
   )
 }

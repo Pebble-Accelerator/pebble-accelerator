@@ -28,6 +28,12 @@ export default function Hero() {
   }, [])
 
   const scrollToNext = () => {
+    // Prefer the slideshow controller (GSAP glide) when it's active.
+    if (typeof window !== 'undefined' && window.__homeSlideshow) {
+      window.__homeSlideshow.advance(1)
+      return
+    }
+    // Fallback for reduced-motion / controller absent: native instant jump.
     const container = document.querySelector('.snap-container') as HTMLElement | null
     const heroWrapper = document.querySelector('.hero-snap-wrapper')
     const nextSlide = heroWrapper?.nextElementSibling as HTMLElement | null

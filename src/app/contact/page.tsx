@@ -6,21 +6,21 @@ const fieldClassName =
 export default function ContactPage() {
   return (
     <div
+      className="flex flex-1 flex-col justify-center"
       style={{
-        paddingTop: '80px',
         paddingLeft: '5vw',
         paddingRight: '5vw',
-        paddingBottom: '48px',
-        maxWidth: '1400px',
-        margin: '0 auto',
+        paddingTop: 'clamp(96px, 14vh, 200px)',
+        paddingBottom: 'clamp(64px, 12vh, 180px)',
       }}
     >
-      <p className="mb-10 text-[12px] font-normal uppercase tracking-[0.04em] text-[#aaa]">
-        Contact
-      </p>
+      <div style={{ maxWidth: '1400px', margin: '0 auto', width: '100%' }}>
+        <p className="mb-10 text-[12px] font-normal uppercase tracking-[0.04em] text-[#aaa]">
+          Contact
+        </p>
 
-      <FadeIn>
-        <div className="flex flex-col gap-12 md:flex-row md:gap-[80px]">
+        <FadeIn>
+          <div className="flex flex-col gap-12 md:flex-row md:gap-[80px]">
           <div className="md:w-[45%] md:shrink-0">
             <h1
               className="mb-4 font-display font-medium leading-[1.1] tracking-[-0.02em] text-[#0f0f0f]"
@@ -83,8 +83,9 @@ export default function ContactPage() {
               </button>
             </form>
           </div>
-        </div>
-      </FadeIn>
+          </div>
+        </FadeIn>
+      </div>
     </div>
   )
 }
