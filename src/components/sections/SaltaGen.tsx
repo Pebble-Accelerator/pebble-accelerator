@@ -314,6 +314,7 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
                   href="https://www.saltagen.com"
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="link-underline"
                   style={{
                     display: 'inline-flex',
                     alignItems: 'baseline',
@@ -331,29 +332,12 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.color = '#5e7a6a'
-                    const underline = e.currentTarget.querySelector(
-                      '[data-underline]'
-                    ) as HTMLElement | null
-                    if (underline) underline.style.borderBottomColor = '#5e7a6a'
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.color = '#1a1a1a'
-                    const underline = e.currentTarget.querySelector(
-                      '[data-underline]'
-                    ) as HTMLElement | null
-                    if (underline) underline.style.borderBottomColor = '#1a1a1a'
                   }}
                 >
-                  <span
-                    data-underline
-                    style={{
-                      borderBottom: '1px solid #1a1a1a',
-                      paddingBottom: '2px',
-                      transition: 'border-color 150ms ease',
-                    }}
-                  >
-                    Visit saltagen.com
-                  </span>
+                  <span>Visit saltagen.com</span>
                   <span aria-hidden>→</span>
                 </Link>
               </div>

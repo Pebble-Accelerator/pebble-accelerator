@@ -95,6 +95,45 @@ a { color: inherit; text-decoration: none; }
   }
 }
 
+/* Animated underline draw-on for nav + inline text links.
+   Consistent rule: underline is HIDDEN at rest and wipes in left→right on
+   hover/focus-visible (applies to email/LinkedIn too — their static underline is
+   converted to this). currentColor by default; sage variant for nav. The ::after
+   is absolutely positioned so there is zero layout shift. */
+.link-underline {
+  position: relative;
+}
+
+.link-underline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.3s ease;
+  pointer-events: none;
+}
+
+.link-underline:hover::after,
+.link-underline:focus-visible::after {
+  transform: scaleX(1);
+}
+
+.link-underline--sage::after {
+  background: #5e7a6a;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Underline appears instantly (no wipe) rather than animating. */
+  .link-underline::after {
+    transition: none;
+  }
+}
+
 .backers-section .backer-logo-img:hover {
   transform: scale(1.08);
 }

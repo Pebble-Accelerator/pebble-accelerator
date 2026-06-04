@@ -1,10 +1,27 @@
 'use client'
 import Image from 'next/image'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 
 export default function Nav() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const pathname = usePathname()
+
+  // On the homepage, the logo is a "back to top" control: glide to the first slide
+  // via the slideshow controller's existing goTo(0). On other routes it navigates
+  // to "/" normally (Next <Link>). Under reduced-motion the controller is inactive
+  // (no window.__homeSlideshow), so fall back to an instant native scroll to top.
+  const handleLogoActivate = (e: { preventDefault: () => void }) => {
+    if (pathname !== '/') return
+    e.preventDefault()
+    const api = typeof window !== 'undefined' ? window.__homeSlideshow : undefined
+    if (api) {
+      api.goTo(0)
+      return
+    }
+    document.querySelector<HTMLElement>('.snap-container')?.scrollTo({ top: 0, behavior: 'auto' })
+  }
 
   const links = [
     { label: 'Our Portfolio', href: '/portfolio' },
@@ -38,8 +55,21 @@ export default function Nav() {
           justifyContent: 'space-between',
         }}>
 
-          {/* Logo — left */}
-          <Link href="/" style={{ display: 'flex', alignItems: 'center' }}>
+          {/* Logo — left (home / back-to-top control) */}
+          <Link
+            href="/"
+            aria-label="Pebble Accelerator — back to top"
+            onClick={handleLogoActivate}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ' || e.code === 'Space') {
+                if (pathname === '/') {
+                  e.preventDefault()
+                  handleLogoActivate(e)
+                }
+              }
+            }}
+            style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+          >
             <Image
               src="/logos/Pebble_Accelerator_Sideways_Logo_transparent_v2.png"
               alt="Pebble Accelerator"
@@ -65,6 +95,7 @@ export default function Nav() {
               <Link
                 key={link.href}
                 href={link.href}
+                className="link-underline link-underline--sage"
                 style={{
                   fontSize: '12px',
                   fontWeight: 400,

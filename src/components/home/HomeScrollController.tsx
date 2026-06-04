@@ -21,8 +21,9 @@ const GLIDE_EASE = 'power2.out'
 /** Singleton guard — prevents a second instance (StrictMode/Fast Refresh) from
  *  attaching a rival listener set + tween that would fight over scrollTop. */
 let controllerActive = false
-/** Short window after a glide finishes to swallow leftover trackpad inertia. */
-const COOLDOWN_MS = 200
+/** Short window after a glide finishes to swallow leftover trackpad inertia.
+ *  Kept minimal so deliberate back-to-back gestures are accepted right after the glide. */
+const COOLDOWN_MS = 120
 const SWIPE_THRESHOLD = 40
 const WHEEL_MIN_DELTA = 4
 
@@ -77,6 +78,11 @@ export default function HomeScrollController() {
       if (animating || clamped === index) return
       index = clamped
       animating = true
+      // The GSAP ticker auto-sleeps after a couple idle seconds (e.g. while the user
+      // reads a slide). A tween created against a sleeping ticker never advances and
+      // never completes, which would freeze the controller. Wake it on the leading
+      // edge so the glide starts instantly on every gesture.
+      gsap.ticker.wake()
       gsap.to(scroller, {
         scrollTop: targetFor(clamped),
         duration: GLIDE_DURATION,

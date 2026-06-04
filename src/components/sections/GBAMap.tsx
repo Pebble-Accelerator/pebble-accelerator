@@ -56,6 +56,12 @@ const MAP_STATS = [
   { number: '100%', label: 'HK HOSPITAL COVERAGE', color: '#E8703A' },
 ] as const
 
+/** Split a stat string into its numeric target and trailing suffix (e.g. "28+" → 28, "+"). */
+function parseStat(value: string): { target: number; suffix: string } {
+  const match = value.match(/^(\d+)(.*)$/)
+  return { target: match ? parseInt(match[1], 10) : 0, suffix: match ? match[2] : '' }
+}
+
 function GBAMap() {
   const reduced = usePrefersReducedMotion()
   const [mapLoaded, setMapLoaded] = useState(false)
@@ -65,6 +71,8 @@ function GBAMap() {
   const sectionRef = useRef<HTMLElement | null>(null)
   const mapCardRef = useRef<HTMLDivElement | null>(null)
   const dotRefs = useRef<Record<string, HTMLDivElement | null>>({})
+  const statNumberRefs = useRef<(HTMLSpanElement | null)[]>([])
+  const statsAnimated = useRef(false)
 
   useEffect(() => {
     if (shouldLoadMap) return
@@ -133,6 +141,55 @@ function GBAMap() {
       triggers.forEach((t) => t.kill())
     }
   }, [mapReady, reduced, shouldLoadMap])
+
+  // Count-up on the GBA stats: fires once when the slide enters view (guarded so
+  // revisiting the slide in the slideshow never replays). Reduced-motion shows the
+  // final values immediately (no observer, no count-up).
+  useEffect(() => {
+    if (statsAnimated.current) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || reduced) return
+
+    const target = sectionRef.current
+    if (!target) return
+    const snapScroller = document.querySelector('.snap-container')
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0]
+        if (!entry?.isIntersecting || statsAnimated.current) return
+        statsAnimated.current = true
+
+        MAP_STATS.forEach((stat, i) => {
+          const el = statNumberRefs.current[i]
+          if (!el) return
+          const { target: end, suffix } = parseStat(stat.number)
+          const counter = { value: 0 }
+          el.textContent = `0${suffix}`
+          gsap.to(counter, {
+            value: end,
+            duration: 1.35,
+            ease: 'power2.out',
+            onUpdate: () => {
+              el.textContent = `${Math.round(counter.value)}${suffix}`
+            },
+            // Snap to the exact source string at the end (preserves "28+", "100%", etc.).
+            onComplete: () => {
+              el.textContent = stat.number
+            },
+          })
+        })
+
+        observer.disconnect()
+      },
+      {
+        root: snapScroller instanceof HTMLElement ? snapScroller : null,
+        threshold: 0.35,
+      }
+    )
+
+    observer.observe(target)
+    return () => observer.disconnect()
+  }, [reduced])
 
   return (
     <section
@@ -224,7 +281,7 @@ function GBAMap() {
               width: '100%',
             }}
           >
-            {MAP_STATS.map((stat) => (
+            {MAP_STATS.map((stat, i) => (
               <div
                 key={stat.label}
                 style={{
@@ -236,6 +293,9 @@ function GBAMap() {
                 }}
               >
                 <span
+                  ref={(el) => {
+                    statNumberRefs.current[i] = el
+                  }}
                   style={{
                     fontFamily: 'var(--font-cormorant), Georgia, serif',
                     fontSize: 'clamp(48px, 5vw, 76px)',

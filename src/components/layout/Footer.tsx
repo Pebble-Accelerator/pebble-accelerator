@@ -37,7 +37,7 @@ export default function Footer() {
             { label: 'Privacy', href: '/privacy' },
             { label: 'Terms', href: '/terms' },
           ].map((link) => (
-            <Link key={link.label} href={link.href} style={{
+            <Link key={link.label} href={link.href} className="link-underline" style={{
               fontSize: '12px',
               color: 'rgba(255,255,255,0.3)',
               textDecoration: 'none',

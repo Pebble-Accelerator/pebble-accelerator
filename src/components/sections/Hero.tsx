@@ -1,14 +1,27 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import Link from 'next/link'
 
 const PEBBLE_PATH_D =
   'M 16 50 C 8 36, 18 20, 64 14 C 104 8, 158 10, 204 18 C 234 26, 242 42, 236 58 C 228 74, 188 86, 122 88 C 60 88, 24 76, 16 50 Z'
 
+// Hero-only headline reveal: each line rises + fades, staggered. Fires once on
+// mount (Hero never unmounts, so returning to slide 0 does not replay) and
+// coexists with the pebble stroke draw-on + ripple animations.
+const headlineContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.11, delayChildren: 0.1 } },
+}
+const headlineLine = {
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
+}
+
 export default function Hero() {
   const pebblePathRef = useRef<SVGPathElement>(null)
+  const reduceMotion = useReducedMotion()
 
   useEffect(() => {
     const path = pebblePathRef.current
@@ -100,9 +113,9 @@ export default function Hero() {
 
       <div style={{ position: 'relative', zIndex: 1, width: '100%' }}>
         <motion.h1
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: 'easeOut', delay: 0.1 }}
+          variants={reduceMotion ? undefined : headlineContainer}
+          initial={reduceMotion ? false : 'hidden'}
+          animate={reduceMotion ? false : 'visible'}
           style={{
             fontFamily: 'var(--font-cormorant), Georgia, serif',
             fontSize: 'clamp(52px, 8vw, 104px)',
@@ -114,67 +127,76 @@ export default function Hero() {
             margin: 0,
           }}
         >
-          An avalanche starts from one{' '}
-          <span
-            style={{
-              display: 'inline-flex',
-              alignItems: 'baseline',
-              whiteSpace: 'nowrap',
-              marginLeft: '8px',
-            }}
+          <motion.span
+            variants={reduceMotion ? undefined : headlineLine}
+            style={{ display: 'block' }}
+          >
+            An avalanche starts from one
+          </motion.span>
+          <motion.span
+            variants={reduceMotion ? undefined : headlineLine}
+            style={{ display: 'block' }}
           >
             <span
               style={{
-                position: 'relative',
-                display: 'inline-block',
-                isolation: 'isolate',
+                display: 'inline-flex',
+                alignItems: 'baseline',
+                whiteSpace: 'nowrap',
               }}
             >
-              <svg
-                viewBox="0 0 248 96"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden
-                style={{
-                  position: 'absolute',
-                  left: '50%',
-                  top: '50%',
-                  zIndex: 0,
-                  width: 'calc(100% + 0.44em)',
-                  height: 'calc(1em + 0.3em)',
-                  overflow: 'visible',
-                  pointerEvents: 'none',
-                  transformOrigin: 'center center',
-                  transform: 'translate(-50%, -50%) rotate(-1deg) scale(1.1)',
-                }}
-              >
-                <path
-                  ref={pebblePathRef}
-                  className="hero-founders-draw hero-pebble-draw"
-                  d={PEBBLE_PATH_D}
-                  fill="none"
-                  stroke="#5e7a6a"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
               <span
-                className="hero-pebble-text-stack"
                 style={{
                   position: 'relative',
-                  display: 'inline-grid',
-                  gridTemplateAreas: '"stack"',
-                  zIndex: 1,
+                  display: 'inline-block',
+                  isolation: 'isolate',
                 }}
               >
-                <span className="hero-pebble-halo" aria-hidden>
-                  pebble
+                <svg
+                  viewBox="0 0 248 96"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden
+                  style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top: '50%',
+                    zIndex: 0,
+                    width: 'calc(100% + 0.44em)',
+                    height: 'calc(1em + 0.3em)',
+                    overflow: 'visible',
+                    pointerEvents: 'none',
+                    transformOrigin: 'center center',
+                    transform: 'translate(-50%, -50%) rotate(-1deg) scale(1.1)',
+                  }}
+                >
+                  <path
+                    ref={pebblePathRef}
+                    className="hero-founders-draw hero-pebble-draw"
+                    d={PEBBLE_PATH_D}
+                    fill="none"
+                    stroke="#5e7a6a"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span
+                  className="hero-pebble-text-stack"
+                  style={{
+                    position: 'relative',
+                    display: 'inline-grid',
+                    gridTemplateAreas: '"stack"',
+                    zIndex: 1,
+                  }}
+                >
+                  <span className="hero-pebble-halo" aria-hidden>
+                    pebble
+                  </span>
+                  <span className="hero-pebble-word">pebble</span>
                 </span>
-                <span className="hero-pebble-word">pebble</span>
               </span>
+              <span className="hero-headline-period">.</span>
             </span>
-            <span className="hero-headline-period">.</span>
-          </span>
+          </motion.span>
         </motion.h1>
 
         <motion.p
@@ -230,12 +252,12 @@ export default function Hero() {
         >
           <Link
             href="/contact"
+            className="link-underline"
             style={{
               fontSize: '14px',
               fontWeight: 500,
               color: '#2D6A5A',
-              textDecoration: 'underline',
-              textUnderlineOffset: '4px',
+              textDecoration: 'none',
               fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
             }}
           >
@@ -243,6 +265,7 @@ export default function Hero() {
           </Link>
           <Link
             href="/consulting"
+            className="link-underline"
             style={{
               fontSize: '12px',
               color: '#888',
