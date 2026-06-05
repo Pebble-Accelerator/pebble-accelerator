@@ -123,7 +123,7 @@ function company(input: Company): Company {
   return input
 }
 
-/** Unified list — 28 unique companies, prominent-first. No duplicate ALL-view entries. */
+/** Unified list — 28 unique companies. */
 export const portfolioCompanies: Company[] = [
   company({
     id: 'cg-oncology',
@@ -133,8 +133,6 @@ export const portfolioCompanies: Company[] = [
     filterGroup: 'Therapeutics',
     logo: L('CGOnco.png'),
     website: 'https://cgoncology.com/',
-    isLegacy: true,
-    legacyFilter: true,
   }),
   company({
     id: 'ka-imaging',
@@ -144,8 +142,6 @@ export const portfolioCompanies: Company[] = [
     filterGroup: 'Diagnostics',
     logo: L('KAimaging.png'),
     website: 'https://kaimaging.com/',
-    isLegacy: false,
-    legacyFilter: false,
   }),
   company({
     id: 'phase-scientific',
@@ -155,8 +151,6 @@ export const portfolioCompanies: Company[] = [
     filterGroup: 'Diagnostics',
     logo: L('phase scientific.png'),
     website: 'https://phasescientific.com/about/the-company',
-    isLegacy: false,
-    legacyFilter: false,
   }),
   company({
     id: 'oncoustics',
@@ -166,8 +160,6 @@ export const portfolioCompanies: Company[] = [
     filterGroup: 'Diagnostics',
     logo: L('Oncoustics.png'),
     website: 'https://www.oncoustics.com/',
-    isLegacy: false,
-    legacyFilter: false,
   }),
   company({
     id: 'corvista',
@@ -177,8 +169,6 @@ export const portfolioCompanies: Company[] = [
     filterGroup: 'Diagnostics',
     logo: L('Corvista.png'),
     website: 'https://corvista.com/',
-    isLegacy: false,
-    legacyFilter: false,
   }),
   company({
     id: 'xandar-kardian',
@@ -188,8 +178,6 @@ export const portfolioCompanies: Company[] = [
     filterGroup: 'Diagnostics',
     logo: L('XandarKardian.png'),
     website: 'https://xkcorp.com/',
-    isLegacy: false,
-    legacyFilter: false,
   }),
   company({
     id: 'endiatx',
@@ -199,8 +187,6 @@ export const portfolioCompanies: Company[] = [
     filterGroup: 'Diagnostics',
     logo: L('endiatx.png'),
     website: 'https://www.endiatx.com/',
-    isLegacy: false,
-    legacyFilter: false,
   }),
   company({
     id: 'heranova',
@@ -210,8 +196,6 @@ export const portfolioCompanies: Company[] = [
     filterGroup: 'Diagnostics',
     logo: L('HeraNova.png'),
     website: 'https://heranova.com/',
-    isLegacy: false,
-    legacyFilter: true,
   }),
   company({
     id: 'e3a',
@@ -221,8 +205,6 @@ export const portfolioCompanies: Company[] = [
     filterGroup: 'Diagnostics',
     logo: L('E3A.png'),
     website: 'https://e3ahealth.com/',
-    isLegacy: false,
-    legacyFilter: false,
   }),
   company({
     id: 'opharmic',
@@ -232,8 +214,6 @@ export const portfolioCompanies: Company[] = [
     filterGroup: 'Devices',
     logo: L('opharmic.png'),
     website: 'https://www.opharmic.com/',
-    isLegacy: false,
-    legacyFilter: true,
   }),
   company({
     id: 'uni-bio-project',
@@ -243,8 +223,6 @@ export const portfolioCompanies: Company[] = [
     filterGroup: 'Pharma',
     logo: L('UniBioScience (1).png'),
     website: 'https://www.uni-bioscience.com/en',
-    isLegacy: false,
-    legacyFilter: false,
   }),
   company({
     id: 'innovac',
@@ -254,8 +232,6 @@ export const portfolioCompanies: Company[] = [
     filterGroup: 'Pharma',
     logo: L('innovac.png'),
     website: 'https://www.innovactx.com/',
-    isLegacy: false,
-    legacyFilter: false,
   }),
   company({
     id: 'valora',
@@ -265,8 +241,6 @@ export const portfolioCompanies: Company[] = [
     filterGroup: 'Pharma',
     logo: L('Valora.png'),
     website: 'https://www.valoratherapeutics.com/',
-    isLegacy: false,
-    legacyFilter: false,
   }),
   company({
     id: 'spiral-tx',
@@ -276,8 +250,6 @@ export const portfolioCompanies: Company[] = [
     filterGroup: 'Pharma',
     logo: L('Spiral.png'),
     website: 'https://www.spiraltx.com/',
-    isLegacy: false,
-    legacyFilter: false,
   }),
   company({
     id: 'pacegenix',
@@ -285,8 +257,6 @@ export const portfolioCompanies: Company[] = [
     name: 'Pacegenix',
     category: 'Pharmaceutical',
     filterGroup: 'Pharma',
-    isLegacy: false,
-    legacyFilter: false,
   }),
   company({
     id: 'pilatus',
@@ -296,8 +266,6 @@ export const portfolioCompanies: Company[] = [
     filterGroup: 'Pharma',
     logo: L('Pilatus.png'),
     website: 'https://www.pilatusbio.com/',
-    isLegacy: false,
-    legacyFilter: false,
   }),
   company({
     id: 'memora',
@@ -308,8 +276,6 @@ export const portfolioCompanies: Company[] = [
     logo: L('memora.png'),
     website:
       'https://www.cpr.cuhk.edu.hk/en/press/cuhk-innovation-summit-2026-concludes-successfully-event-accelerates-the-transformation-of-research-into-societal-impact/',
-    isLegacy: false,
-    legacyFilter: false,
   }),
   company({
     id: 'thrive-bioscience',
@@ -319,8 +285,6 @@ export const portfolioCompanies: Company[] = [
     filterGroup: 'Platform',
     logo: L('Thrive.png'),
     website: 'https://www.thrivebio.com/',
-    isLegacy: false,
-    legacyFilter: true,
   }),
   company({
     id: 'phynx',
@@ -330,8 +294,6 @@ export const portfolioCompanies: Company[] = [
     filterGroup: 'Platform',
     logo: L('PhynXLab.png'),
     website: 'https://www.sknetworks.co.kr/en/business/phnyx-lab',
-    isLegacy: false,
-    legacyFilter: false,
   }),
   company({
     id: 'pebble-healthcare',
@@ -341,8 +303,6 @@ export const portfolioCompanies: Company[] = [
     filterGroup: 'Platform',
     logo: L('PebbleHealthcare.png'),
     website: 'https://pebbleaccelerator.com/',
-    isLegacy: false,
-    legacyFilter: false,
   }),
   company({
     id: 'smt',
@@ -350,8 +310,6 @@ export const portfolioCompanies: Company[] = [
     name: 'SMT',
     category: 'Therapeutic Device',
     filterGroup: 'Devices',
-    isLegacy: false,
-    legacyFilter: false,
   }),
   company({
     id: 'great-bay-bio',
@@ -361,8 +319,6 @@ export const portfolioCompanies: Company[] = [
     filterGroup: 'Platform',
     logo: L('GreaterBayBio.png'),
     website: 'https://www.greatbay-bio.com/',
-    isLegacy: true,
-    legacyFilter: true,
   }),
   company({
     id: 'mixcare',
@@ -372,8 +328,6 @@ export const portfolioCompanies: Company[] = [
     filterGroup: 'Platform',
     logo: L('MixCare.png'),
     website: 'https://m.mixcarehealth.com/en',
-    isLegacy: true,
-    legacyFilter: true,
   }),
   company({
     id: 'zumvet',
@@ -382,8 +336,6 @@ export const portfolioCompanies: Company[] = [
     category: 'Digital/Consumer',
     filterGroup: 'Platform',
     logo: L('ZumVet.png'),
-    isLegacy: true,
-    legacyFilter: true,
   }),
   company({
     id: 'vigor-medical-systems',
@@ -393,8 +345,6 @@ export const portfolioCompanies: Company[] = [
     filterGroup: 'Devices',
     logo: L('Vigor.png'),
     website: 'https://www.hellovigor.com/',
-    isLegacy: true,
-    legacyFilter: true,
   }),
   company({
     id: 'egglogics',
@@ -405,8 +355,6 @@ export const portfolioCompanies: Company[] = [
     logo: L('egglogics-full-logo-white.png'),
     lightLogo: true,
     website: 'https://egglogics.com/',
-    isLegacy: true,
-    legacyFilter: true,
   }),
   company({
     id: 'n-hop',
@@ -416,8 +364,6 @@ export const portfolioCompanies: Company[] = [
     filterGroup: 'Platform',
     logo: L('NHop.png'),
     website: 'https://n-hop.com/',
-    isLegacy: true,
-    legacyFilter: true,
   }),
   company({
     id: 'jotbody',
@@ -427,15 +373,12 @@ export const portfolioCompanies: Company[] = [
     filterGroup: 'Platform',
     logo: L('JotBody.png'),
     website: 'https://jotbody.com/',
-    isLegacy: true,
-    legacyFilter: true,
   }),
 ]
 
 /**
  * Reader-friendly medical buckets. Each display `category` string maps to exactly
- * one bucket. LEGACY is a separate time/status overlay (see `legacyFilter`), NOT a
- * bucket — legacy companies still belong to their medical bucket here.
+ * one bucket.
  */
 export type MedicalBucket = 'Therapeutics' | 'Diagnostics' | 'Platform'
 

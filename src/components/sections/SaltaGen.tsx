@@ -152,6 +152,30 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
             : {}),
         }}
       >
+        {withBand && (
+          <>
+            <div
+              className="saltagen-embedded-band"
+              style={{
+                flex: '0 0 auto',
+                minHeight: 0,
+                display: 'flex',
+                alignItems: 'center',
+                width: '100%',
+                flexShrink: 0,
+                boxSizing: 'border-box',
+                paddingTop: '36px',
+                paddingBottom: '32px',
+              }}
+            >
+              <Backers variant="band" />
+            </div>
+            <div
+              className="saltagen-embedded-divider"
+              style={{ ...contentRailStyle, borderTop: '1px solid #d4cfc2', flexShrink: 0 }}
+            />
+          </>
+        )}
         <div
           className={embedded ? 'saltagen-embedded-main' : undefined}
           style={
@@ -330,30 +354,6 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
           </FadeIn>
         </div>
 
-        {withBand && (
-          <>
-            <div
-              className="saltagen-embedded-divider"
-              style={{ ...contentRailStyle, borderTop: '1px solid #d4cfc2', flexShrink: 0 }}
-            />
-            <div
-              className="saltagen-embedded-band"
-              style={{
-                flex: '0 0 auto',
-                minHeight: 0,
-                display: 'flex',
-                alignItems: 'center',
-                width: '100%',
-                flexShrink: 0,
-                boxSizing: 'border-box',
-                paddingTop: '36px',
-                paddingBottom: '32px',
-              }}
-            >
-              <Backers variant="band" />
-            </div>
-          </>
-        )}
       </div>
     </section>
   )

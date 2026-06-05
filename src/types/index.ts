@@ -18,10 +18,6 @@ export interface Company {
   website?: string
   /** White/light logo asset */
   lightLogo?: boolean
-  /** Legacy-only company (not in current portfolio) */
-  isLegacy: boolean
-  /** Appears when LEGACY filter pill is active */
-  legacyFilter: boolean
 }
 
 export interface Backer {

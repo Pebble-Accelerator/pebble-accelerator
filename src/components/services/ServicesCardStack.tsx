@@ -108,7 +108,7 @@ function InvestmentBody() {
           <TimelineCol label="MID-YEAR">
             First{' '}
             <span style={{ fontFamily: 'var(--font-cormorant), Georgia, serif', fontStyle: 'italic' }}>
-              clinical pilot
+              scientific proof of concept
             </span>{' '}
             or partnership live.
           </TimelineCol>

@@ -29,10 +29,10 @@ const labelStyle: React.CSSProperties = {
   color: '#888',
 }
 
-/** Four reader-friendly pills (+ ALL). LEGACY is an overlay, not a medical bucket. */
+/** Filter pills: ALL + three medical buckets. */
 const MEDICAL_BUCKETS: MedicalBucket[] = ['Therapeutics', 'Diagnostics', 'Platform']
 
-type PortfolioFilter = 'ALL' | MedicalBucket | 'LEGACY'
+type PortfolioFilter = 'ALL' | MedicalBucket
 
 const BUCKET_LABELS: Record<MedicalBucket, string> = {
   Therapeutics: 'THERAPEUTICS',
@@ -55,7 +55,6 @@ function buildFilterPills(companies: Company[]): { key: PortfolioFilter; label: 
     { key: 'ALL', label: 'ALL', count: companies.length },
   ]
 
-  // Medical-bucket counts INCLUDE legacy companies — legacy is an overlay, not a removal.
   for (const bucket of MEDICAL_BUCKETS) {
     const count = companies.filter((c) => getMedicalBucket(c) === bucket).length
     if (count > 0) {
@@ -63,17 +62,11 @@ function buildFilterPills(companies: Company[]): { key: PortfolioFilter; label: 
     }
   }
 
-  const legacyCount = companies.filter((c) => c.legacyFilter).length
-  if (legacyCount > 0) {
-    pills.push({ key: 'LEGACY', label: 'LEGACY', count: legacyCount })
-  }
-
   return pills
 }
 
 function matchesFilter(company: Company, filter: PortfolioFilter): boolean {
   if (filter === 'ALL') return true
-  if (filter === 'LEGACY') return company.legacyFilter
   return getMedicalBucket(company) === filter
 }
 
@@ -83,7 +76,10 @@ export default function PortfolioEditorial() {
   const filterPills = useMemo(() => buildFilterPills(portfolioCompanies), [])
 
   const filteredCompanies = useMemo(
-    () => portfolioCompanies.filter((c) => matchesFilter(c, activeFilter)),
+    () =>
+      portfolioCompanies
+        .filter((c) => matchesFilter(c, activeFilter))
+        .sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })),
     [activeFilter]
   )
 
@@ -96,7 +92,7 @@ export default function PortfolioEditorial() {
           margin: '0 auto',
         }}
       >
-        <p style={{ ...labelStyle, marginBottom: '32px' }}>PORTFOLIO · ORDERED BY TRACTION</p>
+        <p style={{ ...labelStyle, marginBottom: '32px' }}>PORTFOLIO · A–Z</p>
 
         <div style={{ marginBottom: '48px', maxWidth: 'min(720px, 100%)' }}>
           <h1

@@ -70,8 +70,8 @@ function cityCoordinateBounds(): [[number, number], [number, number]] {
 const DOT_ORDER = ['guangzhou', 'shenzhen', 'hongkong', 'macau', 'zhuhai'] as const
 
 const MAP_STATS = [
-  { number: '28+', label: 'COMPANIES BACKED', color: '#5e7a6a' },
-  { number: '3', label: 'FIELDS OF MEDICINE', color: '#5e7a6a' },
+  { number: '28', label: 'STARTUPS BACKED', color: '#5e7a6a' },
+  { number: '39', label: 'COMPANIES ACCELERATED', color: '#5e7a6a' },
   { number: '100%', label: 'HK HOSPITAL COVERAGE', color: '#E8703A' },
 ] as const
 
