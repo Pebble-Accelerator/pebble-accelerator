@@ -1,6 +1,5 @@
 'use client'
 
-import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
 import gsap from 'gsap'
@@ -17,6 +16,44 @@ const LOGO_BY_NAME: Record<string, string> = {
   'Nan Fung Group': '/logos/Nanfung.png',
   Morningside: '/logos/morningside.svg?v=2',
   'HK Cocoon': '/logos/Cocoon.jpeg',
+  'THF Enterprises': '/logos/THFEnterprises.png',
+}
+
+type BackerLogoTreatment = 'default' | 'multiply' | 'dark-chip'
+
+/** Per-asset visibility: default = color on cream; multiply = white baked box; dark-chip = light mark */
+const BACKER_LOGO_TREATMENT: Record<string, BackerLogoTreatment> = {
+  'Tiger Med Group': 'default',
+  'Tiger Jade Capital': 'dark-chip',
+  'Nan Fung Group': 'default',
+  Morningside: 'default',
+  'HK Cocoon': 'multiply',
+  'THF Enterprises': 'multiply',
+}
+
+const bandLogoBaseStyle: CSSProperties = {
+  maxHeight: 'clamp(48px, 5vw, 56px)',
+  height: 'auto',
+  width: 'auto',
+  maxWidth: 'clamp(100px, 12vw, 150px)',
+  objectFit: 'contain',
+  display: 'block',
+}
+
+function backerLogoImgStyle(treatment: BackerLogoTreatment): CSSProperties {
+  if (treatment === 'multiply') {
+    return { ...bandLogoBaseStyle, mixBlendMode: 'multiply' }
+  }
+  return { ...bandLogoBaseStyle }
+}
+
+const darkChipStyle: CSSProperties = {
+  background: '#1a1a1a',
+  borderRadius: '7px',
+  padding: '16px 20px',
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
 }
 
 type BackersProps = {
@@ -46,30 +83,26 @@ const bandLabelStyle: CSSProperties = {
   whiteSpace: 'nowrap',
 }
 
-const bandLogoStyle: CSSProperties = {
-  maxHeight: '48px',
-  height: 'auto',
-  width: 'auto',
-  objectFit: 'contain',
-  display: 'block',
-}
-
 function BackersBandLogo({
   b,
   src,
-  logoStyle = bandLogoStyle,
 }: {
   b: (typeof backers)[number]
   src: string
-  logoStyle?: CSSProperties
 }) {
-  const isTigerJade = src.includes('TigerJade')
-  const isCocoon = src.includes('Cocoon.jpeg')
+  const treatment = BACKER_LOGO_TREATMENT[b.name] ?? 'default'
+  const imgStyle: CSSProperties = {
+    ...backerLogoImgStyle(treatment),
+    ...(b.name === 'HK Cocoon'
+      ? {
+          maxHeight: 'clamp(54px, 5.65vw, 64px)',
+          maxWidth: 'clamp(112px, 13.5vw, 168px)',
+        }
+      : {}),
+  }
 
-  const logoNode = isCocoon ? (
-    <Image src={src} alt={b.name} width={200} height={48} style={logoStyle} />
-  ) : (
-    <img src={src} alt={b.name} style={logoStyle} />
+  const logoNode = (
+    <img className="backer-band-logo" src={src} alt={b.name} style={imgStyle} />
   )
 
   return (
@@ -82,33 +115,14 @@ function BackersBandLogo({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        flex: '1 1 0',
+        flex: '0 0 auto',
         minWidth: 0,
+        background: 'transparent',
       }}
     >
-      {isTigerJade ? (
-        <div
-          style={{
-            background: '#1a1a1a',
-            borderRadius: '4px',
-            padding: '10px 18px',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          {logoNode}
-        </div>
-      ) : (
-        logoNode
-      )}
+      {treatment === 'dark-chip' ? <div style={darkChipStyle}>{logoNode}</div> : logoNode}
     </a>
   )
-}
-
-const bandLogoStyleResponsive: CSSProperties = {
-  ...bandLogoStyle,
-  maxHeight: 'clamp(64px, 6vw, 72px)',
 }
 
 function BackersBand() {
@@ -235,12 +249,7 @@ function BackersBand() {
             {backers.map((b) => {
               const src = LOGO_BY_NAME[b.name]
               return (
-                <BackersBandLogo
-                  key={b.name}
-                  b={b}
-                  src={src}
-                  logoStyle={bandLogoStyleResponsive}
-                />
+                <BackersBandLogo key={b.name} b={b} src={src} />
               )
             })}
           </div>
@@ -400,15 +409,19 @@ export default function Backers({ embedded = false, variant = 'default' }: Backe
 
   const renderLogo = (b: (typeof backers)[number], i: number) => {
     const src = LOGO_BY_NAME[b.name]
-    const isTigerJade = src.includes('TigerJade')
-    const isCocoon = src.includes('Cocoon.jpeg')
+    const treatment = BACKER_LOGO_TREATMENT[b.name] ?? 'default'
     const imgStyle: CSSProperties = {
       maxHeight: embedded ? '44px' : `${b.height || 56}px`,
       height: 'auto',
       width: 'auto',
       objectFit: 'contain',
       display: 'block',
+      ...(treatment === 'multiply' ? { mixBlendMode: 'multiply' } : {}),
     }
+
+    const logoNode = (
+      <img className="backer-logo-img" src={src} alt={b.name} style={imgStyle} />
+    )
 
     return (
       <a
@@ -428,26 +441,15 @@ export default function Backers({ embedded = false, variant = 'default' }: Backe
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
+          background: 'transparent',
         }}
       >
-        {isTigerJade ? (
-          <div
-            className="backer-logo-pill"
-            style={{
-              background: '#1a1a1a',
-              borderRadius: '6px',
-              padding: '8px 12px',
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <img className="backer-logo-img" src={src} alt={b.name} style={imgStyle} />
+        {treatment === 'dark-chip' ? (
+          <div className="backer-logo-pill" style={darkChipStyle}>
+            {logoNode}
           </div>
-        ) : isCocoon ? (
-          <Image className="backer-logo-img" src={src} alt={b.name} width={200} height={56} style={imgStyle} />
         ) : (
-          <img className="backer-logo-img" src={src} alt={b.name} style={imgStyle} />
+          logoNode
         )}
         <span className={embedded ? 'backer-logo-caption' : undefined} style={embedded ? undefined : captionStandalone}>
           {b.type}

@@ -14,23 +14,10 @@ const SALTAGEN_LOGO_WIDTH = 916
 const SALTAGEN_LOGO_HEIGHT = 515
 
 const bullets = [
-  {
-    number: '01',
-    content:
-      'Founded October 2017. Cross-Pacific deal flow between North America and Asia.',
-  },
-  {
-    number: '02',
-    content: 'Verticals: bioscience, biomedical, AI/ML, media, education tech.',
-  },
-  {
-    number: '03',
-    content: 'Looks for defensibility and patentable technology.',
-  },
-  {
-    number: '04',
-    content: 'A working venture-scaling conduit across the Pacific into Asia.',
-  },
+  { number: '01', content: 'Founded October 2017.' },
+  { number: '02', content: 'Bioscience, biomedical, AI/ML, media, edtech.' },
+  { number: '03', content: 'Backs defensible, patentable technology.' },
+  { number: '04', content: 'A venture-scaling conduit into Asia.' },
 ]
 
 function SaltaGenVisual({ embedded, withBand }: { embedded: boolean; withBand: boolean }) {
@@ -39,66 +26,42 @@ function SaltaGenVisual({ embedded, withBand }: { embedded: boolean; withBand: b
   return (
     <div
       style={{
-        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
         width: '100%',
-        maxWidth: withBand
-          ? 'min(100%, 360px)'
-          : embedded
-            ? 'min(360px, 100%)'
-            : '420px',
-        height: withBand ? 'auto' : embedded ? 'min(calc(100vh - 108px), 420px)' : undefined,
-        maxHeight: withBand ? 'min(380px, 100%)' : embedded ? 'calc(100vh - 108px)' : undefined,
-        aspectRatio: '4 / 5',
-        borderRadius: '12px',
-        border: '1px solid #d4cfc2',
-        background: 'transparent',
-        overflow: 'hidden',
-        marginLeft: withBand ? 'auto' : 'auto',
+        maxWidth: withBand ? 'min(100%, 440px)' : embedded ? 'min(440px, 100%)' : '480px',
       }}
     >
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '4%',
-          boxSizing: 'border-box',
-        }}
-      >
-        {!logoMissing ? (
-          <Image
-            // saltagen-ventures_logo-2.png — white bg on cream card, used as-is (no filter).
-            // TODO: swap for a transparent-background PNG/SVG to remove the white rectangle.
-            src="/logos/saltagen-ventures_logo-2.png"
-            alt="SaltaGen Ventures"
-            width={SALTAGEN_LOGO_WIDTH}
-            height={SALTAGEN_LOGO_HEIGHT}
-            quality={100}
-            style={{
-              width: '92%',
-              height: 'auto',
-              maxWidth: '100%',
-              objectFit: 'contain',
-            }}
-            onError={() => setLogoMissing(true)}
-          />
-        ) : (
-          <span
-            style={{
-              fontFamily: 'var(--font-cormorant), Georgia, serif',
-              fontSize: '48px',
-              fontStyle: 'italic',
-              fontWeight: 500,
-              color: '#1a1a1a',
-              lineHeight: 1,
-            }}
-          >
-            SaltaGen
-          </span>
-        )}
-      </div>
+      {!logoMissing ? (
+        <Image
+          src="/logos/saltagen-ventures_logo-2.png"
+          alt="Saltagen Ventures"
+          width={SALTAGEN_LOGO_WIDTH}
+          height={SALTAGEN_LOGO_HEIGHT}
+          quality={100}
+          style={{
+            width: '100%',
+            height: 'auto',
+            objectFit: 'contain',
+            transform: 'translate(0, -1.5%)',
+          }}
+          onError={() => setLogoMissing(true)}
+        />
+      ) : (
+        <span
+          style={{
+            fontFamily: 'var(--font-cormorant), Georgia, serif',
+            fontSize: '48px',
+            fontStyle: 'italic',
+            fontWeight: 500,
+            color: '#1a1a1a',
+            lineHeight: 1,
+          }}
+        >
+          Saltagen
+        </span>
+      )}
     </div>
   )
 }
@@ -157,12 +120,14 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
           style={
             embedded
               ? {
-                  flex: '1 1 74%',
+                  flex: '1 1 auto',
                   minHeight: 0,
                   display: 'flex',
                   alignItems: 'center',
+                  justifyContent: 'center',
                   width: '100%',
                   boxSizing: 'border-box',
+                  paddingBottom: '32px',
                 }
               : undefined
           }
@@ -173,13 +138,11 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
                 ...contentRailStyle,
                 display: 'grid',
                 gridTemplateColumns: withBand
-                  ? '45% 40%'
+                  ? 'minmax(0, 1fr) minmax(0, 1fr)'
                   : 'minmax(0, 45%) minmax(0, 55%)',
-                ...(withBand
-                  ? { justifyContent: 'space-between' as const }
-                  : { columnGap: 'clamp(20px, 3.5vw, 48px)' }),
+                columnGap: withBand ? 'clamp(40px, 5vw, 72px)' : 'clamp(20px, 3.5vw, 48px)',
                 alignItems: 'center',
-                height: withBand ? '100%' : undefined,
+                width: '100%',
               }}
             >
               <div
@@ -239,7 +202,7 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
                     flexShrink: 0,
                   }}
                 >
-                  <span style={{ fontWeight: 400 }}>SaltaGen Ventures.</span>
+                  <span style={{ fontWeight: 400 }}>Saltagen Ventures.</span>
                   <br />
                   <span
                     style={{
@@ -255,19 +218,17 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
                 <p
                   style={{
                     fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-                    fontSize: withBand ? '17px' : embedded ? '17px' : '18px',
+                    fontSize: withBand ? '16px' : embedded ? '16px' : '17px',
                     fontWeight: 300,
                     color: '#1a1a1a',
-                    lineHeight: withBand ? 1.55 : embedded ? 1.6 : 1.75,
+                    lineHeight: 1.6,
                     maxWidth: withBand ? 'none' : '460px',
-                    margin: `0 0 ${withBand ? '12px' : embedded ? '18px' : '32px'}`,
+                    margin: `0 0 ${withBand ? '20px' : embedded ? '22px' : '28px'}`,
                     flexShrink: 0,
                   }}
                 >
-                  Founded in October 2017, SaltaGen Ventures is an early-stage venture firm investing in
-                  science- and technology-based startups across bioscience, biomedical, AI & machine
-                  learning, media and education tech — run by operators with decades on both sides of the
-                  Pacific.
+                  An early-stage firm backing science and technology startups, run by operators on both
+                  sides of the Pacific.
                 </p>
 
                 <div style={{ maxWidth: withBand ? 'none' : '520px', flexShrink: 0, width: '100%' }}>
@@ -278,8 +239,7 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
                         display: 'flex',
                         gap: '12px',
                         alignItems: 'flex-start',
-                        padding: i === 0 ? '0 0 8px' : '8px 0',
-                        borderTop: i > 0 ? '1px solid #d4cfc2' : 'none',
+                        marginTop: i > 0 ? '14px' : 0,
                       }}
                     >
                       <span
@@ -337,7 +297,7 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
                     e.currentTarget.style.color = '#1a1a1a'
                   }}
                 >
-                  <span>Visit saltagen.com</span>
+                  <span>Visit Saltagen.com</span>
                   <span aria-hidden>→</span>
                 </Link>
               </div>
@@ -346,9 +306,10 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'flex-end',
+                  justifyContent: 'center',
                   minHeight: 0,
                   minWidth: 0,
+                  width: '100%',
                 }}
               >
                 <SaltaGenVisual embedded={embedded} withBand={withBand} />
@@ -362,15 +323,15 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
             <div style={{ ...contentRailStyle, borderTop: '1px solid #d4cfc2', flexShrink: 0 }} />
             <div
               style={{
-                flex: '0 0 26%',
+                flex: '0 0 auto',
                 minHeight: 0,
                 display: 'flex',
                 alignItems: 'center',
                 width: '100%',
                 flexShrink: 0,
                 boxSizing: 'border-box',
-              paddingTop: '28px',
-              paddingBottom: '28px',
+                paddingTop: '36px',
+                paddingBottom: '32px',
               }}
             >
               <Backers variant="band" />

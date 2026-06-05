@@ -10,10 +10,12 @@ export const metadata = {
 export default function ServicesPage() {
   return (
     <>
-      <main style={{ backgroundColor: '#f5efe4' }}>
+      <div className="services-page-main" style={{ backgroundColor: '#f5efe4' }}>
         <ServicesEditorial />
-      </main>
-      <CTAStrip />
+      </div>
+      <div className="services-page-cta" style={{ position: 'relative', zIndex: 3 }}>
+        <CTAStrip />
+      </div>
     </>
   )
 }

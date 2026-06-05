@@ -3,37 +3,21 @@ import type { Company } from '@/types'
 /** Public logo assets (served from /public/Portfolio). */
 const L = (file: string) => `/Portfolio/${encodeURI(file)}`
 
-/** Harmonized brand colors (base → dark computed at build). */
-const C = {
-  cgo: '#8e4837',
-  corvista: '#2e5f7b',
-  e3a: '#397082',
-  greatBay: '#304a6d',
-  heranova: '#953152',
-  jotbody: '#40597a',
-  ka: '#945c31',
-  mixcare: '#448179',
-  nhop: '#88713d',
-  oncoustics: '#8d6a38',
-  pebbleHc: '#995b2c',
-  phynx: '#a04a55',
-  pilatus: '#8f363e',
-  spiral: '#527467',
-  thrive: '#90353c',
-  uniBio: '#2b6d7e',
-  valora: '#824343',
-  vigor: '#2b5a9a',
-  xandar: '#3d7488',
-  zumvet: '#635274',
-  egglogics: '#3f4a46',
-  endiatx: '#257a6d',
-  innovac: '#6a7f72',
-  memora: '#3d5f7f',
-  opharmic: '#4a6278',
-  pacegenix: '#556a62',
-  phase: '#2a6d85',
-  smtFallback: '#2d3a35',
-} as const
+/**
+ * On-brand bucket hue families — soft, desaturated, ~midway to cream (#f5efe4).
+ * Therapeutics = muted clay, Diagnostics = pale cool sage-petrol, Platform = pale sage.
+ */
+const BUCKET_HSL_BASE: Record<MedicalBucket, { h: number; s: number; l: number }> = {
+  Therapeutics: { h: 28, s: 32, l: 70 },
+  Diagnostics: { h: 160, s: 14, l: 74 },
+  Platform: { h: 92, s: 16, l: 77 },
+}
+
+/** Subtle per-tile lightness shifts within a family (deterministic by grid index). */
+const BUCKET_LIGHTNESS_OFFSETS = [0, -2, 3, -4, 4, -2, 2, -3] as const
+
+/** Strata: lighter at top → ~12% deeper toward the bottom (sediment feel). */
+const GRADIENT_DARKEN_DELTA = 12
 
 function hexToRgb(hex: string) {
   const h = hex.replace('#', '')
@@ -108,13 +92,35 @@ export function darkenBlockColor(hex: string, lightnessDelta = 22): string {
   return rgbToHex(hslToRgb(hsl))
 }
 
-type CompanyInput = Omit<Company, 'blockColorDark'> & { blockColor: string }
+function hslBaseToHex(h: number, s: number, l: number) {
+  return rgbToHex(hslToRgb({ h, s, l }))
+}
 
-function company(input: CompanyInput): Company {
-  return {
-    ...input,
-    blockColorDark: darkenBlockColor(input.blockColor, 22),
+/** Tile gradient base + dark corner from medical bucket and grid index. */
+export function getTileColors(
+  company: Company,
+  gridIndex: number
+): { blockColor: string; blockColorDark: string } {
+  const bucket = getMedicalBucket(company)
+  const fallback = '#2d3a35'
+  if (!bucket) {
+    return {
+      blockColor: fallback,
+      blockColorDark: darkenBlockColor(fallback, GRADIENT_DARKEN_DELTA),
+    }
   }
+  const base = BUCKET_HSL_BASE[bucket]
+  const lightnessOffset =
+    BUCKET_LIGHTNESS_OFFSETS[gridIndex % BUCKET_LIGHTNESS_OFFSETS.length]
+  const blockColor = hslBaseToHex(base.h, base.s, base.l + lightnessOffset)
+  return {
+    blockColor,
+    blockColorDark: darkenBlockColor(blockColor, GRADIENT_DARKEN_DELTA),
+  }
+}
+
+function company(input: Company): Company {
+  return input
 }
 
 /** Unified list — 28 unique companies, prominent-first. No duplicate ALL-view entries. */
@@ -126,7 +132,6 @@ export const portfolioCompanies: Company[] = [
     category: 'Therapeutic',
     filterGroup: 'Therapeutics',
     logo: L('CGOnco.png'),
-    blockColor: C.cgo,
     website: 'https://cgoncology.com/',
     isLegacy: true,
     legacyFilter: true,
@@ -138,7 +143,6 @@ export const portfolioCompanies: Company[] = [
     category: 'Diagnostic Device',
     filterGroup: 'Diagnostics',
     logo: L('KAimaging.png'),
-    blockColor: C.ka,
     website: 'https://kaimaging.com/',
     isLegacy: false,
     legacyFilter: false,
@@ -150,7 +154,6 @@ export const portfolioCompanies: Company[] = [
     category: 'Diagnostic Device',
     filterGroup: 'Diagnostics',
     logo: L('phase scientific.png'),
-    blockColor: C.phase,
     website: 'https://phasescientific.com/about/the-company',
     isLegacy: false,
     legacyFilter: false,
@@ -162,7 +165,6 @@ export const portfolioCompanies: Company[] = [
     category: 'Diagnostic Device',
     filterGroup: 'Diagnostics',
     logo: L('Oncoustics.png'),
-    blockColor: C.oncoustics,
     website: 'https://www.oncoustics.com/',
     isLegacy: false,
     legacyFilter: false,
@@ -174,7 +176,6 @@ export const portfolioCompanies: Company[] = [
     category: 'Diagnostic Device',
     filterGroup: 'Diagnostics',
     logo: L('Corvista.png'),
-    blockColor: C.corvista,
     website: 'https://corvista.com/',
     isLegacy: false,
     legacyFilter: false,
@@ -186,7 +187,6 @@ export const portfolioCompanies: Company[] = [
     category: 'Diagnostic Device',
     filterGroup: 'Diagnostics',
     logo: L('XandarKardian.png'),
-    blockColor: C.xandar,
     website: 'https://xkcorp.com/',
     isLegacy: false,
     legacyFilter: false,
@@ -198,7 +198,6 @@ export const portfolioCompanies: Company[] = [
     category: 'Diagnostic Device',
     filterGroup: 'Diagnostics',
     logo: L('endiatx.png'),
-    blockColor: C.endiatx,
     website: 'https://www.endiatx.com/',
     isLegacy: false,
     legacyFilter: false,
@@ -210,7 +209,6 @@ export const portfolioCompanies: Company[] = [
     category: 'Diagnostic',
     filterGroup: 'Diagnostics',
     logo: L('HeraNova.png'),
-    blockColor: C.heranova,
     website: 'https://heranova.com/',
     isLegacy: false,
     legacyFilter: true,
@@ -222,7 +220,6 @@ export const portfolioCompanies: Company[] = [
     category: 'Diagnostic Device',
     filterGroup: 'Diagnostics',
     logo: L('E3A.png'),
-    blockColor: C.e3a,
     website: 'https://e3ahealth.com/',
     isLegacy: false,
     legacyFilter: false,
@@ -234,7 +231,6 @@ export const portfolioCompanies: Company[] = [
     category: 'Therapeutic Device',
     filterGroup: 'Devices',
     logo: L('opharmic.png'),
-    blockColor: C.opharmic,
     website: 'https://www.opharmic.com/',
     isLegacy: false,
     legacyFilter: true,
@@ -246,7 +242,6 @@ export const portfolioCompanies: Company[] = [
     category: 'Pharmaceutical',
     filterGroup: 'Pharma',
     logo: L('UniBioScience (1).png'),
-    blockColor: C.uniBio,
     website: 'https://www.uni-bioscience.com/en',
     isLegacy: false,
     legacyFilter: false,
@@ -258,7 +253,6 @@ export const portfolioCompanies: Company[] = [
     category: 'Pharmaceutical',
     filterGroup: 'Pharma',
     logo: L('innovac.png'),
-    blockColor: C.innovac,
     website: 'https://www.innovactx.com/',
     isLegacy: false,
     legacyFilter: false,
@@ -270,7 +264,6 @@ export const portfolioCompanies: Company[] = [
     category: 'Pharmaceutical',
     filterGroup: 'Pharma',
     logo: L('Valora.png'),
-    blockColor: C.valora,
     website: 'https://www.valoratherapeutics.com/',
     isLegacy: false,
     legacyFilter: false,
@@ -282,7 +275,6 @@ export const portfolioCompanies: Company[] = [
     category: 'Pharmaceutical',
     filterGroup: 'Pharma',
     logo: L('Spiral.png'),
-    blockColor: C.spiral,
     website: 'https://www.spiraltx.com/',
     isLegacy: false,
     legacyFilter: false,
@@ -293,8 +285,6 @@ export const portfolioCompanies: Company[] = [
     name: 'Pacegenix',
     category: 'Pharmaceutical',
     filterGroup: 'Pharma',
-    logo: L('pacegenix.png'),
-    blockColor: C.pacegenix,
     isLegacy: false,
     legacyFilter: false,
   }),
@@ -305,7 +295,6 @@ export const portfolioCompanies: Company[] = [
     category: 'Pharmaceutical',
     filterGroup: 'Pharma',
     logo: L('Pilatus.png'),
-    blockColor: C.pilatus,
     website: 'https://www.pilatusbio.com/',
     isLegacy: false,
     legacyFilter: false,
@@ -317,7 +306,6 @@ export const portfolioCompanies: Company[] = [
     category: 'Pharmaceutical',
     filterGroup: 'Pharma',
     logo: L('memora.png'),
-    blockColor: C.memora,
     website:
       'https://www.cpr.cuhk.edu.hk/en/press/cuhk-innovation-summit-2026-concludes-successfully-event-accelerates-the-transformation-of-research-into-societal-impact/',
     isLegacy: false,
@@ -330,7 +318,6 @@ export const portfolioCompanies: Company[] = [
     category: 'Science Tool',
     filterGroup: 'Platform',
     logo: L('Thrive.png'),
-    blockColor: C.thrive,
     website: 'https://www.thrivebio.com/',
     isLegacy: false,
     legacyFilter: true,
@@ -342,7 +329,6 @@ export const portfolioCompanies: Company[] = [
     category: 'Scientific Tool',
     filterGroup: 'Platform',
     logo: L('PhynXLab.png'),
-    blockColor: C.phynx,
     website: 'https://www.sknetworks.co.kr/en/business/phnyx-lab',
     isLegacy: false,
     legacyFilter: false,
@@ -354,7 +340,6 @@ export const portfolioCompanies: Company[] = [
     category: 'Distribution',
     filterGroup: 'Platform',
     logo: L('PebbleHealthcare.png'),
-    blockColor: C.pebbleHc,
     website: 'https://pebbleaccelerator.com/',
     isLegacy: false,
     legacyFilter: false,
@@ -365,7 +350,6 @@ export const portfolioCompanies: Company[] = [
     name: 'SMT',
     category: 'Therapeutic Device',
     filterGroup: 'Devices',
-    blockColor: C.smtFallback,
     isLegacy: false,
     legacyFilter: false,
   }),
@@ -376,7 +360,6 @@ export const portfolioCompanies: Company[] = [
     category: 'Service/Adjacent',
     filterGroup: 'Platform',
     logo: L('GreaterBayBio.png'),
-    blockColor: C.greatBay,
     website: 'https://www.greatbay-bio.com/',
     isLegacy: true,
     legacyFilter: true,
@@ -388,7 +371,6 @@ export const portfolioCompanies: Company[] = [
     category: 'Digital/Consumer',
     filterGroup: 'Platform',
     logo: L('MixCare.png'),
-    blockColor: C.mixcare,
     website: 'https://m.mixcarehealth.com/en',
     isLegacy: true,
     legacyFilter: true,
@@ -400,7 +382,6 @@ export const portfolioCompanies: Company[] = [
     category: 'Digital/Consumer',
     filterGroup: 'Platform',
     logo: L('ZumVet.png'),
-    blockColor: C.zumvet,
     isLegacy: true,
     legacyFilter: true,
   }),
@@ -411,7 +392,6 @@ export const portfolioCompanies: Company[] = [
     category: 'Medical Device',
     filterGroup: 'Devices',
     logo: L('Vigor.png'),
-    blockColor: C.vigor,
     website: 'https://www.hellovigor.com/',
     isLegacy: true,
     legacyFilter: true,
@@ -423,7 +403,6 @@ export const portfolioCompanies: Company[] = [
     category: 'Medical Device',
     filterGroup: 'Devices',
     logo: L('egglogics-full-logo-white.png'),
-    blockColor: C.egglogics,
     lightLogo: true,
     website: 'https://egglogics.com/',
     isLegacy: true,
@@ -436,7 +415,6 @@ export const portfolioCompanies: Company[] = [
     category: 'Service/Adjacent',
     filterGroup: 'Platform',
     logo: L('NHop.png'),
-    blockColor: C.nhop,
     website: 'https://n-hop.com/',
     isLegacy: true,
     legacyFilter: true,
@@ -448,7 +426,6 @@ export const portfolioCompanies: Company[] = [
     category: 'Service/Adjacent',
     filterGroup: 'Platform',
     logo: L('JotBody.png'),
-    blockColor: C.jotbody,
     website: 'https://jotbody.com/',
     isLegacy: true,
     legacyFilter: true,

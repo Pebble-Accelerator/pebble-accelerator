@@ -27,6 +27,11 @@ html {
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
+
+/* /services sticky overlap: overflow-x on html breaks position:sticky */
+html:has(.services-page-main) {
+  overflow-x: clip;
+}
 html,
 body {
   background: #f5efe4;

@@ -26,6 +26,11 @@ const backers: Backer[] = [
     type: 'Program partner',
     href: 'https://www.hkcocoon.com',
   },
+  {
+    name: 'THF Enterprises',
+    type: 'Strategic partner',
+    href: 'https://www.thfenterprises.com',
+  },
 ]
 
 export default backers

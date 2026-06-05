@@ -1,10 +1,24 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
-import { portfolioCompanies, darkenBlockColor, getMedicalBucket } from '@/data/portfolio'
+import { useMemo, useState } from 'react'
+import {
+  portfolioCompanies,
+  getMedicalBucket,
+  getTileColors,
+  darkenBlockColor,
+} from '@/data/portfolio'
 import type { MedicalBucket } from '@/data/portfolio'
+import {
+  monogramFromName,
+  usesTileLogo,
+  WATERMARK_BOX_STYLE,
+  WATERMARK_LOGO_FILTER,
+  WATERMARK_MARK,
+  WATERMARK_OPACITY,
+} from '@/data/portfolioWatermark'
 import type { Company } from '@/types'
-import { fadeUpStyle, useFadeUpReveal } from '@/components/ui/useFadeUpReveal'
+import { FILM_GRAIN_TILE_STYLE } from '@/lib/filmGrain'
+import { pebbleWaveLayer } from '@/lib/pebbleWaveMotif'
 
 const labelStyle: React.CSSProperties = {
   fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
@@ -26,46 +40,14 @@ const BUCKET_LABELS: Record<MedicalBucket, string> = {
   Platform: 'PLATFORM',
 }
 
-const LOGO_GHOST_SIZE = {
-  width: '84%',
-  height: '84%',
-  scale: 1.55,
-} as const
+/** Accent for the category label — deepened from ember/teal/sage for contrast on pale tiles. */
+const BUCKET_ACCENT: Record<MedicalBucket, string> = {
+  Therapeutics: '#C05A2A',
+  Diagnostics: '#2C6B72',
+  Platform: '#4F6B5D',
+}
 
-/** Deterministic bleed positions — cycle by block index. No rotation, fixed size. */
-const LOGO_CROP_VARIANTS = [
-  // Upper-right bleed (default)
-  {
-    top: '-18%',
-    right: '-34%',
-    left: 'auto',
-    transformOrigin: '100% 0%',
-    maskPosition: 'left center',
-  },
-  // Centered (more emblematic marks)
-  {
-    top: '6%',
-    right: '10%',
-    left: 'auto',
-    transformOrigin: '50% 50%',
-    maskPosition: 'center',
-  },
-  // Upper-center (wordmarks)
-  {
-    top: '-26%',
-    right: 'auto',
-    left: '10%',
-    transformOrigin: '50% 0%',
-    maskPosition: 'center',
-  },
-] as const
-
-const LOGO_GHOST_OPACITY = 0.22
-
-/** KA Imaging — literal mask values (zoom past 100% to crop wordmark from 500×250 asset). */
-const KA_IMAGING_MASK_SIZE = '160%'
-const KA_IMAGING_MASK_POSITION = 'left -15% bottom 35%'
-const KA_IMAGING_GHOST_OPACITY = 0.32
+const TILE_NAME_FOREST = '#2d3a35'
 
 function buildFilterPills(companies: Company[]): { key: PortfolioFilter; label: string; count: number }[] {
   // ALL = distinct companies (the data already holds one row per company, no dual-era duplicates).
@@ -95,11 +77,8 @@ function matchesFilter(company: Company, filter: PortfolioFilter): boolean {
   return getMedicalBucket(company) === filter
 }
 
-const STAGGER_MS = 100
-
 export default function PortfolioEditorial() {
   const [activeFilter, setActiveFilter] = useState<PortfolioFilter>('ALL')
-  const { ref: revealRef, revealed, reduced } = useFadeUpReveal()
 
   const filterPills = useMemo(() => buildFilterPills(portfolioCompanies), [])
 
@@ -109,7 +88,7 @@ export default function PortfolioEditorial() {
   )
 
   return (
-    <div ref={revealRef}>
+    <div>
       <section
         style={{
           padding: '80px 5vw 120px',
@@ -122,7 +101,6 @@ export default function PortfolioEditorial() {
         <div style={{ marginBottom: '48px', maxWidth: 'min(720px, 100%)' }}>
           <h1
             style={{
-              ...fadeUpStyle(revealed, reduced, 0),
               fontFamily: 'var(--font-cormorant), Georgia, serif',
               fontSize: 'clamp(48px, 5.5vw, 80px)',
               fontWeight: 500,
@@ -139,7 +117,6 @@ export default function PortfolioEditorial() {
 
         <div
           style={{
-            ...fadeUpStyle(revealed, reduced, 150),
             display: 'flex',
             flexWrap: 'wrap',
             alignItems: 'center',
@@ -184,12 +161,7 @@ export default function PortfolioEditorial() {
 
         <div className="portfolio-company-grid">
           {filteredCompanies.map((company, gridIndex) => (
-            <CompanyBlock
-              key={company.id}
-              company={company}
-              variantIndex={gridIndex}
-              revealStyle={fadeUpStyle(revealed, reduced, 300 + gridIndex * STAGGER_MS)}
-            />
+            <CompanyBlock key={company.id} company={company} gridIndex={gridIndex} />
           ))}
         </div>
       </section>
@@ -201,10 +173,44 @@ export default function PortfolioEditorial() {
           gap: 28px;
         }
 
+        /* Pure-CSS staggered scroll reveal — base state is fully VISIBLE.
+           The entrance only applies where scroll-driven timelines are supported AND
+           motion is allowed. No JS, no IntersectionObserver, no hidden start-state. */
+        .portfolio-tile {
+          opacity: 1;
+          transform: none;
+        }
+
+        @keyframes portfolioTileEnter {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @supports (animation-timeline: view()) {
+          @media (prefers-reduced-motion: no-preference) {
+            .portfolio-tile {
+              animation: portfolioTileEnter linear both;
+              animation-timeline: view();
+              animation-range: entry 0% entry 55%;
+            }
+
+            /* Stagger: even column resolves a touch later → gentle diagonal cascade. */
+            .portfolio-tile:nth-child(even) {
+              animation-range: entry 14% entry 70%;
+            }
+          }
+        }
+
         @media (max-width: 720px) {
           .portfolio-company-grid {
             grid-template-columns: 1fr;
-            gap: 24px;
+            gap: 20px;
           }
         }
       `}</style>
@@ -212,102 +218,63 @@ export default function PortfolioEditorial() {
   )
 }
 
-function LogoGhost({
-  logoSrc,
-  toneColor,
-  variantIndex,
-  companySlug,
-}: {
-  logoSrc: string
-  toneColor: string
-  variantIndex: number
-  companySlug: string
-}) {
-  const variant = LOGO_CROP_VARIANTS[variantIndex % LOGO_CROP_VARIANTS.length]
-  const maskUrl = `url("${logoSrc}")`
+function TileFilmGrain() {
+  return <div aria-hidden className="portfolio-tile-grain" style={FILM_GRAIN_TILE_STYLE} />
+}
 
-  useEffect(() => {
-    if (companySlug !== 'ka-imaging') return
-    console.log('[KA Imaging logo mask]', {
-      maskSize: KA_IMAGING_MASK_SIZE,
-      maskPosition: KA_IMAGING_MASK_POSITION,
-    })
-  }, [companySlug])
-
-  if (companySlug === 'ka-imaging') {
-    return (
-      <div
-        aria-hidden
-        className="portfolio-logo-ghost portfolio-logo-ghost--ka-imaging"
-        data-company="ka-imaging"
-        data-mask-size={KA_IMAGING_MASK_SIZE}
-        data-mask-position={KA_IMAGING_MASK_POSITION}
-        style={{
-          position: 'absolute',
-          inset: 0,
-          width: '100%',
-          height: '100%',
-          backgroundColor: toneColor,
-          opacity: KA_IMAGING_GHOST_OPACITY,
-          WebkitMaskImage: maskUrl,
-          maskImage: maskUrl,
-          WebkitMaskSize: KA_IMAGING_MASK_SIZE,
-          maskSize: KA_IMAGING_MASK_SIZE,
-          WebkitMaskRepeat: 'no-repeat',
-          maskRepeat: 'no-repeat',
-          WebkitMaskPosition: KA_IMAGING_MASK_POSITION,
-          maskPosition: KA_IMAGING_MASK_POSITION,
-          pointerEvents: 'none',
-          zIndex: 0,
-        }}
-      />
-    )
-  }
+function TileWatermark({ company }: { company: Company }) {
+  const showLogo = usesTileLogo(company)
 
   return (
     <div
       aria-hidden
-      className="portfolio-logo-ghost"
-      style={{
-        position: 'absolute',
-        width: LOGO_GHOST_SIZE.width,
-        height: LOGO_GHOST_SIZE.height,
-        top: variant.top,
-        right: variant.right,
-        left: variant.left,
-        backgroundColor: toneColor,
-        opacity: LOGO_GHOST_OPACITY,
-        WebkitMaskImage: maskUrl,
-        maskImage: maskUrl,
-        WebkitMaskSize: 'contain',
-        maskSize: 'contain',
-        WebkitMaskRepeat: 'no-repeat',
-        maskRepeat: 'no-repeat',
-        WebkitMaskPosition: variant.maskPosition,
-        maskPosition: variant.maskPosition,
-        transform: `scale(${LOGO_GHOST_SIZE.scale})`,
-        transformOrigin: variant.transformOrigin,
-        pointerEvents: 'none',
-        zIndex: 0,
-      }}
-    />
+      className="portfolio-watermark-box"
+      data-watermark={showLogo ? 'logo' : 'monogram'}
+      style={WATERMARK_BOX_STYLE}
+    >
+      {showLogo ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={company.logo}
+          alt=""
+          className="portfolio-watermark-logo"
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            opacity: WATERMARK_OPACITY,
+            filter: WATERMARK_LOGO_FILTER,
+          }}
+        />
+      ) : (
+        <span
+          className="portfolio-watermark-monogram"
+          style={{
+            fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+            fontSize: 30,
+            fontWeight: 600,
+            lineHeight: 1,
+            letterSpacing: '0.02em',
+            color: WATERMARK_MARK,
+            opacity: WATERMARK_OPACITY,
+            userSelect: 'none',
+          }}
+        >
+          {monogramFromName(company.name)}
+        </span>
+      )}
+    </div>
   )
 }
 
-function CompanyBlock({
-  company,
-  revealStyle,
-  variantIndex,
-}: {
-  company: Company
-  revealStyle: React.CSSProperties
-  variantIndex: number
-}) {
-  const [hovered, setHovered] = useState(false)
+function CompanyBlock({ company, gridIndex }: { company: Company; gridIndex: number }) {
   const isLinked = Boolean(company.website)
-  const logoTone = darkenBlockColor(company.blockColor, 26)
+  const { blockColor, blockColorDark } = getTileColors(company, gridIndex)
+  const waveTone = darkenBlockColor(blockColor, 16)
+  const bucket = getMedicalBucket(company)
+  const accent = bucket ? BUCKET_ACCENT[bucket] : TILE_NAME_FOREST
 
-  const blockStyle: React.CSSProperties = {
+  const surfaceStyle: React.CSSProperties = {
     position: 'relative',
     display: 'flex',
     flexDirection: 'column',
@@ -315,45 +282,41 @@ function CompanyBlock({
     alignItems: 'stretch',
     aspectRatio: '4 / 3',
     width: '100%',
-    background: `linear-gradient(to top right, ${company.blockColor} 0%, ${company.blockColorDark} 100%)`,
+    background: `linear-gradient(180deg, ${blockColor} 0%, ${blockColorDark} 100%)`,
     boxSizing: 'border-box',
     padding: 'clamp(24px, 4vw, 40px)',
     overflow: 'hidden',
+    borderRadius: '10px',
+    border: '1px solid rgba(45, 58, 53, 0.14)',
     textDecoration: 'none',
     color: 'inherit',
     cursor: isLinked ? 'pointer' : 'default',
-    transform: hovered && isLinked ? 'scale(1.01)' : 'scale(1)',
-    filter: hovered && isLinked ? 'brightness(1.05)' : 'none',
-    transition: 'transform 0.25s ease, filter 0.25s ease',
   }
 
   const inner = (
     <>
-      {company.logo ? (
-        <LogoGhost
-          logoSrc={company.logo}
-          toneColor={logoTone}
-          variantIndex={variantIndex}
-          companySlug={company.slug}
-        />
-      ) : null}
+      <div aria-hidden style={pebbleWaveLayer(waveTone, 'back')} />
+      <div aria-hidden className="portfolio-tile-wave-front" style={pebbleWaveLayer(waveTone, 'front')} />
+      <TileWatermark company={company} />
+      <TileFilmGrain />
 
       <div
         style={{
           position: 'relative',
-          zIndex: 1,
+          zIndex: 2,
           textAlign: 'left',
           maxWidth: '72%',
         }}
       >
         <h2
+          className="portfolio-tile-name"
           style={{
             fontFamily: 'var(--font-cormorant), Georgia, serif',
             fontSize: 'clamp(26px, 3vw, 36px)',
             fontWeight: 500,
             lineHeight: 1.1,
             letterSpacing: '-0.02em',
-            color: '#f5efe4',
+            color: TILE_NAME_FOREST,
             margin: '0 0 8px',
           }}
         >
@@ -363,10 +326,10 @@ function CompanyBlock({
           style={{
             fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
             fontSize: '10px',
-            fontWeight: 500,
+            fontWeight: 600,
             letterSpacing: '0.12em',
             textTransform: 'uppercase',
-            color: 'rgba(245, 239, 228, 0.7)',
+            color: accent,
             margin: 0,
             lineHeight: 1.35,
           }}
@@ -378,29 +341,66 @@ function CompanyBlock({
   )
 
   return (
-    <div style={revealStyle}>
+    <div className="portfolio-tile">
       {isLinked ? (
         <a
           href={company.website}
           target="_blank"
           rel="noopener noreferrer"
-          style={blockStyle}
+          className="portfolio-tile-surface"
+          style={surfaceStyle}
           aria-label={`${company.name} — opens website in a new tab`}
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
         >
           {inner}
         </a>
       ) : (
-        <div
-          style={blockStyle}
-          aria-label={company.name}
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
-        >
+        <div className="portfolio-tile-surface" style={surfaceStyle} aria-label={company.name}>
           {inner}
         </div>
       )}
+
+      <style jsx>{`
+        .portfolio-tile-surface {
+          box-shadow: inset 0 1px 0 rgba(245, 239, 228, 0.5), 0 1px 2px rgba(45, 58, 53, 0.05);
+          transition: transform 0.25s ease, box-shadow 0.25s ease;
+          will-change: transform;
+        }
+
+        .portfolio-tile-surface:hover {
+          transform: translateY(-5px);
+          box-shadow: inset 0 1px 0 rgba(245, 239, 228, 0.5), 0 18px 38px -14px rgba(45, 58, 53, 0.3);
+        }
+
+        .portfolio-tile-name {
+          transition: color 0.25s ease;
+        }
+
+        .portfolio-tile-surface:hover .portfolio-tile-name {
+          color: #1f2a26;
+        }
+
+        .portfolio-tile-wave-front {
+          transition: transform 0.25s ease;
+          will-change: transform;
+        }
+
+        .portfolio-tile-surface:hover .portfolio-tile-wave-front {
+          transform: translate3d(-6px, -3px, 0);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .portfolio-tile-surface {
+            transition: box-shadow 0.25s ease;
+          }
+          .portfolio-tile-surface:hover {
+            transform: none;
+            box-shadow: inset 0 1px 0 rgba(245, 239, 228, 0.5), 0 6px 16px -8px rgba(45, 58, 53, 0.22);
+          }
+          .portfolio-tile-surface:hover .portfolio-tile-wave-front {
+            transform: none;
+          }
+        }
+      `}</style>
     </div>
   )
 }

@@ -3,10 +3,24 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 
-export function useFadeUpReveal() {
+export type FadeUpRevealOptions = {
+  /** Fraction of element visible before firing (default 0.08). */
+  threshold?: number
+  rootMargin?: string
+}
+
+export type FadeUpMotionOptions = {
+  translateYPx?: number
+  durationMs?: number
+  easing?: string
+}
+
+export function useFadeUpReveal(options?: FadeUpRevealOptions) {
   const ref = useRef<HTMLDivElement>(null)
   const reduced = usePrefersReducedMotion()
   const [revealed, setRevealed] = useState(reduced)
+  const threshold = options?.threshold ?? 0.08
+  const rootMargin = options?.rootMargin ?? '0px 0px -40px 0px'
 
   useEffect(() => {
     if (reduced) {
@@ -24,12 +38,12 @@ export function useFadeUpReveal() {
           io.disconnect()
         }
       },
-      { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+      { threshold, rootMargin }
     )
 
     io.observe(el)
     return () => io.disconnect()
-  }, [reduced])
+  }, [reduced, threshold, rootMargin])
 
   return { ref, revealed, reduced }
 }
@@ -37,11 +51,18 @@ export function useFadeUpReveal() {
 export const fadeUpStyle = (
   revealed: boolean,
   reduced: boolean,
-  delayMs = 0
-): CSSProperties => ({
-  opacity: revealed || reduced ? 1 : 0,
-  transform: revealed || reduced ? 'translateY(0)' : 'translateY(24px)',
-  transition: reduced
-    ? 'none'
-    : `opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1) ${delayMs}ms, transform 0.8s cubic-bezier(0.4, 0, 0.2, 1) ${delayMs}ms`,
-})
+  delayMs = 0,
+  motion?: FadeUpMotionOptions
+): CSSProperties => {
+  const translateYPx = motion?.translateYPx ?? 24
+  const durationMs = motion?.durationMs ?? 800
+  const easing = motion?.easing ?? 'cubic-bezier(0.4, 0, 0.2, 1)'
+
+  return {
+    opacity: revealed || reduced ? 1 : 0,
+    transform: revealed || reduced ? 'translateY(0)' : `translateY(${translateYPx}px)`,
+    transition: reduced
+      ? 'none'
+      : `opacity ${durationMs}ms ${easing} ${delayMs}ms, transform ${durationMs}ms ${easing} ${delayMs}ms`,
+  }
+}
