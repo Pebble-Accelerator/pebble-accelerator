@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion, useReducedMotion, type Variants } from 'framer-motion'
 import Link from 'next/link'
 
 const PEBBLE_PATH_D =
@@ -10,11 +10,11 @@ const PEBBLE_PATH_D =
 // Hero-only headline reveal: each line rises + fades, staggered. Fires once on
 // mount (Hero never unmounts, so returning to slide 0 does not replay) and
 // coexists with the pebble stroke draw-on + ripple animations.
-const headlineContainer = {
+const headlineContainer: Variants = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.11, delayChildren: 0.1 } },
 }
-const headlineLine = {
+const headlineLine: Variants = {
   hidden: { opacity: 0, y: 16 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
 }
