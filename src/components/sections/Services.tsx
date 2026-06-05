@@ -5,18 +5,19 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import SectionLabelLine from '@/components/ui/SectionLabelLine'
 import Link from 'next/link'
+import { getHomeScrollScroller } from '@/lib/homeSlideshow'
 
 gsap.registerPlugin(ScrollTrigger)
 
 const services = [
   {
     name: 'Investment',
-    desc: 'We deploy starting capital of US$200K alongside deep operational support, leveraging our investor network to accelerate the milestones that matter.',
+    desc: 'We deploy starting capital alongside deep operational support, leveraging our investor network to accelerate the milestones that matter.',
     tags: 'Seed · Series A bridge · Follow-on',
   },
   {
     name: 'Consulting',
-    desc: 'For companies beyond our investment scope, we serve as your extension in Hong Kong — opening doors to China, accessing government grants, building the right partnerships.',
+    desc: 'For companies beyond our investment scope, we serve as your extension in Hong Kong, opening doors to China, accessing government grants, building the right partnerships.',
     tags: 'Market entry · HK grants · China access',
   },
 ]
@@ -48,8 +49,7 @@ export default function Services({ embedded = false }: ServicesProps) {
       return
     }
 
-    const snapScroller = document.querySelector('.snap-container')
-    if (!snapScroller) return
+    const snapScroller = getHomeScrollScroller()
 
     if (label) gsap.set(label, { opacity: 0, y: 12, willChange: 'transform' })
     gsap.set(leftCol, { opacity: 0, x: -24, willChange: 'transform' })

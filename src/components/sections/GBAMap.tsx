@@ -2,11 +2,13 @@
 
 import 'mapbox-gl/dist/mapbox-gl.css'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Map, { AttributionControl, Marker } from 'react-map-gl/mapbox'
+import type { MapRef } from 'react-map-gl/mapbox'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
+import { getHomeScrollScroller, HOME_DESKTOP_MQ } from '@/lib/homeSlideshow'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -36,7 +38,7 @@ const CITIES: CityMarker[] = [
     longitude: 113.5,
     latitude: 22.16,
     labelSide: 'left',
-    labelOffset: { x: -6, y: 16 },
+    labelOffset: { x: -18, y: 24 },
   },
   {
     id: 'zhuhai',
@@ -44,9 +46,26 @@ const CITIES: CityMarker[] = [
     longitude: 113.58,
     latitude: 22.27,
     labelSide: 'right',
-    labelOffset: { x: 0, y: 16 },
+    labelOffset: { x: 14, y: -20 },
   },
 ]
+
+const DESKTOP_MAP_VIEW = {
+  longitude: 113.9,
+  latitude: 22.5,
+  zoom: 7.8,
+} as const
+
+const MOBILE_FIT_PADDING = { top: 56, bottom: 56, left: 44, right: 44 } as const
+
+function cityCoordinateBounds(): [[number, number], [number, number]] {
+  const lngs = CITIES.map((c) => c.longitude)
+  const lats = CITIES.map((c) => c.latitude)
+  return [
+    [Math.min(...lngs), Math.min(...lats)],
+    [Math.max(...lngs), Math.max(...lats)],
+  ]
+}
 
 const DOT_ORDER = ['guangzhou', 'shenzhen', 'hongkong', 'macau', 'zhuhai'] as const
 
@@ -70,17 +89,52 @@ function GBAMap() {
 
   const sectionRef = useRef<HTMLElement | null>(null)
   const mapCardRef = useRef<HTMLDivElement | null>(null)
+  const mapRef = useRef<MapRef | null>(null)
   const dotRefs = useRef<Record<string, HTMLDivElement | null>>({})
   const statNumberRefs = useRef<(HTMLSpanElement | null)[]>([])
   const statsAnimated = useRef(false)
+  const [isDesktop, setIsDesktop] = useState(() =>
+    typeof window !== 'undefined' ? window.matchMedia(HOME_DESKTOP_MQ).matches : true
+  )
+
+  useEffect(() => {
+    const mq = window.matchMedia(HOME_DESKTOP_MQ)
+    const sync = () => setIsDesktop(mq.matches)
+    sync()
+    mq.addEventListener('change', sync)
+    return () => mq.removeEventListener('change', sync)
+  }, [])
+
+  const applyMapFraming = useCallback(() => {
+    const map = mapRef.current?.getMap()
+    if (!map) return
+
+    if (isDesktop) {
+      map.jumpTo({
+        center: [DESKTOP_MAP_VIEW.longitude, DESKTOP_MAP_VIEW.latitude],
+        zoom: DESKTOP_MAP_VIEW.zoom,
+      })
+      return
+    }
+
+    map.fitBounds(cityCoordinateBounds(), {
+      padding: MOBILE_FIT_PADDING,
+      duration: 0,
+    })
+  }, [isDesktop])
+
+  useEffect(() => {
+    if (!mapReady) return
+    applyMapFraming()
+  }, [mapReady, applyMapFraming])
 
   useEffect(() => {
     if (shouldLoadMap) return
-    const snapContainer = document.querySelector('.snap-container')
+    const snapScroller = getHomeScrollScroller()
     const observer = new IntersectionObserver(
       ([entry]) => entry?.isIntersecting && setShouldLoadMap(true),
       {
-        root: snapContainer instanceof HTMLElement ? snapContainer : null,
+        root: snapScroller ?? null,
         rootMargin: '250px',
       }
     )
@@ -106,8 +160,7 @@ function GBAMap() {
 
     gsap.set(dots, { opacity: 0, scale: 0, willChange: 'transform' })
 
-    const snapScroller = document.querySelector('.snap-container')
-    if (!snapScroller) return
+    const snapScroller = getHomeScrollScroller()
 
     const tl = gsap.timeline({
       delay: 0.1,
@@ -151,7 +204,7 @@ function GBAMap() {
 
     const target = sectionRef.current
     if (!target) return
-    const snapScroller = document.querySelector('.snap-container')
+    const snapScroller = getHomeScrollScroller()
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -182,7 +235,7 @@ function GBAMap() {
         observer.disconnect()
       },
       {
-        root: snapScroller instanceof HTMLElement ? snapScroller : null,
+        root: snapScroller ?? null,
         threshold: 0.35,
       }
     )
@@ -207,6 +260,7 @@ function GBAMap() {
       }}
     >
       <div
+        className="apac-map-layout"
         style={{
           width: '100%',
           maxWidth: '1280px',
@@ -219,6 +273,7 @@ function GBAMap() {
         }}
       >
         <div
+          className="apac-map-copy"
           style={{
             flex: '0 0 40%',
             maxWidth: '40%',
@@ -269,6 +324,7 @@ function GBAMap() {
           </div>
 
           <div
+            className="apac-map-stats"
             style={{
               flex: 1,
               minHeight: 0,
@@ -328,6 +384,7 @@ function GBAMap() {
         </div>
 
         <div
+          className="apac-map-mapcol"
           style={{
             flex: '1 1 58%',
             minWidth: 0,
@@ -351,13 +408,10 @@ function GBAMap() {
           >
             {shouldLoadMap ? (
               <Map
+                ref={mapRef}
                 mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
                 mapStyle="mapbox://styles/kh-chen/cmp6m5igl002001sc3g662ejb"
-                initialViewState={{
-                  longitude: 113.9,
-                  latitude: 22.5,
-                  zoom: 7.8,
-                }}
+                initialViewState={DESKTOP_MAP_VIEW}
                 style={{ width: '100%', height: '100%' }}
                 reuseMaps
                 dragPan={false}
@@ -448,6 +502,12 @@ function GBAMap() {
       </div>
 
       <style>{`
+        @media (max-width: 767px) {
+          .apac-map-card {
+            height: 500px !important;
+          }
+        }
+
         .apac-map .mapboxgl-marker {
           z-index: 10;
         }

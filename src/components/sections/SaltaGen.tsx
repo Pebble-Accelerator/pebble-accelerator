@@ -25,6 +25,7 @@ function SaltaGenVisual({ embedded, withBand }: { embedded: boolean; withBand: b
 
   return (
     <div
+      className="saltagen-embedded-logo"
       style={{
         display: 'flex',
         alignItems: 'center',
@@ -76,8 +77,42 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
     boxSizing: 'border-box' as const,
   }
 
+  const visitLink = (
+    <Link
+      href="https://www.saltagen.com"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="link-underline saltagen-embedded-visit"
+      style={{
+        display: 'inline-flex',
+        alignItems: 'baseline',
+        gap: '4px',
+        marginTop: withBand ? '12px' : embedded ? '18px' : '32px',
+        fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+        fontSize: '11px',
+        fontWeight: 400,
+        letterSpacing: '0.12em',
+        textTransform: 'uppercase',
+        color: '#1a1a1a',
+        textDecoration: 'none',
+        transition: 'color 150ms ease',
+        flexShrink: 0,
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.color = '#5e7a6a'
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.color = '#1a1a1a'
+      }}
+    >
+      <span>Visit Saltagen.com</span>
+      <span aria-hidden>→</span>
+    </Link>
+  )
+
   return (
     <section
+      className={embedded ? 'saltagen-section--embedded' : undefined}
       style={{
         background: '#f5efe4',
         width: '100%',
@@ -101,6 +136,7 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
       }}
     >
       <div
+        className={embedded ? 'saltagen-embedded-shell' : undefined}
         style={{
           ...(embedded
             ? {
@@ -117,6 +153,7 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
         }}
       >
         <div
+          className={embedded ? 'saltagen-embedded-main' : undefined}
           style={
             embedded
               ? {
@@ -134,6 +171,7 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
         >
           <FadeIn>
             <div
+              className={withBand ? 'saltagen-embedded-grid' : undefined}
               style={{
                 ...contentRailStyle,
                 display: 'grid',
@@ -146,6 +184,7 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
               }}
             >
               <div
+                className={withBand ? 'saltagen-embedded-copy' : undefined}
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
@@ -270,36 +309,7 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
                   ))}
                 </div>
 
-                <Link
-                  href="https://www.saltagen.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="link-underline"
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'baseline',
-                    gap: '4px',
-                    marginTop: withBand ? '12px' : embedded ? '18px' : '32px',
-                    fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-                    fontSize: '11px',
-                    fontWeight: 400,
-                    letterSpacing: '0.12em',
-                    textTransform: 'uppercase',
-                    color: '#1a1a1a',
-                    textDecoration: 'none',
-                    transition: 'color 150ms ease',
-                    flexShrink: 0,
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = '#5e7a6a'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = '#1a1a1a'
-                  }}
-                >
-                  <span>Visit Saltagen.com</span>
-                  <span aria-hidden>→</span>
-                </Link>
+                {!withBand && visitLink}
               </div>
 
               <div
@@ -314,14 +324,20 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
               >
                 <SaltaGenVisual embedded={embedded} withBand={withBand} />
               </div>
+
+              {withBand && visitLink}
             </div>
           </FadeIn>
         </div>
 
         {withBand && (
           <>
-            <div style={{ ...contentRailStyle, borderTop: '1px solid #d4cfc2', flexShrink: 0 }} />
             <div
+              className="saltagen-embedded-divider"
+              style={{ ...contentRailStyle, borderTop: '1px solid #d4cfc2', flexShrink: 0 }}
+            />
+            <div
+              className="saltagen-embedded-band"
               style={{
                 flex: '0 0 auto',
                 minHeight: 0,

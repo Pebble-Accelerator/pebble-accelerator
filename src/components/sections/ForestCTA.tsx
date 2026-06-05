@@ -14,6 +14,7 @@ type ForestCTAProps = {
 export default function ForestCTA({ embedded = false }: ForestCTAProps) {
   return (
     <section
+      className={embedded ? 'forest-cta--embedded' : undefined}
       style={{
         background: '#2d3a35',
         padding: embedded ? '0 5vw' : 'clamp(80px, 10vw, 120px) 5vw',
@@ -29,6 +30,7 @@ export default function ForestCTA({ embedded = false }: ForestCTAProps) {
     >
       <div
         aria-hidden
+        className="forest-cta-wave"
         style={{
           position: 'absolute',
           right: embedded ? '-30vh' : '-12%',
@@ -180,6 +182,24 @@ export default function ForestCTA({ embedded = false }: ForestCTAProps) {
           </a>
         </div>
       </div>
+      <style>{`
+        @media (max-width: 767px) {
+          .forest-cta-wave {
+            right: auto !important;
+            bottom: auto !important;
+            left: 50% !important;
+            top: 54% !important;
+            transform: translate(-50%, -50%) !important;
+            width: min(76vw, 300px) !important;
+            height: min(54vw, 220px) !important;
+            opacity: 0.1 !important;
+            -webkit-mask-size: 100% !important;
+            mask-size: 100% !important;
+            -webkit-mask-position: center !important;
+            mask-position: center !important;
+          }
+        }
+      `}</style>
     </section>
   )
 }

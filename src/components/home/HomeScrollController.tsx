@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect } from 'react'
 import { gsap } from 'gsap'
+import { useEffect, useState } from 'react'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
+import { HOME_DESKTOP_MQ } from '@/lib/homeSlideshow'
 
 type SlideshowApi = {
   advance: (dir: number) => void
@@ -30,13 +31,26 @@ const WHEEL_MIN_DELTA = 4
 /**
  * Homepage-only scroll-hijack slideshow. One gesture = exactly one slide, with a
  * GSAP glide. Input is locked mid-animation so a gesture never skips slides.
- * Disabled entirely under prefers-reduced-motion (native scroll fallback).
+ * Disabled under prefers-reduced-motion or below 768px (native scroll fallback).
  */
 export default function HomeScrollController() {
   const reduced = usePrefersReducedMotion()
+  const [isDesktop, setIsDesktop] = useState(() =>
+    typeof window !== 'undefined' ? window.matchMedia(HOME_DESKTOP_MQ).matches : true
+  )
 
   useEffect(() => {
-    if (reduced) return
+    const mq = window.matchMedia(HOME_DESKTOP_MQ)
+    const sync = () => setIsDesktop(mq.matches)
+    sync()
+    mq.addEventListener('change', sync)
+    return () => mq.removeEventListener('change', sync)
+  }, [])
+
+  const slideshowEnabled = isDesktop && !reduced
+
+  useEffect(() => {
+    if (!slideshowEnabled) return
     if (controllerActive) return
 
     const scroller = document.querySelector<HTMLElement>('.snap-container')
@@ -171,7 +185,7 @@ export default function HomeScrollController() {
       if (window.__homeSlideshow) delete window.__homeSlideshow
       controllerActive = false
     }
-  }, [reduced])
+  }, [slideshowEnabled])
 
   return null
 }

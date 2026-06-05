@@ -508,3 +508,206 @@ body:has(.snap-container) > footer {
   }
 }
 
+/* Homepage mobile (< Tailwind md / 768px): native scroll + natural section height */
+@media (max-width: 767px) {
+  body:has(.snap-container) {
+    overflow: auto;
+    height: auto;
+  }
+
+  body:has(.snap-container) main {
+    height: auto;
+    overflow: visible;
+  }
+
+  .snap-container {
+    height: auto !important;
+    overflow-y: visible !important;
+  }
+
+  .home-slide,
+  .hero-snap-wrapper {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  .hero-section {
+    min-height: 100svh;
+    height: auto !important;
+  }
+
+  .apac-map {
+    height: auto !important;
+    overflow: visible !important;
+    align-items: flex-start !important;
+    padding: 48px 5vw !important;
+  }
+
+  .apac-map-layout {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 32px !important;
+  }
+
+  .apac-map-copy {
+    flex: none !important;
+    max-width: 100% !important;
+    min-height: 0 !important;
+  }
+
+  .apac-map-copy h2 {
+    font-size: clamp(32px, 8vw, 40px) !important;
+    line-height: 1.1 !important;
+  }
+
+  .apac-map-copy p {
+    max-width: 100% !important;
+  }
+
+  .apac-map-stats {
+    margin-top: 28px !important;
+    padding-top: 0 !important;
+    gap: 20px !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+  }
+
+  .apac-map-stats > div {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .apac-map-stats > div > span:first-child {
+    font-size: clamp(40px, 10vw, 52px) !important;
+  }
+
+  .apac-map-mapcol {
+    flex: none !important;
+    width: 100% !important;
+  }
+
+  .apac-map-card {
+    height: 360px !important;
+    width: 100% !important;
+  }
+
+  .services-section--embedded {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    justify-content: flex-start !important;
+    padding: 48px 5vw !important;
+  }
+
+  .services-section--embedded .services-embedded-columns {
+    grid-template-columns: 1fr !important;
+    row-gap: 32px !important;
+  }
+
+  .services-section--embedded .services-embedded-divider {
+    display: none;
+  }
+
+  .services-section--embedded h2 {
+    margin-bottom: 36px !important;
+  }
+
+  .services-section--embedded .services-embedded-columns + div,
+  .services-section--embedded > div > div[style*='marginBottom: 56px'] {
+    margin-bottom: 36px !important;
+  }
+
+  .saltagen-section--embedded {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    padding-top: 48px !important;
+  }
+
+  .saltagen-embedded-shell {
+    padding-left: 5vw !important;
+    padding-right: 5vw !important;
+  }
+
+  .saltagen-embedded-main {
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    padding-bottom: 24px !important;
+  }
+
+  .saltagen-embedded-grid {
+    grid-template-columns: 1fr !important;
+    column-gap: 0 !important;
+    row-gap: 28px !important;
+    align-items: stretch !important;
+  }
+
+  .saltagen-embedded-logo {
+    max-width: min(280px, 72vw) !important;
+    margin: 0 auto;
+  }
+
+  .saltagen-embedded-visit {
+    margin-top: 0 !important;
+  }
+
+  .saltagen-embedded-band {
+    padding-top: 28px !important;
+    padding-bottom: 40px !important;
+  }
+
+  .backers-band {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding-right: 0 !important;
+    gap: 20px !important;
+    height: auto !important;
+  }
+
+  .backers-band > div:last-child {
+    width: 100% !important;
+    justify-content: stretch !important;
+  }
+
+  .backers-band-scroll {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .forest-cta--embedded {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    padding: 48px 5vw !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .saltagen-embedded-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    grid-template-rows: auto auto;
+    align-items: center;
+  }
+
+  .saltagen-embedded-copy {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .saltagen-embedded-grid > .saltagen-embedded-logo,
+  .saltagen-embedded-grid > div:has(.saltagen-embedded-logo) {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: center;
+  }
+
+  .saltagen-embedded-visit {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: start;
+    margin-top: 12px !important;
+  }
+}
+

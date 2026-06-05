@@ -7,6 +7,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import backers from '@/data/backers'
 import SectionLabelLine from '@/components/ui/SectionLabelLine'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
+import { getHomeScrollScroller } from '@/lib/homeSlideshow'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -355,8 +356,7 @@ export default function Backers({ embedded = false, variant = 'default' }: Backe
       return
     }
 
-    const snapScroller = document.querySelector('.snap-container')
-    if (!snapScroller) return
+    const snapScroller = getHomeScrollScroller()
 
     if (label) gsap.set(label, { opacity: 0, y: 12, willChange: 'transform' })
     gsap.set(logos, { opacity: 0, y: 12, willChange: 'transform' })
