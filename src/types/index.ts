@@ -12,7 +12,7 @@ export interface Company {
   category: string
   filterGroup: PortfolioFilterGroup
   logo?: string
-  /** Tile gradient colors — computed from medical bucket when omitted. */
+  /** Tile gradient colors (computed from medical bucket when omitted). */
   blockColor?: string
   blockColorDark?: string
   website?: string

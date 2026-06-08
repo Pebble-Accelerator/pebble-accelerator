@@ -135,10 +135,10 @@ export default function Services({ embedded = false }: ServicesProps) {
           boxSizing: 'border-box',
           border: 'none',
           overflow: 'hidden',
-          paddingTop: '60px',
-          paddingBottom: '60px',
-          paddingLeft: '5vw',
-          paddingRight: '5vw',
+          // Consistent top-reserve rhythm with the Hero/GBA slides: nav (64px)
+          // + breathing room. Content still vertically centers, but in a tighter
+          // remaining area so the slide reads composed instead of under-filled.
+          padding: 'clamp(112px, 16vh, 160px) 5vw clamp(48px, 6vh, 96px)',
         }}
       >
         <div
@@ -151,8 +151,39 @@ export default function Services({ embedded = false }: ServicesProps) {
             flexDirection: 'column',
           }}
         >
-          <div ref={labelRef} className="services-embedded-label" style={{ marginBottom: '20px' }}>
-            What we do
+          <div
+            ref={labelRef}
+            className="services-embedded-label"
+            style={{
+              marginBottom: '20px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+            }}
+          >
+            <span
+              aria-hidden
+              style={{
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                background: '#E8703A',
+                display: 'inline-block',
+                flexShrink: 0,
+              }}
+            />
+            <span
+              style={{
+                fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+                fontSize: '11px',
+                fontWeight: 400,
+                letterSpacing: '0.14em',
+                textTransform: 'uppercase',
+                color: 'rgba(26, 26, 26, 0.55)',
+              }}
+            >
+              What we do
+            </span>
           </div>
 
           <h2

@@ -236,7 +236,7 @@ export default function Hero() {
             fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
           }}
         >
-          Pebble is a boutique accelerator building Hong Kong into a global biomedical nexus —
+          Pebble is a boutique accelerator building Hong Kong into a global biomedical nexus,
           bridging the world&apos;s largest patient population with the capital and expertise to
           reach them.
         </motion.p>

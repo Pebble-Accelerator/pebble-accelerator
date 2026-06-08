@@ -81,34 +81,17 @@ export default function ForestCTA({ embedded = false }: ForestCTAProps) {
           <h2
             style={{
               fontFamily: 'var(--font-cormorant), Georgia, serif',
-              fontSize: 'clamp(52px, 7vw, 96px)',
+              fontStyle: 'italic',
+              fontSize: 'clamp(56px, 7.4vw, 104px)',
               fontWeight: 500,
               lineHeight: 1.02,
               letterSpacing: '-0.02em',
-              color: CREAM,
+              color: EMBER,
               margin: 0,
             }}
           >
-            Every avalanche
-            <br />
-            starts
-            <br />
-            with one pebble.
-          </h2>
-          <p
-            style={{
-              fontFamily: 'var(--font-cormorant), Georgia, serif',
-              fontStyle: 'italic',
-              fontSize: 'clamp(40px, 4.6vw, 64px)',
-              fontWeight: 500,
-              lineHeight: 1.05,
-              letterSpacing: '-0.01em',
-              color: EMBER,
-              margin: '0.3em 0 0',
-            }}
-          >
             Let&rsquo;s find yours.
-          </p>
+          </h2>
         </div>
 
         <div

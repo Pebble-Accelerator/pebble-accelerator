@@ -43,9 +43,12 @@ export default function Home() {
         <div
           className="home-slide"
           style={{
-            height: '100vh',
+            // GBA grows to fit its content (left column can exceed 100vh on
+            // shorter viewports). Open the overflow so nothing clips; the
+            // slideshow controller now handles taller-than-viewport slides
+            // by stepping through them in viewport-sized chunks.
             minHeight: '100vh',
-            overflow: 'hidden',
+            overflow: 'visible',
             flexShrink: 0,
           }}
         >

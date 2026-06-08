@@ -175,11 +175,11 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
               <span
                 style={{
                   fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-                  fontSize: '10px',
+                  fontSize: '11px',
                   fontWeight: 400,
-                  letterSpacing: '0.12em',
+                  letterSpacing: '0.14em',
                   textTransform: 'uppercase',
-                  color: '#888',
+                  color: 'rgba(26, 26, 26, 0.55)',
                 }}
               >
                 Affiliated · Strategic Partner

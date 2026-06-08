@@ -27,7 +27,7 @@ export type StickyTabsItemProps = {
   decoration?: ReactNode
 }
 
-/** Declarative placeholder — StickyTabs reads these props and renders the actual <section>. */
+/** Declarative placeholder ; StickyTabs reads these props and renders the actual <section>. */
 function StickyTabsItem(_props: StickyTabsItemProps): ReactElement | null {
   return null
 }

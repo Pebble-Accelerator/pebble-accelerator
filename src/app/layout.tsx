@@ -20,11 +20,11 @@ const ibmPlexSans = IBM_Plex_Sans({
 })
 
 export const metadata: Metadata = {
-  title: 'Pebble Accelerator — Biomedical Innovation from Hong Kong',
+  title: 'Pebble Accelerator · Biomedical Innovation from Hong Kong',
   description:
     'Pebble is a boutique accelerator empowering biomedical innovation. We back founders building the future of medicine from Hong Kong.',
   openGraph: {
-    title: 'Pebble Accelerator — Biomedical Innovation from Hong Kong',
+    title: 'Pebble Accelerator · Biomedical Innovation from Hong Kong',
     description:
       'Pebble is a boutique accelerator empowering biomedical innovation. We back founders building the future of medicine from Hong Kong.',
     url: 'https://pebbleaccelerator.com',

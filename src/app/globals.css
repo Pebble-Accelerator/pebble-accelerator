@@ -48,7 +48,7 @@ button { cursor: pointer; }
 a { color: inherit; text-decoration: none; }
 
 @media (prefers-reduced-motion: no-preference) {
-  /* Founders underline: stroke-dash draw only (no opacity — avoids compositor jitter). */
+  /* Founders underline: stroke-dash draw only (no opacity ; avoids compositor jitter). */
   @keyframes drawOval {
     from {
       stroke-dashoffset: 1100;
@@ -102,7 +102,7 @@ a { color: inherit; text-decoration: none; }
 
 /* Animated underline draw-on for nav + inline text links.
    Consistent rule: underline is HIDDEN at rest and wipes in left→right on
-   hover/focus-visible (applies to email/LinkedIn too — their static underline is
+   hover/focus-visible (applies to email/LinkedIn too ; their static underline is
    converted to this). currentColor by default; sage variant for nav. The ::after
    is absolutely positioned so there is zero layout shift. */
 .link-underline {
@@ -161,7 +161,7 @@ a { color: inherit; text-decoration: none; }
   animation: none !important;
   opacity: 0.28;
 }
-/* Homepage: single scroll surface — prevent body + snap-container fighting */
+/* Homepage: single scroll surface ; prevent body + snap-container fighting */
 body:has(.snap-container) {
   overflow: hidden;
   height: 100%;
@@ -183,7 +183,7 @@ body:has(.snap-container) > footer {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Snap disabled during layout iteration — rhythm kept via section heights */
+/* Snap disabled during layout iteration ; rhythm kept via section heights */
 .snap-final-group {
   scroll-snap-align: none;
   flex-shrink: 0;

@@ -29,21 +29,9 @@ const fieldLabel: CSSProperties = {
 }
 
 const QUALIFIERS = [
-  {
-    num: '01',
-    lead: 'Founders',
-    rest: ' building the next generation of biomedical companies.',
-  },
-  {
-    num: '02',
-    lead: 'International teams',
-    rest: ' seeking a foothold in Hong Kong & Greater China.',
-  },
-  {
-    num: '03',
-    lead: 'Clinical & institutional partners',
-    rest: ' looking to collaborate.',
-  },
+  { num: '01', lead: 'Founders', rest: ' building biomedical companies.' },
+  { num: '02', lead: 'International teams', rest: ' entering Greater China.' },
+  { num: '03', lead: 'Clinical & institutional partners', rest: ' seeking collaboration.' },
 ]
 
 export default function ContactPage() {
@@ -104,23 +92,30 @@ export default function ContactPage() {
                 If any of these describe you, we want to hear from you.
               </p>
 
+              {/* Three qualifier items wrapped in a single flat container with
+                  a thin sage hairline border. Internal dividers between items
+                  use the same hairline; the container border handles the top
+                  and bottom edges, so no rules above item 1 or below item 3. */}
               <ol
                 style={{
                   listStyle: 'none',
                   margin: 0,
                   padding: 0,
-                  borderBottom: '1px solid rgba(26,26,26,0.12)',
+                  border: '1px solid rgba(94, 122, 106, 0.28)',
+                  borderRadius: '3px',
+                  background: 'transparent',
+                  width: '100%',
                 }}
               >
-                {QUALIFIERS.map((q) => (
+                {QUALIFIERS.map((q, i) => (
                   <li
                     key={q.num}
                     style={{
                       display: 'flex',
                       gap: '24px',
                       alignItems: 'baseline',
-                      padding: '22px 0',
-                      borderTop: '1px solid rgba(26,26,26,0.12)',
+                      padding: '22px 24px',
+                      borderTop: i === 0 ? 'none' : '1px solid rgba(94, 122, 106, 0.28)',
                     }}
                   >
                     <span

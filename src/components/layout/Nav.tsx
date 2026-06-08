@@ -55,10 +55,10 @@ export default function Nav() {
           justifyContent: 'space-between',
         }}>
 
-          {/* Logo — left (home / back-to-top control) */}
+          {/* Logo: left (home / back-to-top control) */}
           <Link
             href="/"
-            aria-label="Pebble Accelerator — back to top"
+            aria-label="Pebble Accelerator, back to top"
             onClick={handleLogoActivate}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ' || e.code === 'Space') {
@@ -76,7 +76,7 @@ export default function Nav() {
                 occupying rows 968-1117 underneath. Wrapper height (48px) +
                 image scaled to 115px tall + translateY(-24px) clips the
                 wordmark below the wrapper while keeping the mark crisp and
-                centered. Mark renders at ~48px tall — roughly 3× the
+                centered. Mark renders at ~48px tall, roughly 3× the
                 effective mark size of the previous 40px stacked render. */}
             <div
               style={{
@@ -107,7 +107,7 @@ export default function Nav() {
             </div>
           </Link>
 
-          {/* Links — right, desktop only */}
+          {/* Links: right, desktop only */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
@@ -136,7 +136,7 @@ export default function Nav() {
             ))}
           </div>
 
-          {/* Hamburger — mobile only */}
+          {/* Hamburger: mobile only */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             style={{

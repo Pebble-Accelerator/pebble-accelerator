@@ -26,7 +26,7 @@ type CityMarker = {
   latitude: number
   // Anchor cities carry a permanent label; non-anchors only show their label
   // on hover (desktop) or tap (mobile). Both kinds use the same flat label
-  // style — the difference is just whether the label always renders.
+  // style ; the difference is just whether the label always renders.
   anchor: boolean
   // CSS pixels from dot center to the matching corner of the label.
   // For non-anchors the offset is tuned to point toward map center so the
@@ -35,13 +35,13 @@ type CityMarker = {
 }
 
 const CITIES: CityMarker[] = [
-  // 4 anchors — hand-tuned diverging offsets so the permanent labels never
+  // 4 anchors ; hand-tuned diverging offsets so the permanent labels never
   // collide with each other or with neighbouring dots at either breakpoint.
   { id: 'hongkong', city: 'Hong Kong', longitude: 114.17, latitude: 22.32, anchor: true, labelPos: { top: 10, left: 12 } },
   { id: 'macau', city: 'Macau', longitude: 113.54, latitude: 22.19, anchor: true, labelPos: { top: 10, right: 12 } },
   { id: 'shenzhen', city: 'Shenzhen', longitude: 114.06, latitude: 22.55, anchor: true, labelPos: { bottom: 10, left: 12 } },
   { id: 'guangzhou', city: 'Guangzhou', longitude: 113.26, latitude: 23.13, anchor: true, labelPos: { bottom: 10, right: 12 } },
-  // 7 non-anchors — each labelPos points toward map center (~113.45, 22.66)
+  // 7 non-anchors ; each labelPos points toward map center (~113.45, 22.66)
   // so the revealed label can never escape the map frame on any side.
   { id: 'zhuhai', city: 'Zhuhai', longitude: 113.55, latitude: 22.27, anchor: false, labelPos: { bottom: 10, right: 12 } },
   { id: 'foshan', city: 'Foshan', longitude: 113.12, latitude: 23.02, anchor: false, labelPos: { top: 10, left: 12 } },
@@ -79,12 +79,12 @@ function labelStyleFor(pos: LabelPos, revealed = false): React.CSSProperties {
   }
 }
 
-// 11 cities span ~1.95° lng × 0.94° lat — wider than the previous 5,
+// 11 cities span ~1.95° lng × 0.94° lat ; wider than the previous 5,
 // so both breakpoints now drive their frame from fitBounds over the full set.
 const DESKTOP_FIT_PADDING = { top: 80, bottom: 80, left: 60, right: 60 } as const
 const MOBILE_FIT_PADDING = { top: 70, bottom: 70, left: 50, right: 50 } as const
 
-// Pre-fitBounds default — replaced as soon as the map loads.
+// Pre-fitBounds default ; replaced as soon as the map loads.
 const INITIAL_VIEW = { longitude: 113.4, latitude: 22.65, zoom: 7.2 } as const
 
 function cityCoordinateBounds(): [[number, number], [number, number]] {
@@ -116,7 +116,7 @@ function GBAMap() {
   const [mapReady, setMapReady] = useState(false)
   const [shouldLoadMap, setShouldLoadMap] = useState(false)
   // One source of truth for which non-anchor city is currently revealed.
-  // Hover (desktop) and tap (mobile) both drive this — guarantees only one
+  // Hover (desktop) and tap (mobile) both drive this ; guarantees only one
   // revealed label is visible at a time, so labels never pile up.
   const [activeCity, setActiveCity] = useState<string | null>(null)
 
@@ -132,7 +132,7 @@ function GBAMap() {
   // Whether the device can hover (fine pointer). Used to gate the
   // onMouseEnter / onMouseLeave handlers so iPad-style touch devices don't
   // ghost-hover-then-toggle and immediately hide the label they just opened.
-  // This is a capability query, not a viewport breakpoint — the 768px gate
+  // This is a capability query, not a viewport breakpoint ; the 768px gate
   // remains the single mobile/desktop layout switch.
   const [supportsHover, setSupportsHover] = useState(true)
 
@@ -153,7 +153,7 @@ function GBAMap() {
   }, [])
 
   // Tapping/clicking empty map clears any revealed label. Mapbox fires map.click
-  // only for clicks that hit the canvas, NOT for clicks on Marker DOM children —
+  // only for clicks that hit the canvas, NOT for clicks on Marker DOM children ;
   // so anchor/non-anchor dot interactions never trigger this clear.
   useEffect(() => {
     if (!mapReady) return
@@ -303,15 +303,17 @@ function GBAMap() {
       className="apac-map"
       style={{
         background: '#f5efe4',
-        height: '100vh',
+        // min-height (not fixed height) so the section grows when the left
+        // column's natural content is taller than the viewport. Top-aligned
+        // (flex-start) so content anchors below the top padding instead of
+        // centering and clipping symmetrically; the row's top padding already
+        // provides nav clearance. No overflow:hidden so "100%" never clips.
+        minHeight: '100vh',
         display: 'flex',
-        alignItems: 'center',
-        // Top reserve = fixed nav (64px) + comfortable breathing room so the
-        // "biomedical corridor." headline never sits against the nav edge.
+        alignItems: 'flex-start',
         padding: 'clamp(112px, 16vh, 160px) 5vw clamp(48px, 6vh, 96px)',
         width: '100%',
         boxSizing: 'border-box',
-        overflow: 'hidden',
       }}
     >
       <div
@@ -335,9 +337,9 @@ function GBAMap() {
             minWidth: 0,
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: 'center',
-            alignSelf: 'stretch',
-            minHeight: 'min(560px, calc(100vh - 256px))',
+            // No stretch / no min-height / no own justify ; the column hugs its
+            // natural content height, and the row's alignItems:center vertically
+            // centers this stacked block against the centered map.
             boxSizing: 'border-box',
           }}
         >
@@ -369,42 +371,26 @@ function GBAMap() {
                 color: '#2d3a35',
                 lineHeight: 1.4,
                 maxWidth: '520px',
-                marginTop: '20px',
+                marginTop: '24px',
                 marginBottom: 0,
               }}
             >
               Tiger Jade Pebble Accelerator (Pebble) is a boutique accelerator building the next
               generation of biomedical ventures across the Greater Bay Area.
             </p>
-
-            <p
-              style={{
-                fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-                fontSize: '15px',
-                fontWeight: 300,
-                color: '#1a1a1a',
-                lineHeight: 1.7,
-                maxWidth: '460px',
-                marginTop: '18px',
-                marginBottom: 0,
-              }}
-            >
-              Where 1.4 billion patients, world-class clinical infrastructure, and tier-one capital
-              converge within a 90-minute radius.
-            </p>
           </div>
 
           <div
             className="apac-map-stats"
             style={{
-              flex: 1,
-              minHeight: 0,
+              // Natural height: stats stack with a fixed comfortable gap rather
+              // than stretching to the column's extremes. The visible separation
+              // from the body text above comes from marginTop, not flex:1.
               display: 'flex',
               flexDirection: 'column',
-              justifyContent: 'space-between',
               alignItems: 'flex-start',
-              marginTop: 'clamp(24px, 3vh, 40px)',
-              paddingTop: 'clamp(20px, 2.5vh, 32px)',
+              gap: 'clamp(20px, 2.4vh, 32px)',
+              marginTop: 'clamp(40px, 5vh, 64px)',
               width: '100%',
             }}
           >
@@ -634,7 +620,7 @@ function GBAMap() {
         }
         .gba-dot--quiet {
           /* ~78% of anchor size, near-solid opacity, same cream halo as
-             anchors — reads as a definite point, just visually subordinate
+             anchors ; reads as a definite point, just visually subordinate
              to the labeled anchors. */
           transform: scale(0.78);
           opacity: 0.9;

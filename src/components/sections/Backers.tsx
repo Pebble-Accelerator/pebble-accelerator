@@ -1,15 +1,6 @@
-'use client'
-
 import Link from 'next/link'
-import { useEffect, useRef } from 'react'
 import type { CSSProperties } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import backers from '@/data/backers'
-import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
-import { getHomeScrollScroller } from '@/lib/homeSlideshow'
-
-gsap.registerPlugin(ScrollTrigger)
 
 const LOGO_BY_NAME: Record<string, string> = {
   'Tiger Med Group': '/logos/tigermed.png',
@@ -37,17 +28,17 @@ type BackersProps = {
   embedded?: boolean
 }
 
-/** Uniform bounding box for the logo area in each cell — every logo reads with equal weight regardless of native aspect. */
-const LOGO_BOX_HEIGHT = 80
-const NAKED_LOGO_MAX_HEIGHT = 60
-const NAKED_LOGO_MAX_WIDTH = 170
-const CHIP_INNER_LOGO_MAX_HEIGHT = 36
-const CHIP_INNER_LOGO_MAX_WIDTH = 124
+/** Uniform bounding box for the logo area in each cell (every logo reads with equal weight regardless of native aspect). */
+const LOGO_BOX_HEIGHT = 64
+const NAKED_LOGO_MAX_HEIGHT = 64
+const NAKED_LOGO_MAX_WIDTH = 190
+const CHIP_INNER_LOGO_MAX_HEIGHT = 42
+const CHIP_INNER_LOGO_MAX_WIDTH = 144
 
 const darkChipStyle: CSSProperties = {
   background: '#1a1a1a',
   borderRadius: '6px',
-  padding: '10px 16px',
+  padding: '8px 14px',
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -68,76 +59,17 @@ function backerLogoImg(b: (typeof backers)[number], src: string, treatment: Back
 }
 
 export default function Backers({ embedded = false }: BackersProps) {
-  const reduced = usePrefersReducedMotion()
-  const sectionRef = useRef<HTMLElement | null>(null)
-  const headerRef = useRef<HTMLDivElement | null>(null)
-  const cellRefs = useRef<(HTMLAnchorElement | null)[]>([])
-
-  useEffect(() => {
-    const section = sectionRef.current
-    const header = headerRef.current
-    const cells = cellRefs.current.filter(Boolean) as HTMLAnchorElement[]
-    if (!section || !header || cells.length === 0) return
-
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const triggers: ScrollTrigger[] = []
-
-    if (prefersReduced || reduced) {
-      gsap.set([header, ...cells], { opacity: 1, y: 0 })
-      return
-    }
-
-    const snapScroller = getHomeScrollScroller()
-    gsap.set([header, ...cells], { opacity: 0, y: 12, willChange: 'transform' })
-
-    const headerTween = gsap.to(header, {
-      opacity: 1,
-      y: 0,
-      duration: 0.7,
-      ease: 'power1.out',
-      delay: 0.05,
-      scrollTrigger: { trigger: section, scroller: snapScroller, start: 'top 90%', once: true },
-      onComplete: () => {
-        header.style.willChange = 'auto'
-      },
-    })
-    if (headerTween.scrollTrigger) triggers.push(headerTween.scrollTrigger)
-
-    const cellsTween = gsap.to(cells, {
-      opacity: 1,
-      y: 0,
-      duration: 0.7,
-      ease: 'power1.out',
-      delay: 0.18,
-      stagger: 0.07,
-      scrollTrigger: { trigger: section, scroller: snapScroller, start: 'top 90%', once: true },
-      onComplete: () => {
-        cells.forEach((c) => {
-          c.style.willChange = 'auto'
-        })
-      },
-    })
-    if (cellsTween.scrollTrigger) triggers.push(cellsTween.scrollTrigger)
-
-    return () => {
-      triggers.forEach((t) => t.kill())
-    }
-  }, [reduced])
-
-  const renderCell = (b: (typeof backers)[number], i: number) => {
+  const renderCell = (b: (typeof backers)[number]) => {
     const src = LOGO_BY_NAME[b.name]
     const treatment = BACKER_LOGO_TREATMENT[b.name] ?? 'default'
     const logoNode = backerLogoImg(b, src, treatment)
     return (
       <a
         key={b.name}
-        ref={(el) => {
-          cellRefs.current[i] = el
-        }}
         href={b.href}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label={`${b.name} — ${b.region}`}
+        aria-label={`${b.name}, ${b.region}`}
         className="backer-cell"
       >
         <div className="backer-cell__logobox">
@@ -170,7 +102,7 @@ export default function Backers({ embedded = false }: BackersProps) {
       }
 
   return (
-    <section ref={sectionRef} className="backers-section backers-section--embedded" style={sectionStyle}>
+    <section className="backers-section backers-section--embedded" style={sectionStyle}>
       <div
         className="backers-shell"
         style={{
@@ -185,24 +117,27 @@ export default function Backers({ embedded = false }: BackersProps) {
           gap: 'clamp(32px, 4vh, 56px)',
         }}
       >
-        {/* Header — two columns on desktop, stacked on mobile */}
-        <div ref={headerRef} className="backers-header">
-          <div className="backers-header__left">
-            <p className="backers-eyebrow">Our partners</p>
-            <h2 className="backers-headline">
-              Backed by leaders in medicine, capital, and industry.
-            </h2>
+        {/* Header: eyebrow spans both cols, then headline (col 1) + lede (col 2)
+            sit as peers in row 2. Top-aligned so the lede starts at the same Y
+            as the headline's first line, removing the prior "floating low" dead space. */}
+        <div className="backers-header">
+          <div className="backers-eyebrow">
+            <span className="backers-eyebrow-dot" aria-hidden />
+            <span className="backers-eyebrow-label">Our partners</span>
           </div>
+          <h2 className="backers-headline">
+            Backed by leaders in medicine, capital, and industry.
+          </h2>
           <p className="backers-lede">
             Pebble is supported by a network of strategic investors and institutions across Greater
             China and beyond.
           </p>
         </div>
 
-        {/* Grid — 3 desktop, 2 mobile; logo + region only */}
-        <div className="backers-grid">{backers.map((b, i) => renderCell(b, i))}</div>
+        {/* Grid: 3 desktop, 2 mobile; logo + region only */}
+        <div className="backers-grid">{backers.map((b) => renderCell(b))}</div>
 
-        {/* Footer line — partner CTA */}
+        {/* Footer line: partner CTA */}
         <p className="backers-footnote">
           Interested in partnering with Pebble?{' '}
           <Link href="/contact" className="backers-footnote__link">
@@ -216,33 +151,48 @@ export default function Backers({ embedded = false }: BackersProps) {
         .backers-header {
           display: grid;
           grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+          grid-template-rows: auto auto;
           column-gap: clamp(32px, 5vw, 80px);
-          align-items: end;
+          row-gap: clamp(18px, 2.4vh, 32px);
+          align-items: start;
           width: 100%;
         }
-        .backers-header__left {
-          min-width: 0;
-        }
         .backers-eyebrow {
-          margin: 0 0 14px;
+          grid-column: 1 / -1;
+          margin: 0;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+        .backers-eyebrow-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: #E8703A;
+          display: inline-block;
+          flex-shrink: 0;
+        }
+        .backers-eyebrow-label {
           font-family: var(--font-ibm-plex-sans), system-ui, sans-serif;
           font-size: 11px;
           font-weight: 400;
-          letter-spacing: 0.18em;
+          letter-spacing: 0.14em;
           text-transform: uppercase;
-          color: #5e7a6a;
+          color: rgba(26, 26, 26, 0.55);
         }
         .backers-headline {
+          grid-column: 1;
           margin: 0;
           font-family: var(--font-cormorant), Georgia, serif;
           font-weight: 500;
-          font-size: clamp(30px, 3.4vw, 48px);
-          line-height: 1.1;
+          font-size: clamp(28px, 3vw, 44px);
+          line-height: 1.12;
           letter-spacing: -0.015em;
           color: #1a1a1a;
-          max-width: 16ch;
+          max-width: 18ch;
         }
         .backers-lede {
+          grid-column: 2;
           margin: 0;
           font-family: var(--font-ibm-plex-sans), system-ui, sans-serif;
           font-size: 15px;
@@ -250,7 +200,9 @@ export default function Backers({ embedded = false }: BackersProps) {
           line-height: 1.6;
           color: #555;
           max-width: 38ch;
-          padding-bottom: 4px;
+          /* Optical alignment: drop the lede slightly so its top reads aligned
+             with the Cormorant headline's cap-line, not its x-height. */
+          padding-top: 6px;
         }
 
         .backers-grid {
@@ -269,7 +221,7 @@ export default function Backers({ embedded = false }: BackersProps) {
           justify-content: flex-start;
           text-decoration: none;
           background: #efe8db;
-          padding: clamp(24px, 2.4vw, 32px) clamp(20px, 2vw, 28px) clamp(16px, 1.8vw, 22px);
+          padding: clamp(18px, 1.8vw, 22px) clamp(20px, 2vw, 28px) clamp(12px, 1.3vw, 16px);
           box-sizing: border-box;
           border-radius: 3px;
           transition: background-color 200ms ease, transform 200ms ease;
@@ -292,7 +244,7 @@ export default function Backers({ embedded = false }: BackersProps) {
         .backer-cell__divider {
           height: 1px;
           background: rgba(26, 26, 26, 0.1);
-          margin: clamp(16px, 1.6vw, 22px) 0 clamp(10px, 1.1vw, 14px);
+          margin: clamp(10px, 1.1vw, 14px) 0 clamp(7px, 0.8vw, 10px);
         }
         .backer-cell__region {
           font-family: var(--font-ibm-plex-sans), system-ui, sans-serif;
@@ -326,11 +278,16 @@ export default function Backers({ embedded = false }: BackersProps) {
         @media (max-width: 767px) {
           .backers-header {
             grid-template-columns: 1fr;
-            row-gap: 18px;
+            row-gap: 14px;
             align-items: start;
           }
+          .backers-eyebrow,
+          .backers-headline,
           .backers-lede {
-            padding-bottom: 0;
+            grid-column: 1;
+          }
+          .backers-lede {
+            padding-top: 0;
             max-width: none;
           }
           .backers-grid {
@@ -339,7 +296,7 @@ export default function Backers({ embedded = false }: BackersProps) {
             row-gap: 16px;
           }
           .backer-cell {
-            padding: 20px 16px 14px;
+            padding: 16px 14px 12px;
           }
         }
       `}</style>
