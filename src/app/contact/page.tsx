@@ -3,24 +3,30 @@ import FadeIn from '@/components/ui/FadeIn'
 
 const SAGE = '#5e7a6a'
 const EMBER = '#E8703A'
+const FOREST = '#2d3a35'
 const INK = '#1a1a1a'
-const MONO = "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace"
 const LINKEDIN = 'https://linkedin.com/company/pebbleaccelerator'
 
-const monoLabel: CSSProperties = {
+const eyebrowLabel: CSSProperties = {
   display: 'block',
-  fontFamily: MONO,
+  fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
   fontSize: '11px',
-  letterSpacing: '0.12em',
+  fontWeight: 400,
+  letterSpacing: '0.14em',
   textTransform: 'uppercase',
-  color: 'rgba(26,26,26,0.5)',
+  color: 'rgba(26,26,26,0.55)',
 }
 
-const inputClassName =
-  'w-full rounded-[6px] border border-solid border-[rgba(26,26,26,0.10)] bg-[#fbf8f1] px-4 py-[15px] text-[15px] text-[#1a1a1a] outline-none transition-colors duration-150 placeholder:text-[rgba(26,26,26,0.4)] focus:border-[#5e7a6a]'
-
-// Consistent vertical gap between field groups; label-to-input stays tight (8px).
-const fieldGroup: CSSProperties = { marginBottom: '30px' }
+const fieldLabel: CSSProperties = {
+  display: 'block',
+  fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+  fontSize: '11px',
+  fontWeight: 400,
+  letterSpacing: '0.14em',
+  textTransform: 'uppercase',
+  color: 'rgba(26,26,26,0.55)',
+  marginBottom: '10px',
+}
 
 const QUALIFIERS = [
   {
@@ -51,13 +57,11 @@ export default function ContactPage() {
         paddingBottom: 'clamp(64px, 12vh, 180px)',
       }}
     >
-      {/* Desktop only: drop the form card so its top lines up with the heading cap height. */}
-      <style>{`@media (min-width: 768px) { .contact-form-card { margin-top: 52px; } }`}</style>
       <div style={{ maxWidth: '1280px', margin: '0 auto', width: '100%' }}>
         <FadeIn>
-          <div className="flex flex-col gap-14 md:flex-row md:gap-[72px]">
-            {/* LEFT COLUMN */}
-            <div className="md:w-[46%] md:shrink-0">
+          <div className="contact-grid">
+            {/* LEFT COLUMN: copy */}
+            <div className="contact-left">
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '28px' }}>
                 <span
                   aria-hidden
@@ -69,7 +73,7 @@ export default function ContactPage() {
                     display: 'inline-block',
                   }}
                 />
-                <span style={{ ...monoLabel, color: 'rgba(26,26,26,0.55)' }}>Contact</span>
+                <span style={eyebrowLabel}>Contact</span>
               </div>
 
               <h1
@@ -89,6 +93,7 @@ export default function ContactPage() {
 
               <p
                 style={{
+                  fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
                   fontSize: '16px',
                   lineHeight: 1.6,
                   color: 'rgba(26,26,26,0.75)',
@@ -120,8 +125,10 @@ export default function ContactPage() {
                   >
                     <span
                       style={{
-                        fontFamily: MONO,
-                        fontSize: '13px',
+                        fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+                        fontSize: '12px',
+                        fontWeight: 500,
+                        letterSpacing: '0.12em',
                         color: EMBER,
                         flexShrink: 0,
                         width: '28px',
@@ -129,7 +136,15 @@ export default function ContactPage() {
                     >
                       {q.num}
                     </span>
-                    <p style={{ margin: 0, fontSize: '17px', lineHeight: 1.5, color: INK }}>
+                    <p
+                      style={{
+                        margin: 0,
+                        fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+                        fontSize: '17px',
+                        lineHeight: 1.5,
+                        color: INK,
+                      }}
+                    >
                       <span
                         className="font-display"
                         style={{ fontStyle: 'italic', color: SAGE, fontSize: '21px' }}
@@ -142,29 +157,35 @@ export default function ContactPage() {
                 ))}
               </ol>
 
-              <div style={{ display: 'flex', gap: '56px', marginTop: '44px' }}>
+              <div style={{ display: 'flex', gap: '56px', marginTop: '44px', flexWrap: 'wrap' }}>
                 <div>
-                  <p style={{ ...monoLabel, marginBottom: '10px' }}>Email</p>
+                  <p style={{ ...eyebrowLabel, marginBottom: '10px' }}>Email</p>
                   <a
-                    href="mailto:hello@pebbleaccelerator.com"
+                    href="mailto:pebbleadmin@tigerjadecapital.com"
                     className="link-underline"
                     style={{
+                      fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
                       fontSize: '15px',
                       color: INK,
                       textDecoration: 'none',
                     }}
                   >
-                    hello@pebbleaccelerator.com
+                    pebbleadmin@tigerjadecapital.com
                   </a>
                 </div>
                 <div>
-                  <p style={{ ...monoLabel, marginBottom: '10px' }}>Elsewhere</p>
+                  <p style={{ ...eyebrowLabel, marginBottom: '10px' }}>Elsewhere</p>
                   <a
                     href={LINKEDIN}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="link-underline"
-                    style={{ fontSize: '15px', color: INK, textDecoration: 'none' }}
+                    style={{
+                      fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+                      fontSize: '15px',
+                      color: INK,
+                      textDecoration: 'none',
+                    }}
                   >
                     LinkedIn &rarr;
                   </a>
@@ -172,101 +193,192 @@ export default function ContactPage() {
               </div>
             </div>
 
-            {/* RIGHT COLUMN — FORM CARD */}
-            <div className="min-w-0 md:w-[54%] md:flex-1">
-              <div
-                className="contact-form-card"
-                style={{
-                  border: '1px solid rgba(26,26,26,0.15)',
-                  borderRadius: '10px',
-                  padding: 'clamp(28px, 4vw, 48px)',
-                  background: '#faf6ec',
-                }}
-              >
-                <p style={{ ...monoLabel, marginBottom: '28px' }}>Send a message</p>
+            {/* RIGHT COLUMN: flat form on cream, no card */}
+            <div className="contact-right">
+              <p style={{ ...eyebrowLabel, marginBottom: '32px' }}>Send a message</p>
 
-                <form action="mailto:hello@pebbleaccelerator.com" method="POST">
-                  <div style={fieldGroup}>
-                    <label htmlFor="contact-name" style={{ ...monoLabel, marginBottom: '8px' }}>
-                      Full name
+              <form action="mailto:pebbleadmin@tigerjadecapital.com" method="POST" noValidate>
+                <div className="contact-field">
+                  <label htmlFor="contact-name" style={fieldLabel}>
+                    Full name
+                  </label>
+                  <input
+                    id="contact-name"
+                    type="text"
+                    name="name"
+                    required
+                    placeholder="Jane Chan"
+                    className="contact-input"
+                  />
+                </div>
+
+                <div className="contact-field-row">
+                  <div className="contact-field">
+                    <label htmlFor="contact-company" style={fieldLabel}>
+                      Company
                     </label>
                     <input
-                      id="contact-name"
+                      id="contact-company"
                       type="text"
-                      name="name"
-                      required
-                      placeholder="Jane Chan"
-                      className={inputClassName}
+                      name="company"
+                      placeholder="OncoBridge"
+                      className="contact-input"
                     />
                   </div>
-
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2" style={fieldGroup}>
-                    <div>
-                      <label htmlFor="contact-company" style={{ ...monoLabel, marginBottom: '8px' }}>
-                        Company
-                      </label>
-                      <input
-                        id="contact-company"
-                        type="text"
-                        name="company"
-                        placeholder="OncoBridge"
-                        className={inputClassName}
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="contact-email" style={{ ...monoLabel, marginBottom: '8px' }}>
-                        Email
-                      </label>
-                      <input
-                        id="contact-email"
-                        type="email"
-                        name="email"
-                        required
-                        placeholder="jane@company.com"
-                        className={inputClassName}
-                      />
-                    </div>
-                  </div>
-
-                  <div style={fieldGroup}>
-                    <label htmlFor="contact-message" style={{ ...monoLabel, marginBottom: '8px' }}>
-                      Message
+                  <div className="contact-field">
+                    <label htmlFor="contact-email" style={fieldLabel}>
+                      Email
                     </label>
-                    <textarea
-                      id="contact-message"
-                      name="message"
-                      rows={6}
+                    <input
+                      id="contact-email"
+                      type="email"
+                      name="email"
                       required
-                      placeholder="Tell us what you're building, and how we can help."
-                      className={`${inputClassName} min-h-[170px] resize-none`}
+                      placeholder="jane@company.com"
+                      className="contact-input"
                     />
                   </div>
+                </div>
 
-                  <button
-                    type="submit"
-                    className="flex w-full items-center justify-center gap-2 rounded-full border-0 bg-[#1a1a1a] py-4 text-[14px] font-medium tracking-[0.02em] text-[#f5efe4] transition-colors duration-150 hover:bg-[#333]"
-                  >
-                    Send message
-                    <span aria-hidden>&rarr;</span>
-                  </button>
+                <div className="contact-field">
+                  <label htmlFor="contact-message" style={fieldLabel}>
+                    Message
+                  </label>
+                  <textarea
+                    id="contact-message"
+                    name="message"
+                    rows={5}
+                    required
+                    placeholder="Tell us what you're building, and how we can help."
+                    className="contact-input contact-input--textarea"
+                  />
+                </div>
 
-                  <p
-                    style={{
-                      ...monoLabel,
-                      textTransform: 'none',
-                      marginTop: '16px',
-                      textAlign: 'center',
-                      letterSpacing: '0.02em',
-                    }}
-                  >
-                    We read every message — usually back within two working days.
-                  </p>
-                </form>
-              </div>
+                <button type="submit" className="contact-submit">
+                  Send message
+                  <span aria-hidden style={{ marginLeft: '8px' }}>
+                    &rarr;
+                  </span>
+                </button>
+
+                <p className="contact-footnote">
+                  We read every message, usually back within two working days.
+                </p>
+              </form>
             </div>
           </div>
         </FadeIn>
       </div>
+
+      <style>{`
+        .contact-grid {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr);
+          row-gap: 56px;
+          width: 100%;
+        }
+        @media (min-width: 768px) {
+          .contact-grid {
+            grid-template-columns: minmax(0, 46%) minmax(0, 1fr);
+            column-gap: 72px;
+            row-gap: 0;
+            align-items: start;
+          }
+          .contact-right {
+            /* Drop the form so its first label sits at the headline cap-height row. */
+            padding-top: 60px;
+          }
+        }
+
+        .contact-left, .contact-right { min-width: 0; }
+
+        .contact-field {
+          margin-bottom: 36px;
+          min-width: 0;
+        }
+        .contact-field-row {
+          display: grid;
+          grid-template-columns: 1fr;
+          column-gap: 32px;
+          margin-bottom: 0;
+        }
+        @media (min-width: 640px) {
+          .contact-field-row {
+            grid-template-columns: 1fr 1fr;
+          }
+        }
+
+        .contact-input {
+          display: block;
+          width: 100%;
+          font-family: var(--font-ibm-plex-sans), system-ui, sans-serif;
+          font-size: 16px;
+          font-weight: 400;
+          line-height: 1.5;
+          color: ${INK};
+          background: transparent;
+          border: 0;
+          border-bottom: 1px solid rgba(94, 122, 106, 0.4);
+          border-radius: 0;
+          padding: 8px 0 12px;
+          outline: none;
+          transition: border-color 180ms ease, box-shadow 180ms ease;
+          box-sizing: border-box;
+        }
+        .contact-input::placeholder {
+          color: rgba(26, 26, 26, 0.35);
+        }
+        .contact-input:hover {
+          border-bottom-color: rgba(45, 58, 53, 0.5);
+        }
+        .contact-input:focus {
+          border-bottom-color: ${FOREST};
+          box-shadow: 0 1px 0 0 ${FOREST};
+        }
+        .contact-input--textarea {
+          min-height: 140px;
+          resize: vertical;
+          padding-top: 10px;
+        }
+
+        .contact-submit {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          margin-top: 12px;
+          padding: 14px 28px;
+          font-family: var(--font-ibm-plex-sans), system-ui, sans-serif;
+          font-size: 13px;
+          font-weight: 500;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          color: #f5efe4;
+          background: ${FOREST};
+          border: 0;
+          border-radius: 2px;
+          cursor: pointer;
+          transition: background-color 160ms ease, transform 100ms ease;
+        }
+        .contact-submit:hover {
+          background: #1f2a26;
+        }
+        .contact-submit:active {
+          transform: translateY(1px);
+        }
+        .contact-submit:focus-visible {
+          outline: 2px solid ${SAGE};
+          outline-offset: 3px;
+        }
+
+        .contact-footnote {
+          margin: 18px 0 0;
+          font-family: var(--font-ibm-plex-sans), system-ui, sans-serif;
+          font-size: 13px;
+          font-weight: 300;
+          color: rgba(26, 26, 26, 0.6);
+          line-height: 1.55;
+        }
+      `}</style>
     </div>
   )
 }

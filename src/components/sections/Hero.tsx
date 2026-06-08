@@ -69,7 +69,10 @@ export default function Hero() {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        padding: '0 5vw',
+        // Top reserve = fixed nav (64px) + comfortable breathing room.
+        // Asymmetric (top > bottom) gives the headline clear space below the nav
+        // while keeping the chevron near the bottom of the slide.
+        padding: 'clamp(112px, 16vh, 160px) 5vw clamp(48px, 6vh, 96px)',
         boxSizing: 'border-box',
         overflow: 'visible',
       }}

@@ -61,7 +61,7 @@ function InvestmentHeader() {
           maxWidth: '520px',
         }}
       >
-        We write the <span style={{ fontStyle: 'italic' }}>first cheque</span>, then stay close for a
+        We write the <span style={{ fontStyle: 'italic' }}>cheque</span>, then stay close for a
         year.
       </h2>
     </>

@@ -17,11 +17,17 @@ export default function Footer() {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
           <Image
-            src="/logos/Pebble_Accelerator_Sideways_Logo_transparent_v2.png"
+            src="/logos/pebblenew.png"
             alt="Pebble Accelerator"
-            width={140}
-            height={24}
-            style={{ objectFit: 'contain', opacity: 0.5 }}
+            width={1342}
+            height={1408}
+            style={{
+              width: 'auto',
+              height: '32px',
+              objectFit: 'contain',
+              opacity: 0.5,
+              display: 'block',
+            }}
           />
           <span style={{
             fontSize: '12px',

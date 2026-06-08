@@ -22,7 +22,11 @@ export interface Company {
 
 export interface Backer {
   name: string
+  /** Investor role / category (e.g. "Strategic investor"). Kept in data for
+   *  internal reference but intentionally NOT rendered in the UI. */
   type: string
   href: string
   height?: number
+  /** Public-facing region label shown beneath the logo in the backers grid. */
+  region: string
 }

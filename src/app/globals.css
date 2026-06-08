@@ -329,61 +329,7 @@ body:has(.snap-container) > footer {
   align-self: center;
 }
 
-.backers-section--embedded .backers-embedded-inner {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding-top: 4vh;
-}
-
-.backers-section--embedded .backers-embedded-label {
-  font-family: var(--font-ibm-plex-sans), system-ui, sans-serif;
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: #888;
-  padding-top: 0;
-  margin: 0 0 20px;
-  flex-shrink: 0;
-}
-
-.backers-section--embedded .backers-embedded-row {
-  flex: 0 0 auto;
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: clamp(16px, 2.5vw, 32px);
-  width: 100%;
-}
-
-.backers-section--embedded .backer-logo-img {
-  max-height: 44px;
-  width: auto;
-  object-fit: contain;
-  display: block;
-  filter: grayscale(20%);
-  transition: filter 200ms ease;
-}
-
-.backers-section--embedded a:hover .backer-logo-img {
-  filter: grayscale(0%);
-}
-
-.backers-section--embedded .backer-logo-caption {
-  margin-top: 8px;
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #aaa;
-  text-align: center;
-  font-family: var(--font-ibm-plex-sans), system-ui, sans-serif;
-}
+/* Backers grid uses inline component CSS; no extra rules needed here. */
 
 /* Stats overlay on map */
 .stats-overlay {
@@ -541,7 +487,8 @@ body:has(.snap-container) > footer {
     height: auto !important;
     overflow: visible !important;
     align-items: flex-start !important;
-    padding: 48px 5vw !important;
+    /* Top reserve covers the fixed 64px nav on mobile native scroll. */
+    padding: 112px 5vw 48px !important;
   }
 
   .apac-map-layout {
@@ -644,36 +591,12 @@ body:has(.snap-container) > footer {
   }
 
   .saltagen-embedded-logo {
-    max-width: min(280px, 72vw) !important;
+    max-width: min(200px, 60vw) !important;
     margin: 0 auto;
   }
 
   .saltagen-embedded-visit {
-    margin-top: 0 !important;
-  }
-
-  .saltagen-embedded-band {
-    padding-top: 28px !important;
-    padding-bottom: 40px !important;
-  }
-
-  .backers-band {
-    flex-direction: column !important;
-    align-items: stretch !important;
-    padding-right: 0 !important;
-    gap: 20px !important;
-    height: auto !important;
-  }
-
-  .backers-band > div:last-child {
-    width: 100% !important;
-    justify-content: stretch !important;
-  }
-
-  .backers-band-scroll {
-    flex: 1 1 auto !important;
-    width: 100% !important;
-    min-width: 0 !important;
+    margin-top: 16px !important;
   }
 
   .forest-cta--embedded {
@@ -684,30 +607,4 @@ body:has(.snap-container) > footer {
   }
 }
 
-@media (min-width: 768px) {
-  .saltagen-embedded-grid {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
-    grid-template-rows: auto auto;
-    align-items: center;
-  }
-
-  .saltagen-embedded-copy {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  .saltagen-embedded-grid > .saltagen-embedded-logo,
-  .saltagen-embedded-grid > div:has(.saltagen-embedded-logo) {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-    align-self: center;
-  }
-
-  .saltagen-embedded-visit {
-    grid-column: 1;
-    grid-row: 2;
-    align-self: start;
-    margin-top: 12px !important;
-  }
-}
 

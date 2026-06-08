@@ -1,6 +1,7 @@
 import Hero from '@/components/sections/Hero'
 import GBAMap from '@/components/sections/GBAMap'
 import Services from '@/components/sections/Services'
+import Backers from '@/components/sections/Backers'
 import SaltaGen from '@/components/sections/SaltaGen'
 import CTAStrip from '@/components/sections/CTAStrip'
 import Footer from '@/components/layout/Footer'
@@ -52,6 +53,10 @@ export default function Home() {
         </div>
         <div className="home-slide" style={snapWrapperStyle}>
           <Services embedded />
+        </div>
+
+        <div className="home-slide" style={snapWrapperStyle}>
+          <Backers embedded />
         </div>
 
         <div className="home-slide" style={snapWrapperStyle}>

@@ -70,19 +70,41 @@ export default function Nav() {
             }}
             style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
           >
-            <Image
-              src="/logos/Pebble_Accelerator_Sideways_Logo_transparent_v2.png"
-              alt="Pebble Accelerator"
-              width={220}
-              height={40}
-              priority={true}
+            {/* Mark-only crop of the stacked logo.
+                Asset is 1342×1408 with the wave mark occupying rows 292-880
+                (~588px tall, ~71% of content height) and the "PEBBLE" wordmark
+                occupying rows 968-1117 underneath. Wrapper height (48px) +
+                image scaled to 115px tall + translateY(-24px) clips the
+                wordmark below the wrapper while keeping the mark crisp and
+                centered. Mark renders at ~48px tall — roughly 3× the
+                effective mark size of the previous 40px stacked render. */}
+            <div
               style={{
-                objectFit: 'contain',
-                objectPosition: 'left center',
-                opacity: 1,
-                filter: 'none',
+                width: '110px',
+                height: '48px',
+                overflow: 'hidden',
+                display: 'block',
+                flexShrink: 0,
               }}
-            />
+            >
+              <Image
+                src="/logos/pebblenew.png"
+                alt="Pebble Accelerator"
+                width={1342}
+                height={1408}
+                priority={true}
+                style={{
+                  width: '110px',
+                  height: '115px',
+                  objectFit: 'contain',
+                  objectPosition: 'left center',
+                  opacity: 1,
+                  filter: 'none',
+                  display: 'block',
+                  transform: 'translateY(-24px)',
+                }}
+              />
+            </div>
           </Link>
 
           {/* Links — right, desktop only */}

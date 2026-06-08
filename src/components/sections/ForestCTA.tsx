@@ -169,7 +169,7 @@ export default function ForestCTA({ embedded = false }: ForestCTAProps) {
           />
 
           <a
-            href="mailto:hello@pebbleaccelerator.com"
+            href="mailto:pebbleadmin@tigerjadecapital.com"
             className="link-underline"
             style={{
               fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
@@ -178,7 +178,7 @@ export default function ForestCTA({ embedded = false }: ForestCTAProps) {
               textDecoration: 'none',
             }}
           >
-            hello@pebbleaccelerator.com
+            pebbleadmin@tigerjadecapital.com
           </a>
         </div>
       </div>

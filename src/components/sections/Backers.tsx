@@ -1,11 +1,11 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import Link from 'next/link'
+import { useEffect, useRef } from 'react'
 import type { CSSProperties } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import backers from '@/data/backers'
-import SectionLabelLine from '@/components/ui/SectionLabelLine'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import { getHomeScrollScroller } from '@/lib/homeSlideshow'
 
@@ -22,7 +22,7 @@ const LOGO_BY_NAME: Record<string, string> = {
 
 type BackerLogoTreatment = 'default' | 'multiply' | 'dark-chip'
 
-/** Per-asset visibility: default = color on cream; multiply = white baked box; dark-chip = light mark */
+/** Per-asset visibility: default = color on cream; multiply = white baked box; dark-chip = light mark on a dark chip (logo treatment, not decoration). */
 const BACKER_LOGO_TREATMENT: Record<string, BackerLogoTreatment> = {
   'Tiger Med Group': 'default',
   'Tiger Jade Capital': 'dark-chip',
@@ -32,515 +32,317 @@ const BACKER_LOGO_TREATMENT: Record<string, BackerLogoTreatment> = {
   'THF Enterprises': 'multiply',
 }
 
-const bandLogoBaseStyle: CSSProperties = {
-  maxHeight: 'clamp(48px, 5vw, 56px)',
-  height: 'auto',
-  width: 'auto',
-  maxWidth: 'clamp(100px, 12vw, 150px)',
-  objectFit: 'contain',
-  display: 'block',
+type BackersProps = {
+  /** Use the slide-shaped 100vh layout. The home page renders <Backers embedded /> as its own slide. */
+  embedded?: boolean
 }
 
-function backerLogoImgStyle(treatment: BackerLogoTreatment): CSSProperties {
-  if (treatment === 'multiply') {
-    return { ...bandLogoBaseStyle, mixBlendMode: 'multiply' }
-  }
-  return { ...bandLogoBaseStyle }
-}
+/** Uniform bounding box for the logo area in each cell — every logo reads with equal weight regardless of native aspect. */
+const LOGO_BOX_HEIGHT = 80
+const NAKED_LOGO_MAX_HEIGHT = 60
+const NAKED_LOGO_MAX_WIDTH = 170
+const CHIP_INNER_LOGO_MAX_HEIGHT = 36
+const CHIP_INNER_LOGO_MAX_WIDTH = 124
 
 const darkChipStyle: CSSProperties = {
   background: '#1a1a1a',
-  borderRadius: '7px',
-  padding: '16px 20px',
+  borderRadius: '6px',
+  padding: '10px 16px',
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
 }
 
-type BackersProps = {
-  embedded?: boolean
-  /** Thin horizontal logo strip for SaltaGen slide bottom band */
-  variant?: 'default' | 'band'
-}
-
-const captionStandalone: CSSProperties = {
-  marginTop: '10px',
-  textAlign: 'center',
-  fontSize: '11px',
-  letterSpacing: '0.06em',
-  color: '#999',
-  display: 'block',
-  fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-}
-
-const bandLabelStyle: CSSProperties = {
-  fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-  fontSize: '11px',
-  fontWeight: 400,
-  letterSpacing: '0.12em',
-  textTransform: 'uppercase',
-  color: '#888',
-  flexShrink: 0,
-  whiteSpace: 'nowrap',
-}
-
-function BackersBandLogo({
-  b,
-  src,
-}: {
-  b: (typeof backers)[number]
-  src: string
-}) {
-  const treatment = BACKER_LOGO_TREATMENT[b.name] ?? 'default'
+function backerLogoImg(b: (typeof backers)[number], src: string, treatment: BackerLogoTreatment) {
+  const isChip = treatment === 'dark-chip'
   const imgStyle: CSSProperties = {
-    ...backerLogoImgStyle(treatment),
-    ...(b.name === 'HK Cocoon'
-      ? {
-          maxHeight: 'clamp(54px, 5.65vw, 64px)',
-          maxWidth: 'clamp(112px, 13.5vw, 168px)',
-        }
-      : {}),
+    maxHeight: isChip ? `${CHIP_INNER_LOGO_MAX_HEIGHT}px` : `${NAKED_LOGO_MAX_HEIGHT}px`,
+    maxWidth: isChip ? `${CHIP_INNER_LOGO_MAX_WIDTH}px` : `${NAKED_LOGO_MAX_WIDTH}px`,
+    height: 'auto',
+    width: 'auto',
+    objectFit: 'contain',
+    display: 'block',
+    ...(treatment === 'multiply' ? { mixBlendMode: 'multiply' } : {}),
   }
-
-  const logoNode = (
-    <img className="backer-band-logo" src={src} alt={b.name} style={imgStyle} />
-  )
-
-  return (
-    <a
-      href={b.href}
-      target="_blank"
-      rel="noopener noreferrer"
-      style={{
-        textDecoration: 'none',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flex: '0 0 auto',
-        minWidth: 0,
-        background: 'transparent',
-      }}
-    >
-      {treatment === 'dark-chip' ? <div style={darkChipStyle}>{logoNode}</div> : logoNode}
-    </a>
-  )
+  return <img className="backer-logo-img" src={src} alt={b.name} style={imgStyle} />
 }
 
-function BackersBand() {
-  const scrollRef = useRef<HTMLDivElement | null>(null)
-  const [canScrollLeft, setCanScrollLeft] = useState(false)
-  const [canScrollRight, setCanScrollRight] = useState(false)
-
-  const updateScrollButtons = () => {
-    const el = scrollRef.current
-    if (!el) {
-      setCanScrollLeft(false)
-      setCanScrollRight(false)
-      return
-    }
-
-    const atLeft = el.scrollLeft <= 0
-    const atRight = el.scrollLeft + el.clientWidth >= el.scrollWidth - 1
-
-    setCanScrollLeft(!atLeft)
-    setCanScrollRight(!atRight)
-  }
-
-  useEffect(() => {
-    updateScrollButtons()
-    const el = scrollRef.current
-    if (!el) return
-
-    const onScroll = () => updateScrollButtons()
-    el.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', updateScrollButtons)
-
-    return () => {
-      el.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', updateScrollButtons)
-    }
-  }, [])
-
-  const scrollByAmount = 350
-
-  return (
-    <>
-      <div
-        className="backers-band"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          width: '100%',
-          maxWidth: '1280px',
-          margin: '0 auto',
-          paddingRight: '40px',
-          height: '100%',
-          gap: '0',
-          boxSizing: 'border-box',
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            flexShrink: 0,
-          }}
-        >
-          <span style={bandLabelStyle}>Backed by</span>
-          <div
-            aria-hidden
-            style={{
-              width: '1px',
-              height: '32px',
-              background: '#d4cfc2',
-              flexShrink: 0,
-              marginLeft: '28px',
-              marginRight: '28px',
-            }}
-          />
-        </div>
-
-        <div
-          style={{
-            flex: '1 1 auto',
-            minWidth: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-          }}
-        >
-          <button
-            type="button"
-            aria-label="Scroll backers left"
-            aria-disabled={!canScrollLeft}
-            disabled={!canScrollLeft}
-            className="backers-band-arrow backers-band-arrow--left"
-            onClick={() => {
-              const el = scrollRef.current
-              if (!el) return
-              el.scrollBy({ left: -scrollByAmount, behavior: 'smooth' })
-            }}
-          >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
-              <path
-                d="M8.7 3.2L4.4 7l4.3 3.8"
-                stroke="#1a1a1a"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-
-          <div
-            ref={scrollRef}
-            className="backers-band-scroll"
-            style={{
-              overflowX: 'auto',
-              overflowY: 'hidden',
-              scrollBehavior: 'smooth',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 'clamp(48px, 4vw, 64px)',
-              flex: '0 1 auto',
-              minWidth: 0,
-              padding: 0,
-            }}
-          >
-            {backers.map((b) => {
-              const src = LOGO_BY_NAME[b.name]
-              return (
-                <BackersBandLogo key={b.name} b={b} src={src} />
-              )
-            })}
-          </div>
-
-          <button
-            type="button"
-            aria-label="Scroll backers right"
-            aria-disabled={!canScrollRight}
-            disabled={!canScrollRight}
-            className="backers-band-arrow backers-band-arrow--right"
-            onClick={() => {
-              const el = scrollRef.current
-              if (!el) return
-              el.scrollBy({ left: scrollByAmount, behavior: 'smooth' })
-            }}
-          >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
-              <path
-                d="M5.3 3.2L9.6 7l-4.3 3.8"
-                stroke="#1a1a1a"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      <style jsx>{`
-        .backers-band-scroll {
-          scrollbar-width: none;
-          -ms-overflow-style: none;
-        }
-        .backers-band-scroll::-webkit-scrollbar {
-          display: none;
-        }
-
-        .backers-band-arrow {
-          width: 36px;
-          height: 36px;
-          border-radius: 9999px;
-          border: 1px solid #d4cfc2;
-          background: transparent;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          padding: 0;
-          cursor: pointer;
-          transition: border-color 150ms ease, transform 100ms ease, opacity 150ms ease;
-          flex-shrink: 0;
-        }
-
-        .backers-band-arrow--left {
-          margin-right: 18px;
-        }
-
-        .backers-band-arrow--right {
-          margin-left: 18px;
-        }
-
-        .backers-band-arrow:hover {
-          border-color: #1a1a1a;
-        }
-
-        .backers-band-arrow:active {
-          transform: scale(0.95);
-        }
-
-        .backers-band-arrow:focus-visible {
-          outline: 2px solid #5e7a6a;
-          outline-offset: 2px;
-        }
-
-        .backers-band-arrow:disabled {
-          opacity: 0.3;
-          pointer-events: none;
-        }
-      `}</style>
-    </>
-  )
-}
-
-export default function Backers({ embedded = false, variant = 'default' }: BackersProps) {
+export default function Backers({ embedded = false }: BackersProps) {
   const reduced = usePrefersReducedMotion()
   const sectionRef = useRef<HTMLElement | null>(null)
-  const labelRef = useRef<HTMLDivElement | null>(null)
-  const logoRefs = useRef<(HTMLAnchorElement | null)[]>([])
+  const headerRef = useRef<HTMLDivElement | null>(null)
+  const cellRefs = useRef<(HTMLAnchorElement | null)[]>([])
 
   useEffect(() => {
     const section = sectionRef.current
-    const label = labelRef.current
-    const logos = logoRefs.current.filter(Boolean) as HTMLAnchorElement[]
-    if (!section || logos.length === 0) return
-    if (!embedded && !label) return
+    const header = headerRef.current
+    const cells = cellRefs.current.filter(Boolean) as HTMLAnchorElement[]
+    if (!section || !header || cells.length === 0) return
 
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const triggers: ScrollTrigger[] = []
 
     if (prefersReduced || reduced) {
-      if (label) gsap.set(label, { opacity: 1, y: 0 })
-      gsap.set(logos, { opacity: 1, y: 0 })
+      gsap.set([header, ...cells], { opacity: 1, y: 0 })
       return
     }
 
     const snapScroller = getHomeScrollScroller()
+    gsap.set([header, ...cells], { opacity: 0, y: 12, willChange: 'transform' })
 
-    if (label) gsap.set(label, { opacity: 0, y: 12, willChange: 'transform' })
-    gsap.set(logos, { opacity: 0, y: 12, willChange: 'transform' })
-
-    if (label) {
-      const labelTween = gsap.to(label, {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: 'power1.out',
-        delay: 0.1,
-        scrollTrigger: {
-          trigger: section,
-          scroller: snapScroller,
-          start: 'top 95%',
-          once: true,
-        },
-        onComplete: () => {
-          label.style.willChange = 'auto'
-        },
-      })
-      if (labelTween.scrollTrigger) triggers.push(labelTween.scrollTrigger)
-    }
-
-    const logosTween = gsap.to(logos, {
+    const headerTween = gsap.to(header, {
       opacity: 1,
       y: 0,
-      duration: 0.8,
+      duration: 0.7,
       ease: 'power1.out',
-      delay: 0.1,
-      stagger: 0.15,
-      scrollTrigger: {
-        trigger: section,
-        scroller: snapScroller,
-        start: 'top 95%',
-        once: true,
-      },
+      delay: 0.05,
+      scrollTrigger: { trigger: section, scroller: snapScroller, start: 'top 90%', once: true },
       onComplete: () => {
-        logos.forEach((logo) => {
-          logo.style.willChange = 'auto'
+        header.style.willChange = 'auto'
+      },
+    })
+    if (headerTween.scrollTrigger) triggers.push(headerTween.scrollTrigger)
+
+    const cellsTween = gsap.to(cells, {
+      opacity: 1,
+      y: 0,
+      duration: 0.7,
+      ease: 'power1.out',
+      delay: 0.18,
+      stagger: 0.07,
+      scrollTrigger: { trigger: section, scroller: snapScroller, start: 'top 90%', once: true },
+      onComplete: () => {
+        cells.forEach((c) => {
+          c.style.willChange = 'auto'
         })
       },
     })
-    if (logosTween.scrollTrigger) triggers.push(logosTween.scrollTrigger)
+    if (cellsTween.scrollTrigger) triggers.push(cellsTween.scrollTrigger)
 
     return () => {
       triggers.forEach((t) => t.kill())
     }
-  }, [reduced, embedded])
+  }, [reduced])
 
-  const renderLogo = (b: (typeof backers)[number], i: number) => {
+  const renderCell = (b: (typeof backers)[number], i: number) => {
     const src = LOGO_BY_NAME[b.name]
     const treatment = BACKER_LOGO_TREATMENT[b.name] ?? 'default'
-    const imgStyle: CSSProperties = {
-      maxHeight: embedded ? '44px' : `${b.height || 56}px`,
-      height: 'auto',
-      width: 'auto',
-      objectFit: 'contain',
-      display: 'block',
-      ...(treatment === 'multiply' ? { mixBlendMode: 'multiply' } : {}),
-    }
-
-    const logoNode = (
-      <img className="backer-logo-img" src={src} alt={b.name} style={imgStyle} />
-    )
-
+    const logoNode = backerLogoImg(b, src, treatment)
     return (
       <a
         key={b.name}
         ref={(el) => {
-          logoRefs.current[i] = el
+          cellRefs.current[i] = el
         }}
         href={b.href}
         target="_blank"
         rel="noopener noreferrer"
-        style={{
-          textDecoration: 'none',
-          flex: embedded ? '1 1 0' : undefined,
-          minWidth: embedded ? 0 : '140px',
-          flexShrink: embedded ? 1 : 0,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: 'transparent',
-        }}
+        aria-label={`${b.name} — ${b.region}`}
+        className="backer-cell"
       >
-        {treatment === 'dark-chip' ? (
-          <div className="backer-logo-pill" style={darkChipStyle}>
-            {logoNode}
-          </div>
-        ) : (
-          logoNode
-        )}
-        <span className={embedded ? 'backer-logo-caption' : undefined} style={embedded ? undefined : captionStandalone}>
-          {b.type}
-        </span>
+        <div className="backer-cell__logobox">
+          {treatment === 'dark-chip' ? <div style={darkChipStyle}>{logoNode}</div> : logoNode}
+        </div>
+        <div className="backer-cell__divider" aria-hidden />
+        <div className="backer-cell__region">{b.region}</div>
       </a>
     )
   }
 
-  if (variant === 'band') {
-    return <BackersBand />
-  }
-
-  if (embedded) {
-    return (
-      <section
-        ref={sectionRef}
-        className="backers-section backers-section--embedded"
-        style={{
-          background: '#f5efe4',
-          height: '100vh',
-          maxHeight: '100vh',
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          boxSizing: 'border-box',
-          border: 'none',
-          overflow: 'hidden',
-          paddingTop: '60px',
-          paddingLeft: '5vw',
-          paddingRight: '5vw',
-          paddingBottom: '20px',
-        }}
-      >
-        <div className="backers-embedded-inner">
-          <div ref={labelRef} className="backers-embedded-label">
-            Backed by
-          </div>
-          <div className="backers-embedded-row">{backers.map((b, i) => renderLogo(b, i))}</div>
-        </div>
-      </section>
-    )
-  }
-
-  return (
-    <section
-      ref={sectionRef}
-      className="snap-section backers-section"
-      style={{
+  const sectionStyle: CSSProperties = embedded
+    ? {
         background: '#f5efe4',
-        padding: '0 5vw',
+        width: '100%',
+        height: '100vh',
+        maxHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
         boxSizing: 'border-box',
-      }}
-    >
+        overflow: 'hidden',
+        // Top reserve matches the hero / GBA slides so the eyebrow clears the fixed 64px nav.
+        padding: 'clamp(112px, 14vh, 144px) 5vw clamp(48px, 6vh, 80px)',
+      }
+    : {
+        background: '#f5efe4',
+        width: '100%',
+        padding: '96px 5vw',
+        boxSizing: 'border-box',
+      }
+
+  return (
+    <section ref={sectionRef} className="backers-section backers-section--embedded" style={sectionStyle}>
       <div
+        className="backers-shell"
         style={{
-          maxWidth: '1280px',
-          margin: '0 auto',
           width: '100%',
+          maxWidth: '1200px',
+          margin: '0 auto',
+          flex: embedded ? 1 : undefined,
+          minHeight: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          gap: 'clamp(32px, 4vh, 56px)',
         }}
       >
-        <div ref={labelRef}>
-          <SectionLabelLine marginBottom="48px">
-            <span
-              style={{
-                fontSize: '11px',
-                color: '#aaa',
-                letterSpacing: '0.12em',
-                textTransform: 'uppercase' as const,
-                fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-                flexShrink: 0,
-              }}
-            >
-              Backed by
-            </span>
-          </SectionLabelLine>
+        {/* Header — two columns on desktop, stacked on mobile */}
+        <div ref={headerRef} className="backers-header">
+          <div className="backers-header__left">
+            <p className="backers-eyebrow">Our partners</p>
+            <h2 className="backers-headline">
+              Backed by leaders in medicine, capital, and industry.
+            </h2>
+          </div>
+          <p className="backers-lede">
+            Pebble is supported by a network of strategic investors and institutions across Greater
+            China and beyond.
+          </p>
         </div>
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '48px',
-            alignItems: 'flex-start',
-            justifyContent: 'center',
-          }}
-        >
-          {backers.map((b, i) => renderLogo(b, i))}
-        </div>
+
+        {/* Grid — 3 desktop, 2 mobile; logo + region only */}
+        <div className="backers-grid">{backers.map((b, i) => renderCell(b, i))}</div>
+
+        {/* Footer line — partner CTA */}
+        <p className="backers-footnote">
+          Interested in partnering with Pebble?{' '}
+          <Link href="/contact" className="backers-footnote__link">
+            Get in touch
+          </Link>
+          .
+        </p>
       </div>
+
+      <style>{`
+        .backers-header {
+          display: grid;
+          grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+          column-gap: clamp(32px, 5vw, 80px);
+          align-items: end;
+          width: 100%;
+        }
+        .backers-header__left {
+          min-width: 0;
+        }
+        .backers-eyebrow {
+          margin: 0 0 14px;
+          font-family: var(--font-ibm-plex-sans), system-ui, sans-serif;
+          font-size: 11px;
+          font-weight: 400;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          color: #5e7a6a;
+        }
+        .backers-headline {
+          margin: 0;
+          font-family: var(--font-cormorant), Georgia, serif;
+          font-weight: 500;
+          font-size: clamp(30px, 3.4vw, 48px);
+          line-height: 1.1;
+          letter-spacing: -0.015em;
+          color: #1a1a1a;
+          max-width: 16ch;
+        }
+        .backers-lede {
+          margin: 0;
+          font-family: var(--font-ibm-plex-sans), system-ui, sans-serif;
+          font-size: 15px;
+          font-weight: 300;
+          line-height: 1.6;
+          color: #555;
+          max-width: 38ch;
+          padding-bottom: 4px;
+        }
+
+        .backers-grid {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          column-gap: clamp(24px, 3vw, 40px);
+          row-gap: clamp(24px, 3vw, 40px);
+          align-items: stretch;
+          width: 100%;
+        }
+
+        .backer-cell {
+          display: flex;
+          flex-direction: column;
+          align-items: stretch;
+          justify-content: flex-start;
+          text-decoration: none;
+          background: #efe8db;
+          padding: clamp(24px, 2.4vw, 32px) clamp(20px, 2vw, 28px) clamp(16px, 1.8vw, 22px);
+          box-sizing: border-box;
+          border-radius: 3px;
+          transition: background-color 200ms ease, transform 200ms ease;
+        }
+        .backer-cell:hover {
+          background: #e8e0d0;
+          transform: translateY(-2px);
+        }
+        .backer-cell:focus-visible {
+          outline: 2px solid #5e7a6a;
+          outline-offset: 4px;
+        }
+        .backer-cell__logobox {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          min-height: ${LOGO_BOX_HEIGHT}px;
+        }
+        .backer-cell__divider {
+          height: 1px;
+          background: rgba(26, 26, 26, 0.1);
+          margin: clamp(16px, 1.6vw, 22px) 0 clamp(10px, 1.1vw, 14px);
+        }
+        .backer-cell__region {
+          font-family: var(--font-ibm-plex-sans), system-ui, sans-serif;
+          font-size: 11px;
+          font-weight: 400;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: #888;
+        }
+
+        .backers-footnote {
+          margin: 0;
+          font-family: var(--font-ibm-plex-sans), system-ui, sans-serif;
+          font-size: 14px;
+          font-weight: 300;
+          color: #666;
+          line-height: 1.5;
+        }
+        .backers-footnote__link {
+          color: #2d3a35;
+          font-weight: 400;
+          text-decoration: none;
+          border-bottom: 1px solid rgba(45, 58, 53, 0.3);
+          transition: border-color 150ms ease, color 150ms ease;
+        }
+        .backers-footnote__link:hover {
+          color: #5e7a6a;
+          border-bottom-color: #5e7a6a;
+        }
+
+        @media (max-width: 767px) {
+          .backers-header {
+            grid-template-columns: 1fr;
+            row-gap: 18px;
+            align-items: start;
+          }
+          .backers-lede {
+            padding-bottom: 0;
+            max-width: none;
+          }
+          .backers-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            column-gap: 16px;
+            row-gap: 16px;
+          }
+          .backer-cell {
+            padding: 20px 16px 14px;
+          }
+        }
+      `}</style>
     </section>
   )
 }
