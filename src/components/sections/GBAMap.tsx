@@ -144,6 +144,7 @@ function GBAMap() {
     return () => mq.removeEventListener('change', sync)
   }, [])
 
+  // TEMP DIAGNOSTIC: keep section height vs viewport live.
   useEffect(() => {
     const mq = window.matchMedia('(hover: hover) and (pointer: fine)')
     const sync = () => setSupportsHover(mq.matches)
@@ -303,17 +304,17 @@ function GBAMap() {
       className="apac-map"
       style={{
         background: '#f5efe4',
-        // min-height (not fixed height) so the section grows when the left
-        // column's natural content is taller than the viewport. Top-aligned
-        // (flex-start) so content anchors below the top padding instead of
-        // centering and clipping symmetrically; the row's top padding already
-        // provides nav clearance. No overflow:hidden so "100%" never clips.
-        minHeight: '100vh',
+        // Locked to one viewport like the other slides so the slideshow
+        // advances in one wheel. vh-aware font clamps on H2/lede/stats
+        // guarantee content fits the available inner area at 700vh+, so
+        // "100%" never clips under the overflow:hidden ceiling.
+        height: '100vh',
         display: 'flex',
         alignItems: 'flex-start',
-        padding: 'clamp(112px, 16vh, 160px) 5vw clamp(48px, 6vh, 96px)',
+        padding: 'clamp(100px, 13.5vh, 140px) 5vw clamp(48px, 6vh, 96px)',
         width: '100%',
         boxSizing: 'border-box',
+        overflow: 'hidden',
       }}
     >
       <div
@@ -366,7 +367,7 @@ function GBAMap() {
             <p
               style={{
                 fontFamily: 'var(--font-cormorant), Georgia, serif',
-                fontSize: 'clamp(20px, 1.9vw, 26px)',
+                fontSize: 'clamp(18px, min(1.9vw, 2.8vh), 26px)',
                 fontWeight: 400,
                 color: '#2d3a35',
                 lineHeight: 1.4,
@@ -389,8 +390,8 @@ function GBAMap() {
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'flex-start',
-              gap: 'clamp(20px, 2.4vh, 32px)',
-              marginTop: 'clamp(40px, 5vh, 64px)',
+              gap: 'clamp(12px, 1.5vh, 20px)',
+              marginTop: 'clamp(8px, 1.5vh, 24px)',
               width: '100%',
             }}
           >
@@ -411,7 +412,7 @@ function GBAMap() {
                   }}
                   style={{
                     fontFamily: 'var(--font-cormorant), Georgia, serif',
-                    fontSize: 'clamp(48px, 5vw, 76px)',
+                    fontSize: 'clamp(40px, min(5vw, 8vh), 76px)',
                     fontWeight: 500,
                     color: stat.color,
                     lineHeight: 1,
@@ -459,7 +460,7 @@ function GBAMap() {
               position: 'relative',
               borderRadius: '12px',
               overflow: 'hidden',
-              height: 'min(560px, calc(100vh - 256px))',
+              height: 'min(420px, calc(100vh - 300px))',
               width: '100%',
               border: '1px solid #d4cfc2',
               boxShadow: '0 4px 32px rgba(0,0,0,0.08)',

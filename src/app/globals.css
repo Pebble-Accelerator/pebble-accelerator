@@ -487,8 +487,10 @@ body:has(.snap-container) > footer {
     height: auto !important;
     overflow: visible !important;
     align-items: flex-start !important;
-    /* Top reserve covers the fixed 64px nav on mobile native scroll. */
-    padding: 112px 5vw 48px !important;
+    /* Top reserve covers the fixed 64px nav on mobile native scroll
+       (trimmed 24px on this section so the block sits a touch higher;
+       still leaves ~24px breathing room below the navbar). */
+    padding: 88px 5vw 48px !important;
   }
 
   .apac-map-layout {
@@ -513,7 +515,7 @@ body:has(.snap-container) > footer {
   }
 
   .apac-map-stats {
-    margin-top: 28px !important;
+    margin-top: 16px !important;
     padding-top: 0 !important;
     gap: 20px !important;
     flex-direction: column !important;

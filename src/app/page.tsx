@@ -40,18 +40,7 @@ export default function Home() {
         >
           <Hero />
         </div>
-        <div
-          className="home-slide"
-          style={{
-            // GBA grows to fit its content (left column can exceed 100vh on
-            // shorter viewports). Open the overflow so nothing clips; the
-            // slideshow controller now handles taller-than-viewport slides
-            // by stepping through them in viewport-sized chunks.
-            minHeight: '100vh',
-            overflow: 'visible',
-            flexShrink: 0,
-          }}
-        >
+        <div className="home-slide" style={snapWrapperStyle}>
           <GBAMap />
         </div>
         <div className="home-slide" style={snapWrapperStyle}>

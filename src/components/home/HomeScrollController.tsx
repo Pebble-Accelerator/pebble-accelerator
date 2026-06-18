@@ -110,65 +110,7 @@ export default function HomeScrollController() {
       })
     }
 
-    /**
-     * If the current slide is taller than the viewport, step through it in
-     * viewport-sized chunks before advancing to the next slide. Keeps the
-     * one-gesture-one-step UX intact and stops tall slides (like GBAMap on
-     * short viewports) from being skipped past.
-     */
-    const advance = (dir: number) => {
-      if (animating) return
-      const currentSlide = slides[index]
-      if (!currentSlide) {
-        goTo(index + (dir > 0 ? 1 : -1))
-        return
-      }
-      const viewportH = scroller.clientHeight
-      const slideTop = currentSlide.offsetTop
-      const slideBottom = slideTop + currentSlide.offsetHeight
-      const currentScroll = scroller.scrollTop
-      const epsilon = 16
-
-      if (dir > 0) {
-        const visibleBottom = currentScroll + viewportH
-        const remaining = slideBottom - visibleBottom
-        if (remaining > epsilon) {
-          const next = Math.min(currentScroll + viewportH, slideBottom - viewportH)
-          animating = true
-          gsap.ticker.wake()
-          gsap.to(scroller, {
-            scrollTop: next,
-            duration: GLIDE_DURATION,
-            ease: GLIDE_EASE,
-            overwrite: true,
-            onComplete: () => {
-              animating = false
-              cooldownUntil = performance.now() + COOLDOWN_MS
-            },
-          })
-          return
-        }
-      } else {
-        const aboveCurrent = currentScroll - slideTop
-        if (aboveCurrent > epsilon) {
-          const next = Math.max(slideTop, currentScroll - viewportH)
-          animating = true
-          gsap.ticker.wake()
-          gsap.to(scroller, {
-            scrollTop: next,
-            duration: GLIDE_DURATION,
-            ease: GLIDE_EASE,
-            overwrite: true,
-            onComplete: () => {
-              animating = false
-              cooldownUntil = performance.now() + COOLDOWN_MS
-            },
-          })
-          return
-        }
-      }
-      goTo(index + (dir > 0 ? 1 : -1))
-    }
+    const advance = (dir: number) => goTo(index + (dir > 0 ? 1 : -1))
 
     const onWheel = (e: WheelEvent) => {
       e.preventDefault()
