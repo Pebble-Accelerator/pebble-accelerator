@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { FILM_GRAIN_DATA_URI } from '@/lib/filmGrain'
 import { PEBBLE_WAVE_LOGO } from '@/data/portfolioWatermark'
 
-const CREAM = '#f5efe4'
+const CREAM = 'var(--color-canvas)'
 const EMBER = '#E8703A'
 const INK = '#1a1a1a'
 
@@ -16,7 +16,7 @@ export default function ForestCTA({ embedded = false }: ForestCTAProps) {
     <section
       className={embedded ? 'forest-cta--embedded' : undefined}
       style={{
-        background: '#2d3a35',
+        background: 'var(--color-slate-dark)',
         padding: embedded ? '0 5vw' : 'clamp(80px, 10vw, 120px) 5vw',
         width: '100%',
         height: embedded ? '100vh' : 'auto',

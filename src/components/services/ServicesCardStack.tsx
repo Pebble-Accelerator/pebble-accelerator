@@ -56,7 +56,7 @@ function InvestmentHeader() {
           fontSize: 'clamp(36px, 4vw, 56px)',
           fontWeight: 500,
           lineHeight: 1.15,
-          color: '#f5efe4',
+          color: 'var(--color-canvas)',
           margin: 0,
           maxWidth: '520px',
         }}
@@ -81,7 +81,7 @@ function InvestmentBody() {
           margin: '0 0 28px',
         }}
       >
-        Capital is the door — the year that follows is the work. We help structure HK government
+        Capital is the door. The year that follows is the work. We help structure HK government
         grants, open hospital and university access, run regulatory pathways, and warm the next round
         well before you raise it. Plugged into Tigermed&apos;s CRO ecosystem from day one.
       </p>
@@ -171,7 +171,7 @@ function ConsultingBody() {
       }}
     >
       On retainer, we run market entry, HK grant applications, hospital access, and partner
-      introductions — for companies we&apos;d back if our mandate fit. Same operators, same network.
+      introductions, for companies we&apos;d back if our mandate fit. Same operators, same network.
     </p>
   )
 }
@@ -208,7 +208,7 @@ function TimelineCol({ label, children }: { label: string; children: React.React
 }
 
 const sectionBase = {
-  borderRadius: '8px',
+  borderRadius: '10px',
   minHeight: 'clamp(420px, 62vh, 640px)',
 } as const
 
@@ -231,7 +231,7 @@ export default function ServicesCardStack() {
         sectionStyle={{
           ...sectionBase,
           backgroundColor: CREAM_PANEL,
-          border: '1px solid #d4cfc2',
+          border: '1px solid rgba(45, 58, 53, 0.14)',
         }}
         headerStyle={{ backgroundColor: CREAM_PANEL, padding: headerPadding }}
         contentStyle={{ padding: contentPadding }}

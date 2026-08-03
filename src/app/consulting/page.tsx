@@ -10,7 +10,7 @@ export const metadata = {
 export default function ConsultingPage() {
   return (
     <>
-      <main style={{ backgroundColor: '#f5efe4' }}>
+      <main style={{ backgroundColor: 'var(--color-canvas)' }}>
         <ServicesEditorial />
       </main>
       <CTAStrip />

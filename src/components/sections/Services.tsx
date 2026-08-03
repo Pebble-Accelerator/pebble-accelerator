@@ -122,15 +122,18 @@ export default function Services({ embedded = false }: ServicesProps) {
     return (
       <section
         ref={sectionRef}
-        className="services-section services-section--embedded"
+        className="services-section services-section--embedded services-section--dark"
         style={{
-          background: '#f5efe4',
+          // Dark ground — carries the hero's dark language through so the homepage
+          // alternates light/dark instead of running flat cream.
+          background: 'var(--color-slate-dark)',
+          position: 'relative',
           height: '100vh',
           maxHeight: '100vh',
           width: '100%',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'center',
+          justifyContent: 'safe center',
           alignItems: 'stretch',
           boxSizing: 'border-box',
           border: 'none',
@@ -138,12 +141,14 @@ export default function Services({ embedded = false }: ServicesProps) {
           // Consistent top-reserve rhythm with the Hero/GBA slides: nav (64px)
           // + breathing room. Content still vertically centers, but in a tighter
           // remaining area so the slide reads composed instead of under-filled.
-          padding: 'clamp(112px, 16vh, 160px) 5vw clamp(48px, 6vh, 96px)',
+          padding: 'var(--space-page-top) var(--gutter-x) var(--space-section-y)',
         }}
       >
         <div
           className="services-embedded-cluster"
           style={{
+            position: 'relative',
+            zIndex: 1,
             width: '100%',
             maxWidth: '1280px',
             margin: '0 auto',
@@ -151,39 +156,22 @@ export default function Services({ embedded = false }: ServicesProps) {
             flexDirection: 'column',
           }}
         >
-          <div
-            ref={labelRef}
-            className="services-embedded-label"
-            style={{
-              marginBottom: '20px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-            }}
-          >
-            <span
-              aria-hidden
-              style={{
-                width: '8px',
-                height: '8px',
-                borderRadius: '50%',
-                background: '#E8703A',
-                display: 'inline-block',
-                flexShrink: 0,
-              }}
-            />
-            <span
-              style={{
-                fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-                fontSize: '11px',
-                fontWeight: 400,
-                letterSpacing: '0.14em',
-                textTransform: 'uppercase',
-                color: 'rgba(26, 26, 26, 0.55)',
-              }}
-            >
-              What we do
-            </span>
+          <div ref={labelRef} className="services-embedded-label" style={{ marginBottom: '20px' }}>
+            <SectionLabelLine index={3} tone="dark" marginBottom="0">
+              <span
+                style={{
+                  fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+                  fontSize: '11px',
+                  fontWeight: 400,
+                  letterSpacing: '0.14em',
+                  textTransform: 'uppercase',
+                  color: 'rgba(245, 240, 232, 0.62)',
+                  flexShrink: 0,
+                }}
+              >
+                What we do
+              </span>
+            </SectionLabelLine>
           </div>
 
           <h2
@@ -196,8 +184,8 @@ export default function Services({ embedded = false }: ServicesProps) {
               maxWidth: '100%',
             }}
           >
-            <span style={{ fontWeight: 400, color: '#1a1a1a' }}>How we work.</span>{' '}
-            <span style={{ fontStyle: 'italic', fontWeight: 500, color: '#5e7a6a' }}>
+            <span style={{ fontWeight: 400, color: '#f7f3ec' }}>How we work.</span>{' '}
+            <span style={{ fontStyle: 'italic', fontWeight: 500, color: '#a9c7b6' }}>
               Bespoke, not batched.
             </span>
           </h2>
@@ -210,7 +198,7 @@ export default function Services({ embedded = false }: ServicesProps) {
                     fontFamily: 'var(--font-cormorant), Georgia, serif',
                     fontSize: '32px',
                     fontWeight: 500,
-                    color: '#0f0f0f',
+                    color: '#f7f3ec',
                     margin: '0 0 16px',
                     lineHeight: 1.2,
                   }}
@@ -222,7 +210,7 @@ export default function Services({ embedded = false }: ServicesProps) {
                     fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
                     fontSize: '14px',
                     fontWeight: 300,
-                    color: '#666',
+                    color: 'rgba(245, 240, 232, 0.72)',
                     lineHeight: 1.7,
                     maxWidth: '440px',
                     margin: 0,
@@ -231,14 +219,18 @@ export default function Services({ embedded = false }: ServicesProps) {
                   {services[0].desc}
                 </p>
               </div>
-              <div className="services-embedded-divider" aria-hidden />
+              <div
+                className="services-embedded-divider"
+                aria-hidden
+                style={{ background: 'rgba(245, 240, 232, 0.18)' }}
+              />
               <div ref={rightColRef} style={{ flex: 1, maxWidth: 'none', minWidth: 0 }}>
                 <h3
                   style={{
                     fontFamily: 'var(--font-cormorant), Georgia, serif',
                     fontSize: '32px',
                     fontWeight: 500,
-                    color: '#0f0f0f',
+                    color: '#f7f3ec',
                     margin: '0 0 16px',
                     lineHeight: 1.2,
                   }}
@@ -250,7 +242,7 @@ export default function Services({ embedded = false }: ServicesProps) {
                     fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
                     fontSize: '14px',
                     fontWeight: 300,
-                    color: '#666',
+                    color: 'rgba(245, 240, 232, 0.72)',
                     lineHeight: 1.7,
                     maxWidth: '440px',
                     margin: 0,
@@ -274,17 +266,17 @@ export default function Services({ embedded = false }: ServicesProps) {
               fontWeight: 400,
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
-              color: '#1a1a1a',
+              color: 'rgba(245, 240, 232, 0.72)',
               textDecoration: 'none',
-              transition: 'color 150ms ease',
+              transition: 'color 250ms ease',
               cursor: 'pointer',
               alignSelf: 'flex-start',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.color = '#5e7a6a'
+              e.currentTarget.style.color = '#a9c7b6'
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.color = '#1a1a1a'
+              e.currentTarget.style.color = 'rgba(245, 240, 232, 0.72)'
             }}
           >
             <span>SEE HOW WE WORK</span>
@@ -308,11 +300,11 @@ export default function Services({ embedded = false }: ServicesProps) {
       ref={sectionRef}
       className="snap-section services-section"
       style={{
-        background: '#f5efe4',
+        background: 'var(--color-canvas)',
         padding: '0 5vw',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
+        justifyContent: 'safe center',
         boxSizing: 'border-box',
       }}
     >
@@ -324,16 +316,16 @@ export default function Services({ embedded = false }: ServicesProps) {
           display: 'flex',
           flexDirection: 'column',
           flex: 1,
-          justifyContent: 'center',
+          justifyContent: 'safe center',
           minHeight: 0,
         }}
       >
         <div ref={labelRef}>
-          <SectionLabelLine marginBottom="48px">
+          <SectionLabelLine index={3} marginBottom="48px">
             <span
               style={{
                 fontSize: '11px',
-                color: '#aaa',
+                color: 'var(--color-meta)',
                 letterSpacing: '0.12em',
                 textTransform: 'uppercase' as const,
                 fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',

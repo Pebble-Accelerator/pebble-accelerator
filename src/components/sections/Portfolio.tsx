@@ -47,7 +47,7 @@ export default function Portfolio({ limit }: Props) {
 
   return (
     <section
-      className="bg-[#f5efe4] px-[8vw] pt-0"
+      className="bg-[var(--color-canvas)] px-[8vw] pt-0"
       style={{
         paddingLeft: '8vw',
         paddingRight: '8vw',
@@ -184,7 +184,7 @@ export default function Portfolio({ limit }: Props) {
                             ? '#eee7da'
                             : dist === 2
                               ? '#f1eade'
-                              : '#f5efe4',
+                              : 'var(--color-canvas)',
                       opacity: isFiltered ? 0.25 : 1,
                       transition: 'background 200ms, opacity 200ms',
                       textDecoration: 'none',

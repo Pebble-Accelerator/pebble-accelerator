@@ -90,6 +90,8 @@ export default function HomeScrollController() {
     const goTo = (target: number) => {
       const clamped = Math.max(0, Math.min(slides.length - 1, target))
       if (animating || clamped === index) return
+      const fromEl = slides[index]
+      const toEl = slides[clamped]
       index = clamped
       animating = true
       // The GSAP ticker auto-sleeps after a couple idle seconds (e.g. while the user
@@ -97,6 +99,39 @@ export default function HomeScrollController() {
       // never completes, which would freeze the controller. Wake it on the leading
       // edge so the glide starts instantly on every gesture.
       gsap.ticker.wake()
+      // Connective transition: the outgoing slide eases down in brightness as the
+      // incoming one settles back to full. Brightness is used (not opacity/scale)
+      // so it never reveals the container ground or shifts scroll geometry. The
+      // whole controller only runs when motion is allowed, so this is inherently
+      // reduced-motion-safe.
+      if (toEl) {
+        gsap.fromTo(
+          toEl,
+          { filter: 'brightness(0.9)' },
+          {
+            filter: 'brightness(1)',
+            duration: GLIDE_DURATION * 1.1,
+            ease: 'power2.out',
+            onComplete: () => {
+              toEl.style.filter = ''
+            },
+          }
+        )
+      }
+      if (fromEl && fromEl !== toEl) {
+        gsap.fromTo(
+          fromEl,
+          { filter: 'brightness(1)' },
+          {
+            filter: 'brightness(0.94)',
+            duration: GLIDE_DURATION * 0.65,
+            ease: 'power2.in',
+            onComplete: () => {
+              fromEl.style.filter = ''
+            },
+          }
+        )
+      }
       gsap.to(scroller, {
         scrollTop: targetFor(clamped),
         duration: GLIDE_DURATION,

@@ -1,7 +1,17 @@
 @import "tailwindcss";
 
-@theme {
+/* `static` forces every token to emit to :root even when no utility references
+   it yet, so the surface/accent tokens below are usable via var() from inline
+   styles and <style> blocks — the "one knob" guarantee. Without it, Tailwind v4
+   tree-shakes unused theme vars and var(--color-forest) would resolve to empty. */
+@theme static {
   --color-site-bg: #ffffff;
+  /* Surface tokens — the page canvas and the two dark grounds. Single source of
+     truth so a future palette change is one edit here. Values unchanged from the
+     literals they replaced; the site must stay pixel-identical. */
+  --color-canvas: #f5efe4;
+  --color-ink-900: #1a1a1a;
+  --color-slate-dark: #2d3a35;
   --color-ink: #0f0f0f;
   --color-ink-dark: #333333;
   --color-ink-mid: #444444;
@@ -17,8 +27,27 @@
   --color-hover-bg: #fafafa;
   --color-forest: #2D6A5A;
   --color-ember: #E8703A;
+  /* Canonical metadata label grey (promoted from the hardcoded #888/#999 used on
+     eyebrows, section labels, and mono indices). */
+  --color-meta: #888888;
   --font-display: var(--font-cormorant), Georgia, serif;
   --font-sans: var(--font-ibm-plex-sans), system-ui, sans-serif;
+  --font-mono: var(--font-ibm-plex-mono), ui-monospace, monospace;
+  /* Spacing scale — one source of truth for vertical rhythm + gutters, so every
+     section shares the same cadence instead of ad-hoc per-section padding. */
+  --space-2xs: 8px;
+  --space-xs: 12px;
+  --space-sm: 20px;
+  --space-md: 32px;
+  --space-lg: 48px;
+  --space-xl: 72px;
+  --space-2xl: 104px;
+  /* Page top reserve clears the fixed 64px nav with breathing room; section-y is
+     the standard vertical padding for a standalone page section. Both fluid. */
+  --space-page-top: clamp(84px, 11vh, 128px);
+  --space-section-y: clamp(56px, 8vh, 104px);
+  --gutter-x: 5vw;
+  --content-max: 1400px;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -34,7 +63,7 @@ html:has(.services-page-main) {
 }
 html,
 body {
-  background: #f5efe4;
+  background: var(--color-canvas);
 }
 
 body {
@@ -148,12 +177,12 @@ a { color: inherit; text-decoration: none; }
 }
 
 .apac-map {
-  background-color: #f5efe4;
+  background-color: var(--color-canvas);
 }
 
 .apac-map svg.rsm-svg {
-  background: #f5efe4 !important;
-  background-color: #f5efe4 !important;
+  background: var(--color-canvas) !important;
+  background-color: var(--color-canvas) !important;
 }
 
 /* Pause expensive halo animations while the map is off-screen (scroll performance). */
@@ -259,7 +288,7 @@ body:has(.snap-container) > footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f5efe4;
+  background: var(--color-canvas);
   padding: 0;
   box-sizing: border-box;
 }
@@ -338,7 +367,9 @@ body:has(.snap-container) > footer {
   left: 0;
   right: 0;
   z-index: 20;
-  background: rgba(245, 239, 228, 0.85);
+  /* Same tan at 0.85 alpha, derived from the canvas token (color-mix with
+     transparent yields exactly rgba(245,239,228,0.85)). */
+  background: color-mix(in srgb, var(--color-canvas) 85%, transparent);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   padding: 24px 5vw;
@@ -405,7 +436,7 @@ body:has(.snap-container) > footer {
 }
 
 .combined-slide {
-  background: #f5efe4;
+  background: var(--color-canvas);
   display: flex;
   flex-direction: column;
   overflow: hidden;

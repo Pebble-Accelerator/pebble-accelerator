@@ -59,7 +59,7 @@ const FLAT_LABEL_BASE: React.CSSProperties = {
   fontSize: '17px',
   fontWeight: 500,
   color: '#2d3a35',
-  background: '#f5efe4',
+  background: 'var(--color-canvas)',
   padding: '2px 8px',
   borderRadius: '2px',
   whiteSpace: 'nowrap',
@@ -303,7 +303,7 @@ function GBAMap() {
       ref={sectionRef}
       className="apac-map"
       style={{
-        background: '#f5efe4',
+        background: 'var(--color-canvas)',
         // Locked to one viewport like the other slides so the slideshow
         // advances in one wheel. vh-aware font clamps on H2/lede/stats
         // guarantee content fits the available inner area at 700vh+, so
@@ -311,7 +311,7 @@ function GBAMap() {
         height: '100vh',
         display: 'flex',
         alignItems: 'flex-start',
-        padding: 'clamp(100px, 13.5vh, 140px) 5vw clamp(48px, 6vh, 96px)',
+        padding: 'var(--space-page-top) var(--gutter-x) var(--space-section-y)',
         width: '100%',
         boxSizing: 'border-box',
         overflow: 'hidden',
@@ -449,7 +449,7 @@ function GBAMap() {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'safe center',
             gap: '10px',
           }}
         >
@@ -458,12 +458,11 @@ function GBAMap() {
             className="apac-map-card"
             style={{
               position: 'relative',
-              borderRadius: '12px',
+              borderRadius: '10px',
               overflow: 'hidden',
               height: 'min(420px, calc(100vh - 300px))',
               width: '100%',
-              border: '1px solid #d4cfc2',
-              boxShadow: '0 4px 32px rgba(0,0,0,0.08)',
+              border: '1px solid rgba(45, 58, 53, 0.14)',
             }}
           >
             {shouldLoadMap ? (
@@ -558,14 +557,14 @@ function GBAMap() {
                 })}
               </Map>
             ) : (
-              <div style={{ width: '100%', height: '100%', background: '#f5efe4' }} aria-hidden />
+              <div style={{ width: '100%', height: '100%', background: 'var(--color-canvas)' }} aria-hidden />
             )}
 
             <div
               style={{
                 position: 'absolute',
                 inset: 0,
-                background: '#f5efe4',
+                background: 'var(--color-canvas)',
                 opacity: mapLoaded ? 0 : 1,
                 pointerEvents: mapLoaded ? 'none' : 'auto',
                 transition: 'opacity 0.8s ease',
@@ -708,11 +707,10 @@ function GBAMap() {
           font-family: var(--font-ibm-plex-sans), system-ui, sans-serif;
           font-size: 11px;
           color: #888;
-          background: #f5efe4;
-          border: 1px solid #d4cfc2;
+          background: var(--color-canvas);
+          border: 1px solid rgba(45, 58, 53, 0.14);
           border-radius: 4px;
           padding: 6px 10px;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         }
 
         .apac-map-card .mapboxgl-ctrl-attrib-inner a {

@@ -1,27 +1,27 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { motion, useReducedMotion, type Variants } from 'framer-motion'
+import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
+import HeroAtmosphere from '@/components/sections/HeroAtmosphere'
 
 const PEBBLE_PATH_D =
   'M 16 50 C 8 36, 18 20, 64 14 C 104 8, 158 10, 204 18 C 234 26, 242 42, 236 58 C 228 74, 188 86, 122 88 C 60 88, 24 76, 16 50 Z'
 
-// Hero-only headline reveal: each line rises + fades, staggered. Fires once on
-// mount (Hero never unmounts, so returning to slide 0 does not replay) and
-// coexists with the pebble stroke draw-on + ripple animations.
-const headlineContainer: Variants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.11, delayChildren: 0.1 } },
-}
-const headlineLine: Variants = {
-  hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
-}
+// Headline entrance is a single quiet reveal: the whole block fades in and rises
+// ~12px once over ~500ms, then holds completely still — no per-line or per-word
+// motion. Fires once on mount (Hero never unmounts, so returning to slide 0 does
+// not replay) and coexists with the atmospheric background drift + stroke-draw.
+const REVEAL_DURATION = 0.5
+const REVEAL_RISE = 12
+// The green ellipse on "pebble" draws on just after the block settles, so it reads
+// as a quiet finishing touch rather than a separate flourish.
+const ELLIPSE_DELAY = 0.55
 
 export default function Hero() {
   const pebblePathRef = useRef<SVGPathElement>(null)
-  const reduceMotion = useReducedMotion()
+  const reduced = usePrefersReducedMotion()
 
   useEffect(() => {
     const path = pebblePathRef.current
@@ -68,7 +68,7 @@ export default function Hero() {
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
+        justifyContent: 'safe center',
         // Top reserve = fixed nav (64px) + comfortable breathing room.
         // Asymmetric (top > bottom) gives the headline clear space below the nav
         // while keeping the chevron near the bottom of the slide.
@@ -77,69 +77,33 @@ export default function Hero() {
         overflow: 'visible',
       }}
     >
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          overflow: 'hidden',
-          pointerEvents: 'none',
-          zIndex: 0,
-        }}
-      >
-        <svg
-          width="100%"
-          height="100%"
-          viewBox="0 0 1200 800"
-          preserveAspectRatio="xMidYMid slice"
-          style={{ position: 'absolute', top: 0, left: 0 }}
-        >
-          {[0, 1, 2, 3, 4, 5, 6].map((i) => (
-            <circle
-              key={i}
-              cx="920"
-              cy="640"
-              r={900}
-              fill="none"
-              stroke="rgba(45,106,90,0.35)"
-              strokeWidth={1.8}
-              style={{
-                animation: `rippleExpand 14s linear ${-(i * 2)}s infinite`,
-                transformOrigin: '920px 640px',
-              }}
-            />
-          ))}
-        </svg>
-      </div>
+      <HeroAtmosphere />
 
       <div style={{ position: 'relative', zIndex: 1, width: '100%' }}>
         <motion.h1
-          variants={reduceMotion ? undefined : headlineContainer}
-          initial={reduceMotion ? false : 'hidden'}
-          animate={reduceMotion ? false : 'visible'}
+          initial={reduced ? false : { opacity: 0, y: REVEAL_RISE }}
+          animate={reduced ? false : { opacity: 1, y: 0 }}
+          transition={reduced ? undefined : { duration: REVEAL_DURATION, ease: 'easeOut' }}
           style={{
             fontFamily: 'var(--font-cormorant), Georgia, serif',
             fontSize: 'clamp(52px, 8vw, 104px)',
             fontWeight: 500,
             lineHeight: 1.05,
             letterSpacing: '-0.02em',
-            color: '#1a1a1a',
+            color: '#f5efe4',
             maxWidth: '900px',
             margin: 0,
           }}
         >
-          <motion.span
-            variants={reduceMotion ? undefined : headlineLine}
-            style={{ display: 'block' }}
-          >
+          {/* Opening lines — light but dimmed so the eye is pulled to the focal
+              word over the atmospheric background. No per-line motion; the whole
+              block reveals together as one quiet fade + rise. */}
+          <span style={{ display: 'block', color: 'rgba(245, 240, 232, 0.84)' }}>
             An avalanche starts from one
-          </motion.span>
-          <motion.span
-            variants={reduceMotion ? undefined : headlineLine}
-            style={{ display: 'block' }}
-          >
+          </span>
+          {/* "pebble." — the single focal point: darkest ink, heavier weight, and
+              the green ellipse. */}
+          <span style={{ display: 'block' }}>
             <span
               style={{
                 display: 'inline-flex',
@@ -186,20 +150,16 @@ export default function Hero() {
                   className="hero-pebble-text-stack"
                   style={{
                     position: 'relative',
-                    display: 'inline-grid',
-                    gridTemplateAreas: '"stack"',
+                    display: 'inline-block',
                     zIndex: 1,
                   }}
                 >
-                  <span className="hero-pebble-halo" aria-hidden>
-                    pebble
-                  </span>
                   <span className="hero-pebble-word">pebble</span>
                 </span>
               </span>
               <span className="hero-headline-period">.</span>
             </span>
-          </motion.span>
+          </span>
         </motion.h1>
 
         <motion.p
@@ -211,7 +171,7 @@ export default function Hero() {
             fontSize: '22px',
             fontStyle: 'italic',
             fontWeight: 400,
-            color: '#2d3a35',
+            color: 'rgba(245, 240, 232, 0.92)',
             lineHeight: 1.4,
             marginTop: '24px',
             marginBottom: 0,
@@ -227,8 +187,8 @@ export default function Hero() {
           transition={{ duration: 0.6, ease: 'easeOut', delay: 0.35 }}
           style={{
             fontSize: '15px',
-            fontWeight: 300,
-            color: '#555',
+            fontWeight: 400,
+            color: 'rgba(247, 243, 236, 0.92)',
             lineHeight: 1.8,
             maxWidth: '560px',
             marginTop: '20px',
@@ -259,7 +219,7 @@ export default function Hero() {
             style={{
               fontSize: '14px',
               fontWeight: 500,
-              color: '#2D6A5A',
+              color: '#a9c7b6',
               textDecoration: 'none',
               fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
             }}
@@ -271,7 +231,7 @@ export default function Hero() {
             className="link-underline"
             style={{
               fontSize: '12px',
-              color: '#888',
+              color: 'rgba(245, 240, 232, 0.6)',
               fontWeight: 400,
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
@@ -315,7 +275,7 @@ export default function Hero() {
         >
           <path
             d="M6 9l6 6 6-6"
-            stroke="#2d3a35"
+            stroke="rgba(245, 240, 232, 0.7)"
             strokeWidth="1.5"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -329,28 +289,24 @@ export default function Hero() {
           letter-spacing: inherit;
         }
 
-        .hero-pebble-halo,
+        /* "pebble." is the focal point: heavier weight than the opening lines and
+           the brightest ink (near-white over the dark atmosphere). font:inherit
+           resets weight to the h1's 500, so the font-weight override must come
+           after it. The stroke halo was removed — on the dark water it read as a
+           hollow sticker outline, and the light glyphs already sit cleanly over
+           the green ellipse behind them. */
+        .hero-pebble-text-stack {
+          font-weight: 600;
+        }
+
         .hero-pebble-word {
-          grid-area: stack;
           font: inherit;
           letter-spacing: inherit;
           line-height: inherit;
-        }
-
-        .hero-pebble-halo {
-          z-index: 1;
-          pointer-events: none;
-          user-select: none;
-          color: transparent;
-          -webkit-text-fill-color: transparent;
-          -webkit-text-stroke: 8px #f5efe4;
-          paint-order: stroke;
-        }
-
-        .hero-pebble-word {
+          font-weight: 600;
           position: relative;
           z-index: 2;
-          color: #1a1a1a;
+          color: #f7f3ec;
         }
 
         .hero-headline-period {
@@ -360,7 +316,8 @@ export default function Hero() {
           font: inherit;
           letter-spacing: inherit;
           line-height: inherit;
-          color: #1a1a1a;
+          font-weight: 600;
+          color: #f7f3ec;
         }
 
         @media (prefers-reduced-motion: no-preference) {
@@ -374,7 +331,7 @@ export default function Hero() {
           }
 
           .hero-pebble-draw {
-            animation: heroPebbleDraw 1.4s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
+            animation: heroPebbleDraw 1.4s cubic-bezier(0.4, 0, 0.2, 1) ${ELLIPSE_DELAY}s forwards;
           }
         }
       `}</style>

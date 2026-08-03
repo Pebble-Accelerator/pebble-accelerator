@@ -1,5 +1,6 @@
 'use client'
 
+import Section from '@/components/ui/Section'
 import ServicesCardStack from '@/components/services/ServicesCardStack'
 import { fadeUpStyle, useFadeUpReveal } from '@/components/ui/useFadeUpReveal'
 
@@ -7,26 +8,15 @@ export default function ServicesEditorial() {
   const { ref: revealRef, revealed, reduced } = useFadeUpReveal()
 
   return (
-    <div
-      ref={revealRef}
-      className="services-editorial-wrap"
-      style={{
-        paddingTop: '60px',
-        paddingLeft: '5vw',
-        paddingRight: '5vw',
-        maxWidth: '1400px',
-        margin: '0 auto',
-        overflow: 'visible',
-      }}
-    >
-      <section style={{ paddingTop: 'clamp(100px, 28vh, 300px)', paddingBottom: 0 }}>
+    <div ref={revealRef} className="services-editorial-wrap" style={{ overflow: 'visible' }}>
+      <Section first style={{ paddingBottom: 0 }}>
         <div
           className="services-editorial-hero"
           style={{
             display: 'flex',
             flexWrap: 'wrap',
             gap: '48px 5%',
-            marginBottom: 'clamp(88px, 12vh, 160px)',
+            marginBottom: 'var(--space-2xl)',
             alignItems: 'center',
           }}
         >
@@ -71,7 +61,7 @@ export default function ServicesEditorial() {
               }}
             >
               The needs of every biomedical company are vastly different. Pebble works closely with
-              each company for a full year — making sure key milestones and deliverables are actually
+              each company for a full year, making sure key milestones and deliverables are actually
               hit, often through the support of{' '}
               <span
                 style={{
@@ -87,13 +77,9 @@ export default function ServicesEditorial() {
         </div>
 
         <ServicesCardStack />
-      </section>
-      {/* Spacer so CTA clears the editorial column padding before the forest band */}
-      <div
-        className="services-pre-cta-spacer"
-        aria-hidden
-        style={{ height: 'clamp(48px, 8vh, 96px)' }}
-      />
+      </Section>
+      {/* Spacer so CTA clears the editorial column before the forest band */}
+      <div className="services-pre-cta-spacer" aria-hidden style={{ height: 'var(--space-xl)' }} />
     </div>
   )
 }

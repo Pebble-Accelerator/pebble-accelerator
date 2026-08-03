@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react'
 import FadeIn from '@/components/ui/FadeIn'
+import RippleSubmitButton from '@/components/contact/RippleSubmitButton'
 
 const SAGE = '#5e7a6a'
 const EMBER = '#E8703A'
@@ -39,10 +40,10 @@ export default function ContactPage() {
     <div
       className="flex flex-1 flex-col justify-center"
       style={{
-        paddingLeft: '5vw',
-        paddingRight: '5vw',
-        paddingTop: 'clamp(96px, 14vh, 200px)',
-        paddingBottom: 'clamp(64px, 12vh, 180px)',
+        paddingLeft: 'var(--gutter-x)',
+        paddingRight: 'var(--gutter-x)',
+        paddingTop: 'var(--space-page-top)',
+        paddingBottom: 'var(--space-2xl)',
       }}
     >
       <div style={{ maxWidth: '1280px', margin: '0 auto', width: '100%' }}>
@@ -249,12 +250,7 @@ export default function ContactPage() {
                   />
                 </div>
 
-                <button type="submit" className="contact-submit">
-                  Send message
-                  <span aria-hidden style={{ marginLeft: '8px' }}>
-                    &rarr;
-                  </span>
-                </button>
+                <RippleSubmitButton />
 
                 <p className="contact-footnote">
                   We read every message, usually back within two working days.
@@ -317,7 +313,7 @@ export default function ContactPage() {
           border-radius: 0;
           padding: 8px 0 12px;
           outline: none;
-          transition: border-color 180ms ease, box-shadow 180ms ease;
+          transition: border-color 240ms ease, box-shadow 240ms ease;
           box-sizing: border-box;
         }
         .contact-input::placeholder {
@@ -347,12 +343,12 @@ export default function ContactPage() {
           font-weight: 500;
           letter-spacing: 0.14em;
           text-transform: uppercase;
-          color: #f5efe4;
+          color: var(--color-canvas);
           background: ${FOREST};
           border: 0;
           border-radius: 2px;
           cursor: pointer;
-          transition: background-color 160ms ease, transform 100ms ease;
+          transition: background-color 240ms ease, transform 100ms ease;
         }
         .contact-submit:hover {
           background: #1f2a26;

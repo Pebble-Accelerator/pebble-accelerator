@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import type { CSSProperties } from 'react'
 import backers from '@/data/backers'
+import SectionLabelLine from '@/components/ui/SectionLabelLine'
 
 const LOGO_BY_NAME: Record<string, string> = {
   'Tiger Med Group': '/logos/tigermed.png',
@@ -41,7 +42,7 @@ const darkChipStyle: CSSProperties = {
   padding: '8px 14px',
   display: 'inline-flex',
   alignItems: 'center',
-  justifyContent: 'center',
+  justifyContent: 'safe center',
 }
 
 function backerLogoImg(b: (typeof backers)[number], src: string, treatment: BackerLogoTreatment) {
@@ -83,7 +84,7 @@ export default function Backers({ embedded = false }: BackersProps) {
 
   const sectionStyle: CSSProperties = embedded
     ? {
-        background: '#f5efe4',
+        background: 'var(--color-canvas)',
         width: '100%',
         height: '100vh',
         maxHeight: '100vh',
@@ -92,10 +93,10 @@ export default function Backers({ embedded = false }: BackersProps) {
         boxSizing: 'border-box',
         overflow: 'hidden',
         // Top reserve matches the hero / GBA slides so the eyebrow clears the fixed 64px nav.
-        padding: 'clamp(112px, 14vh, 144px) 5vw clamp(48px, 6vh, 80px)',
+        padding: 'var(--space-page-top) var(--gutter-x) var(--space-section-y)',
       }
     : {
-        background: '#f5efe4',
+        background: 'var(--color-canvas)',
         width: '100%',
         padding: '96px 5vw',
         boxSizing: 'border-box',
@@ -113,7 +114,7 @@ export default function Backers({ embedded = false }: BackersProps) {
           minHeight: 0,
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'center',
+          justifyContent: 'safe center',
           gap: 'clamp(32px, 4vh, 56px)',
         }}
       >
@@ -121,9 +122,12 @@ export default function Backers({ embedded = false }: BackersProps) {
             sit as peers in row 2. Top-aligned so the lede starts at the same Y
             as the headline's first line, removing the prior "floating low" dead space. */}
         <div className="backers-header">
-          <div className="backers-eyebrow">
-            <span className="backers-eyebrow-dot" aria-hidden />
-            <span className="backers-eyebrow-label">Our partners</span>
+          <div className="backers-eyebrow" style={{ display: 'block' }}>
+            <SectionLabelLine index={4} marginBottom="0">
+              <span className="backers-eyebrow-label" style={{ flexShrink: 0 }}>
+                Our partners
+              </span>
+            </SectionLabelLine>
           </div>
           <h2 className="backers-headline">
             Backed by leaders in medicine, capital, and industry.
@@ -268,7 +272,7 @@ export default function Backers({ embedded = false }: BackersProps) {
           font-weight: 400;
           text-decoration: none;
           border-bottom: 1px solid rgba(45, 58, 53, 0.3);
-          transition: border-color 150ms ease, color 150ms ease;
+          transition: border-color 250ms ease, color 250ms ease;
         }
         .backers-footnote__link:hover {
           color: #5e7a6a;

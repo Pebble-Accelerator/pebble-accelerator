@@ -2,11 +2,57 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import HKTimeChip from '@/components/layout/HKTimeChip'
 
 export default function Nav() {
   const [menuOpen, setMenuOpen] = useState(false)
   const pathname = usePathname()
+
+  // The homepage hero is a dark slide; every other slide (and every other route)
+  // is the light cream ground. While the hero occupies the top, the nav goes
+  // transparent with light links so there is no hard cream seam across the dark
+  // hero; the moment a light slide takes over it reverts to the solid cream bar
+  // with dark links. Tracked by watching the hero's position in the scroller
+  // (works for the desktop scroll-hijack and mobile native scroll alike).
+  const [overHero, setOverHero] = useState(false)
+
+  useEffect(() => {
+    if (pathname !== '/') {
+      setOverHero(false)
+      return
+    }
+    // Poll the hero's position. Polling (not scroll events, rAF, or IO) is the
+    // reliable signal: the prior scroll+rAF version got stuck on the SaltaGen
+    // slide, leaving faint light links on the dark ground = "no nav". setInterval
+    // + getBoundingClientRect fire in every environment and can't miss a boundary.
+    // setOverHero with an unchanged value is a no-op, so this is cheap.
+    const compute = () => {
+      const hero = document.getElementById('hero-section')
+      // Hero still covering the strip beneath the nav → hero slide is active.
+      setOverHero(hero ? hero.getBoundingClientRect().bottom > 120 : false)
+    }
+    compute()
+    const id = window.setInterval(compute, 120)
+    const onScroll = () => compute() // immediate response on top of the poll
+    const scroller = document.querySelector('.snap-container')
+    scroller?.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+    return () => {
+      clearInterval(id)
+      scroller?.removeEventListener('scroll', onScroll)
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+    }
+  }, [pathname])
+
+  const linkColor = overHero ? 'rgba(245, 240, 232, 0.88)' : '#555'
+  const linkHover = overHero ? '#ffffff' : '#0f0f0f'
+  const barColor = overHero ? 'rgba(245, 240, 232, 0.9)' : '#0f0f0f'
+  // Chip is --color-meta on the light bar; lifted cream on the dark hero so it
+  // stays legible (mirrors the link light/dark logic).
+  const chipColor = overHero ? 'rgba(245, 240, 232, 0.6)' : 'var(--color-meta)'
 
   // On the homepage, the logo is a "back to top" control: glide to the first slide
   // via the slideshow controller's existing goTo(0). On other routes it navigates
@@ -38,8 +84,10 @@ export default function Nav() {
         right: 0,
         width: '100%',
         zIndex: 100,
-        background: 'rgba(245,240,232,0.96)',
-        backdropFilter: 'blur(8px)',
+        background: overHero ? 'transparent' : 'rgba(245,240,232,0.96)',
+        backdropFilter: overHero ? 'none' : 'blur(8px)',
+        WebkitBackdropFilter: overHero ? 'none' : 'blur(8px)',
+        transition: 'background 0.35s ease, backdrop-filter 0.35s ease',
         height: '64px',
       }}>
         <div style={{
@@ -47,7 +95,8 @@ export default function Nav() {
           maxWidth: '1280px',
           margin: '0 auto',
           padding: '0 5vw',
-          borderBottom: '1px solid rgba(0,0,0,0.1)',
+          borderBottom: overHero ? '1px solid transparent' : '1px solid rgba(0,0,0,0.1)',
+          transition: 'border-color 0.35s ease',
           boxSizing: 'border-box',
           height: '100%',
           display: 'flex',
@@ -88,7 +137,9 @@ export default function Nav() {
               }}
             >
               <Image
-                src="/logos/pebblenew.png"
+                // Transparent mark on light grounds; cream light variant over the
+                // dark hero. Both have a transparent background (no white box).
+                src={overHero ? '/logos/pebblenew_light.png' : '/logos/pebblenew_transparent.png'}
                 alt="Pebble Accelerator"
                 width={1342}
                 height={1408}
@@ -107,6 +158,9 @@ export default function Nav() {
             </div>
           </Link>
 
+          {/* Live Hong Kong time chip (desktop only) */}
+          <HKTimeChip color={chipColor} />
+
           {/* Links: right, desktop only */}
           <div style={{
             display: 'flex',
@@ -123,13 +177,13 @@ export default function Nav() {
                   fontWeight: 400,
                   letterSpacing: '0.1em',
                   textTransform: 'uppercase',
-                  color: '#555',
+                  color: linkColor,
                   textDecoration: 'none',
                   fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-                  transition: 'color 0.15s',
+                  transition: 'color 0.25s ease',
                 }}
-                onMouseEnter={e => (e.currentTarget.style.color = '#0f0f0f')}
-                onMouseLeave={e => (e.currentTarget.style.color = '#555')}
+                onMouseEnter={e => (e.currentTarget.style.color = linkHover)}
+                onMouseLeave={e => (e.currentTarget.style.color = linkColor)}
               >
                 {link.label}
               </Link>
@@ -151,9 +205,9 @@ export default function Nav() {
             className="nav-hamburger"
             aria-label="Toggle menu"
           >
-            <span style={{ display: 'block', width: '22px', height: '1px', background: '#0f0f0f' }} />
-            <span style={{ display: 'block', width: '22px', height: '1px', background: '#0f0f0f' }} />
-            <span style={{ display: 'block', width: '22px', height: '1px', background: '#0f0f0f' }} />
+            <span style={{ display: 'block', width: '22px', height: '1px', background: barColor, transition: 'background 0.35s ease' }} />
+            <span style={{ display: 'block', width: '22px', height: '1px', background: barColor, transition: 'background 0.35s ease' }} />
+            <span style={{ display: 'block', width: '22px', height: '1px', background: barColor, transition: 'background 0.35s ease' }} />
           </button>
 
         </div>
@@ -209,6 +263,9 @@ export default function Nav() {
 
       {/* CSS for responsive nav */}
       <style>{`
+        @media (max-width: 900px) {
+          .hk-time-chip { display: none !important; }
+        }
         @media (max-width: 768px) {
           .nav-desktop-links { display: none !important; }
           .nav-hamburger { display: flex !important; }

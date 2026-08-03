@@ -4,6 +4,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 import FadeIn from '@/components/ui/FadeIn'
+import SectionLabelLine from '@/components/ui/SectionLabelLine'
+import SectionRipple from '@/components/ui/SectionRipple'
 
 type SaltaGenProps = {
   embedded?: boolean
@@ -29,40 +31,55 @@ function SaltaGenVisual() {
       style={{
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'safe center',
         width: '100%',
         // Demoted: logo reads as a supporting visual, not the headline of the area.
-        maxWidth: 'min(100%, 240px)',
+        maxWidth: 'min(100%, 280px)',
       }}
     >
-      {!logoMissing ? (
-        <Image
-          src="/logos/saltagen-ventures_logo-2.png"
-          alt="Saltagen Ventures"
-          width={SALTAGEN_LOGO_WIDTH}
-          height={SALTAGEN_LOGO_HEIGHT}
-          quality={100}
-          style={{
-            width: '100%',
-            height: 'auto',
-            objectFit: 'contain',
-          }}
-          onError={() => setLogoMissing(true)}
-        />
-      ) : (
-        <span
-          style={{
-            fontFamily: 'var(--font-cormorant), Georgia, serif',
-            fontSize: '32px',
-            fontStyle: 'italic',
-            fontWeight: 500,
-            color: '#1a1a1a',
-            lineHeight: 1,
-          }}
-        >
-          Saltagen
-        </span>
-      )}
+      {/* Light chip so the (dark) wordmark stays legible on the dark ground —
+          the Backers dark-chip treatment, inverted for a dark section. */}
+      <div
+        style={{
+          background: 'var(--color-canvas)',
+          borderRadius: '10px',
+          border: '1px solid rgba(45, 58, 53, 0.14)',
+          padding: 'clamp(22px, 3vw, 34px)',
+          width: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'safe center',
+        }}
+      >
+        {!logoMissing ? (
+          <Image
+            src="/logos/saltagen-ventures_logo-2.png"
+            alt="Saltagen Ventures"
+            width={SALTAGEN_LOGO_WIDTH}
+            height={SALTAGEN_LOGO_HEIGHT}
+            quality={100}
+            style={{
+              width: '100%',
+              height: 'auto',
+              objectFit: 'contain',
+            }}
+            onError={() => setLogoMissing(true)}
+          />
+        ) : (
+          <span
+            style={{
+              fontFamily: 'var(--font-cormorant), Georgia, serif',
+              fontSize: '32px',
+              fontStyle: 'italic',
+              fontWeight: 500,
+              color: '#1a1a1a',
+              lineHeight: 1,
+            }}
+          >
+            Saltagen
+          </span>
+        )}
+      </div>
     </div>
   )
 }
@@ -91,16 +108,16 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
         fontWeight: 400,
         letterSpacing: '0.12em',
         textTransform: 'uppercase',
-        color: '#2d3a35',
+        color: 'rgba(245, 240, 232, 0.72)',
         textDecoration: 'none',
-        transition: 'color 150ms ease',
+        transition: 'color 250ms ease',
         flexShrink: 0,
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.color = '#5e7a6a'
+        e.currentTarget.style.color = '#a9c7b6'
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.color = '#2d3a35'
+        e.currentTarget.style.color = 'rgba(245, 240, 232, 0.72)'
       }}
     >
       <span>Visit Saltagen.com</span>
@@ -110,9 +127,14 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
 
   return (
     <section
-      className={embedded ? 'saltagen-section--embedded' : undefined}
+      className={
+        embedded ? 'saltagen-section--embedded saltagen-section--dark' : undefined
+      }
       style={{
-        background: '#f5efe4',
+        // Dark ground — carries the hero's dark language through (alternates the
+        // homepage light/dark instead of running flat cream).
+        background: 'var(--color-slate-dark)',
+        position: 'relative',
         width: '100%',
         boxSizing: 'border-box',
         ...(embedded
@@ -120,10 +142,11 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
               height: '100vh',
               maxHeight: '100vh',
               overflow: 'hidden',
-              padding: '60px 8vw',
+              // 8vw gutter (wider than the 5vw standard) is deliberate for the split.
+              padding: 'var(--space-page-top) 8vw var(--space-section-y)',
               display: 'flex',
               flexDirection: 'column',
-              justifyContent: 'center',
+              justifyContent: 'safe center',
             }
           : {
               padding: '120px 8vw',
@@ -136,8 +159,13 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
           className="saltagen-embedded-grid"
           style={{
             ...contentRailStyle,
+            position: 'relative',
+            zIndex: 1,
             display: 'grid',
-            gridTemplateColumns: 'minmax(0, 55%) minmax(0, 45%)',
+            // Two-column split with the copy (and its right-aligned headline) on the
+            // RIGHT and the logo on the LEFT — a distinct composition from the
+            // neighbouring slides.
+            gridTemplateColumns: 'minmax(0, 45%) minmax(0, 55%)',
             columnGap: 'clamp(32px, 4vw, 64px)',
             alignItems: 'center',
             width: '100%',
@@ -146,32 +174,15 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
           <div
             className="saltagen-embedded-copy"
             style={{
+              order: 2,
               display: 'flex',
               flexDirection: 'column',
-              justifyContent: 'center',
+              justifyContent: 'safe center',
               minHeight: 0,
               minWidth: 0,
             }}
           >
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                marginBottom: embedded ? '14px' : '28px',
-                flexShrink: 0,
-              }}
-            >
-              <span
-                style={{
-                  width: '8px',
-                  height: '8px',
-                  borderRadius: '50%',
-                  background: '#E8703A',
-                  flexShrink: 0,
-                }}
-                aria-hidden
-              />
+            <SectionLabelLine index={5} tone="dark" marginBottom={embedded ? '14px' : '28px'}>
               <span
                 style={{
                   fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
@@ -179,12 +190,13 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
                   fontWeight: 400,
                   letterSpacing: '0.14em',
                   textTransform: 'uppercase',
-                  color: 'rgba(26, 26, 26, 0.55)',
+                  color: 'rgba(245, 240, 232, 0.62)',
+                  flexShrink: 0,
                 }}
               >
                 Affiliated · Strategic Partner
               </span>
-            </div>
+            </SectionLabelLine>
 
             <h2
               style={{
@@ -192,7 +204,9 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
                 fontSize: embedded ? 'clamp(28px, 3vw, 42px)' : 'clamp(32px, 3.5vw, 48px)',
                 lineHeight: 1.12,
                 letterSpacing: '-0.02em',
-                color: '#1a1a1a',
+                color: '#f7f3ec',
+                // Right-aligned headline — the distinguishing move of this two-column slide.
+                textAlign: 'right',
                 margin: `0 0 ${embedded ? '16px' : '24px'}`,
                 flexShrink: 0,
               }}
@@ -203,7 +217,7 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
                 style={{
                   fontWeight: 500,
                   fontStyle: 'italic',
-                  color: '#5e7a6a',
+                  color: '#a9c7b6',
                 }}
               >
                 Our sister fund.
@@ -215,7 +229,7 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
                 fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
                 fontSize: embedded ? '16px' : '17px',
                 fontWeight: 300,
-                color: '#1a1a1a',
+                color: 'rgba(245, 240, 232, 0.82)',
                 lineHeight: 1.6,
                 maxWidth: '520px',
                 margin: `0 0 ${embedded ? '22px' : '28px'}`,
@@ -241,7 +255,8 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
                     style={{
                       fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
                       fontSize: '11px',
-                      color: '#E8703A',
+                      // Lifted ember for AA legibility on the dark ground.
+                      color: '#F2915E',
                       letterSpacing: '0.08em',
                       flexShrink: 0,
                       paddingTop: '2px',
@@ -255,7 +270,7 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
                       fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
                       fontSize: embedded ? '15px' : '17px',
                       fontWeight: 300,
-                      color: '#1a1a1a',
+                      color: 'rgba(245, 240, 232, 0.82)',
                       lineHeight: 1.5,
                     }}
                   >
@@ -270,15 +285,46 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
 
           <div
             style={{
+              order: 1,
+              position: 'relative',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
+              justifyContent: 'safe center',
               minHeight: 0,
               minWidth: 0,
               width: '100%',
             }}
           >
-            <SaltaGenVisual />
+            {embedded && (
+              <div
+                aria-hidden
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  width: 'clamp(360px, 46vh, 560px)',
+                  aspectRatio: '1',
+                  transform: 'translate(-50%, -50%)',
+                  pointerEvents: 'none',
+                  zIndex: 0,
+                }}
+              >
+                {/* Reference ripple: radiates from the CENTRE of the logo card, making
+                    the sister fund the visible point of impact. */}
+                <SectionRipple seed="saltagen" color="rgba(245, 240, 232, 0.11)" />
+              </div>
+            )}
+            <div
+              style={{
+                position: 'relative',
+                zIndex: 1,
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'safe center',
+              }}
+            >
+              <SaltaGenVisual />
+            </div>
           </div>
         </div>
       </FadeIn>

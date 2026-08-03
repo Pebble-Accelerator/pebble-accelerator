@@ -25,7 +25,7 @@ export default function About() {
     <section
       className="snap-section apac-corridor-fullbleed"
       style={{
-        background: '#f5efe4',
+        background: 'var(--color-canvas)',
         padding: 0,
         position: 'relative',
         boxSizing: 'border-box',
@@ -39,13 +39,13 @@ export default function About() {
           width: '100%',
           height: '100%',
           minHeight: '100%',
-          background: '#f5efe4',
+          background: 'var(--color-canvas)',
         }}
       >
         {shouldLoadMap ? (
           <GBAMap />
         ) : (
-          <div style={{ width: '100%', height: '100%', background: '#f5efe4' }} aria-hidden />
+          <div style={{ width: '100%', height: '100%', background: 'var(--color-canvas)' }} aria-hidden />
         )}
 
         <style>{`
