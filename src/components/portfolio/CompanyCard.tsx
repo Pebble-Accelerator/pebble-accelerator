@@ -162,7 +162,12 @@ export function CompanyCard({ company, gridIndex }: { company: Company; gridInde
           maxWidth: '72%',
         }}
       >
-        <h2
+        {/* h3, not h2: this card is reused under a real h2 section heading on
+            both the homepage ("A selection of the companies we back.") and
+            /portfolio, so a same-level h2 here made 28+ company names read as
+            peers of the section heading rather than children of it — flat,
+            undifferentiated heading outline for screen-reader navigation. */}
+        <h3
           className="portfolio-tile-name"
           style={{
             fontFamily: 'var(--font-cormorant), Georgia, serif',
@@ -175,7 +180,7 @@ export function CompanyCard({ company, gridIndex }: { company: Company; gridInde
           }}
         >
           {company.name}
-        </h2>
+        </h3>
         <p
           style={{
             fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
