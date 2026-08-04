@@ -90,7 +90,7 @@ export default function Hero() {
             fontWeight: 500,
             lineHeight: 1.05,
             letterSpacing: '-0.02em',
-            color: '#f5efe4',
+            color: 'var(--color-canvas)',
             maxWidth: '900px',
             margin: 0,
           }}
@@ -98,7 +98,7 @@ export default function Hero() {
           {/* Opening lines — light but dimmed so the eye is pulled to the focal
               word over the atmospheric background. No per-line motion; the whole
               block reveals together as one quiet fade + rise. */}
-          <span style={{ display: 'block', color: 'rgba(245, 240, 232, 0.84)' }}>
+          <span style={{ display: 'block', color: 'color-mix(in srgb, var(--color-canvas) 84%, transparent)' }}>
             An avalanche starts from one
           </span>
           {/* "pebble." — the single focal point: darkest ink, heavier weight, and
@@ -140,7 +140,7 @@ export default function Hero() {
                     className="hero-founders-draw hero-pebble-draw"
                     d={PEBBLE_PATH_D}
                     fill="none"
-                    stroke="#5e7a6a"
+                    stroke="var(--color-sage)"
                     strokeWidth="2.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -171,7 +171,7 @@ export default function Hero() {
             fontSize: '22px',
             fontStyle: 'italic',
             fontWeight: 400,
-            color: 'rgba(245, 240, 232, 0.92)',
+            color: 'color-mix(in srgb, var(--color-canvas) 92%, transparent)',
             lineHeight: 1.4,
             marginTop: '24px',
             marginBottom: 0,
@@ -188,7 +188,7 @@ export default function Hero() {
           style={{
             fontSize: '15px',
             fontWeight: 400,
-            color: 'rgba(247, 243, 236, 0.92)',
+            color: 'color-mix(in srgb, var(--color-canvas) 92%, transparent)',
             lineHeight: 1.8,
             maxWidth: '560px',
             marginTop: '20px',
@@ -219,7 +219,7 @@ export default function Hero() {
             style={{
               fontSize: '14px',
               fontWeight: 500,
-              color: '#a9c7b6',
+              color: 'var(--color-sage-light)',
               textDecoration: 'none',
               fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
             }}
@@ -231,7 +231,7 @@ export default function Hero() {
             className="link-underline"
             style={{
               fontSize: '12px',
-              color: 'rgba(245, 240, 232, 0.6)',
+              color: 'color-mix(in srgb, var(--color-canvas) 60%, transparent)',
               fontWeight: 400,
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
@@ -275,7 +275,7 @@ export default function Hero() {
         >
           <path
             d="M6 9l6 6 6-6"
-            stroke="rgba(245, 240, 232, 0.7)"
+            stroke="color-mix(in srgb, var(--color-canvas) 70%, transparent)"
             strokeWidth="1.5"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -306,7 +306,7 @@ export default function Hero() {
           font-weight: 600;
           position: relative;
           z-index: 2;
-          color: #f7f3ec;
+          color: var(--color-canvas);
         }
 
         .hero-headline-period {
@@ -317,7 +317,7 @@ export default function Hero() {
           letter-spacing: inherit;
           line-height: inherit;
           font-weight: 600;
-          color: #f7f3ec;
+          color: var(--color-canvas);
         }
 
         @media (prefers-reduced-motion: no-preference) {

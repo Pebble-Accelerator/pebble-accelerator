@@ -22,13 +22,13 @@ const waveBase: CSSProperties = {
 
 export const SERVICE_CARD_WAVE_FOREST: CSSProperties = {
   ...waveBase,
-  backgroundColor: 'rgba(245, 239, 228, 0.55)',
+  backgroundColor: 'color-mix(in srgb, var(--color-canvas) 55%, transparent)',
   opacity: 0.06,
 }
 
 export const SERVICE_CARD_WAVE_CREAM: CSSProperties = {
   ...waveBase,
-  backgroundColor: 'rgba(45, 58, 53, 0.45)',
+  backgroundColor: 'color-mix(in srgb, var(--color-slate-dark) 45%, transparent)',
   opacity: 0.06,
 }
 

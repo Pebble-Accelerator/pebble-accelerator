@@ -43,7 +43,7 @@ function SaltaGenVisual() {
         style={{
           background: 'var(--color-canvas)',
           borderRadius: '10px',
-          border: '1px solid rgba(45, 58, 53, 0.14)',
+          border: '1px solid color-mix(in srgb, var(--color-slate-dark) 14%, transparent)',
           padding: 'clamp(22px, 3vw, 34px)',
           width: '100%',
           display: 'flex',
@@ -72,7 +72,7 @@ function SaltaGenVisual() {
               fontSize: '32px',
               fontStyle: 'italic',
               fontWeight: 500,
-              color: '#1a1a1a',
+              color: 'var(--color-ink)',
               lineHeight: 1,
             }}
           >
@@ -108,16 +108,16 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
         fontWeight: 400,
         letterSpacing: '0.12em',
         textTransform: 'uppercase',
-        color: 'rgba(245, 240, 232, 0.72)',
+        color: 'color-mix(in srgb, var(--color-canvas) 72%, transparent)',
         textDecoration: 'none',
         transition: 'color 250ms ease',
         flexShrink: 0,
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.color = '#a9c7b6'
+        e.currentTarget.style.color = 'var(--color-sage-light)'
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.color = 'rgba(245, 240, 232, 0.72)'
+        e.currentTarget.style.color = 'color-mix(in srgb, var(--color-canvas) 72%, transparent)'
       }}
     >
       <span>Visit Saltagen.com</span>
@@ -190,7 +190,7 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
                   fontWeight: 400,
                   letterSpacing: '0.14em',
                   textTransform: 'uppercase',
-                  color: 'rgba(245, 240, 232, 0.62)',
+                  color: 'color-mix(in srgb, var(--color-canvas) 62%, transparent)',
                   flexShrink: 0,
                 }}
               >
@@ -204,7 +204,7 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
                 fontSize: embedded ? 'clamp(28px, 3vw, 42px)' : 'clamp(32px, 3.5vw, 48px)',
                 lineHeight: 1.12,
                 letterSpacing: '-0.02em',
-                color: '#f7f3ec',
+                color: 'var(--color-canvas)',
                 // Right-aligned headline — the distinguishing move of this two-column slide.
                 textAlign: 'right',
                 margin: `0 0 ${embedded ? '16px' : '24px'}`,
@@ -217,7 +217,7 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
                 style={{
                   fontWeight: 500,
                   fontStyle: 'italic',
-                  color: '#a9c7b6',
+                  color: 'var(--color-sage-light)',
                 }}
               >
                 Our sister fund.
@@ -229,7 +229,7 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
                 fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
                 fontSize: embedded ? '16px' : '17px',
                 fontWeight: 300,
-                color: 'rgba(245, 240, 232, 0.82)',
+                color: 'color-mix(in srgb, var(--color-canvas) 82%, transparent)',
                 lineHeight: 1.6,
                 maxWidth: '520px',
                 margin: `0 0 ${embedded ? '22px' : '28px'}`,
@@ -256,7 +256,7 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
                       fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
                       fontSize: '11px',
                       // Lifted ember for AA legibility on the dark ground.
-                      color: '#F2915E',
+                      color: 'var(--color-ember-light)',
                       letterSpacing: '0.08em',
                       flexShrink: 0,
                       paddingTop: '2px',
@@ -270,7 +270,7 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
                       fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
                       fontSize: embedded ? '15px' : '17px',
                       fontWeight: 300,
-                      color: 'rgba(245, 240, 232, 0.82)',
+                      color: 'color-mix(in srgb, var(--color-canvas) 82%, transparent)',
                       lineHeight: 1.5,
                     }}
                   >
@@ -311,7 +311,7 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
               >
                 {/* Reference ripple: radiates from the CENTRE of the logo card, making
                     the sister fund the visible point of impact. */}
-                <SectionRipple seed="saltagen" color="rgba(245, 240, 232, 0.11)" />
+                <SectionRipple seed="saltagen" color="color-mix(in srgb, var(--color-canvas) 11%, transparent)" />
               </div>
             )}
             <div

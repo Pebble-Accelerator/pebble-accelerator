@@ -6,7 +6,6 @@ import {
   monogramFromName,
   usesTileLogo,
   WATERMARK_BOX_STYLE,
-  WATERMARK_LOGO_FILTER,
   WATERMARK_MARK,
   WATERMARK_OPACITY,
 } from '@/data/portfolioWatermark'
@@ -28,7 +27,7 @@ const BUCKET_ACCENT: Record<string, string> = {
   Platform: '#4F6B5D',
 }
 
-const TILE_NAME_FOREST = '#2d3a35'
+const TILE_NAME_FOREST = 'var(--color-slate-dark)'
 
 /**
  * Per-card concentric ripple field. Origin + ring spacing are seeded by the
@@ -73,7 +72,6 @@ function TileWatermark({ company }: { company: Company }) {
 
   return (
     <div
-      aria-hidden
       className="portfolio-watermark-box"
       data-watermark={showLogo ? 'logo' : 'monogram'}
       style={WATERMARK_BOX_STYLE}
@@ -82,18 +80,18 @@ function TileWatermark({ company }: { company: Company }) {
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={company.logo}
-          alt=""
+          alt={company.name}
           className="portfolio-watermark-logo"
           style={{
             width: '100%',
             height: '100%',
             objectFit: 'contain',
             opacity: WATERMARK_OPACITY,
-            filter: WATERMARK_LOGO_FILTER,
           }}
         />
       ) : (
         <span
+          aria-hidden
           className="portfolio-watermark-monogram"
           style={{
             fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
@@ -226,8 +224,8 @@ export function CompanyCard({ company, gridIndex }: { company: Company; gridInde
           /* Unified container language: 10px radius, 1px hairline, no drop shadow.
              Inset top highlight is a bevel, not a drop shadow. Elevation on hover
              is the lift + a deepened border, never a shadow. */
-          border: 1px solid rgba(45, 58, 53, 0.14);
-          box-shadow: inset 0 1px 0 rgba(245, 239, 228, 0.5);
+          border: 1px solid color-mix(in srgb, var(--color-slate-dark) 14%, transparent);
+          box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-canvas) 50%, transparent);
           transition: transform 0.25s ease, border-color 0.25s ease;
           will-change: transform;
         }
@@ -243,7 +241,7 @@ export function CompanyCard({ company, gridIndex }: { company: Company; gridInde
 
         .portfolio-tile-surface:hover {
           transform: translateY(-5px);
-          border-color: rgba(45, 58, 53, 0.3);
+          border-color: color-mix(in srgb, var(--color-slate-dark) 30%, transparent);
         }
 
         .portfolio-tile-name {
@@ -309,7 +307,7 @@ export function CompanyCard({ company, gridIndex }: { company: Company; gridInde
           /* No lift under reduced motion; the border deepening is the only hover cue. */
           .portfolio-tile-surface:hover {
             transform: none;
-            border-color: rgba(45, 58, 53, 0.3);
+            border-color: color-mix(in srgb, var(--color-slate-dark) 30%, transparent);
           }
           .portfolio-tile-surface:hover .portfolio-tile-ripple::before {
             animation: none;

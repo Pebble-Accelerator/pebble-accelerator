@@ -102,7 +102,7 @@ export function getTileColors(
   gridIndex: number
 ): { blockColor: string; blockColorDark: string } {
   const bucket = getMedicalBucket(company)
-  const fallback = '#2d3a35'
+  const fallback = 'var(--color-slate-dark)'
   if (!bucket) {
     return {
       blockColor: fallback,

@@ -165,7 +165,7 @@ export default function Services({ embedded = false }: ServicesProps) {
                   fontWeight: 400,
                   letterSpacing: '0.14em',
                   textTransform: 'uppercase',
-                  color: 'rgba(245, 240, 232, 0.62)',
+                  color: 'color-mix(in srgb, var(--color-canvas) 62%, transparent)',
                   flexShrink: 0,
                 }}
               >
@@ -184,8 +184,8 @@ export default function Services({ embedded = false }: ServicesProps) {
               maxWidth: '100%',
             }}
           >
-            <span style={{ fontWeight: 400, color: '#f7f3ec' }}>How we work.</span>{' '}
-            <span style={{ fontStyle: 'italic', fontWeight: 500, color: '#a9c7b6' }}>
+            <span style={{ fontWeight: 400, color: 'var(--color-canvas)' }}>How we work.</span>{' '}
+            <span style={{ fontStyle: 'italic', fontWeight: 500, color: 'var(--color-sage-light)' }}>
               Bespoke, not batched.
             </span>
           </h2>
@@ -198,7 +198,7 @@ export default function Services({ embedded = false }: ServicesProps) {
                     fontFamily: 'var(--font-cormorant), Georgia, serif',
                     fontSize: '32px',
                     fontWeight: 500,
-                    color: '#f7f3ec',
+                    color: 'var(--color-canvas)',
                     margin: '0 0 16px',
                     lineHeight: 1.2,
                   }}
@@ -210,7 +210,7 @@ export default function Services({ embedded = false }: ServicesProps) {
                     fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
                     fontSize: '14px',
                     fontWeight: 300,
-                    color: 'rgba(245, 240, 232, 0.72)',
+                    color: 'color-mix(in srgb, var(--color-canvas) 72%, transparent)',
                     lineHeight: 1.7,
                     maxWidth: '440px',
                     margin: 0,
@@ -222,7 +222,7 @@ export default function Services({ embedded = false }: ServicesProps) {
               <div
                 className="services-embedded-divider"
                 aria-hidden
-                style={{ background: 'rgba(245, 240, 232, 0.18)' }}
+                style={{ background: 'color-mix(in srgb, var(--color-canvas) 18%, transparent)' }}
               />
               <div ref={rightColRef} style={{ flex: 1, maxWidth: 'none', minWidth: 0 }}>
                 <h3
@@ -230,7 +230,7 @@ export default function Services({ embedded = false }: ServicesProps) {
                     fontFamily: 'var(--font-cormorant), Georgia, serif',
                     fontSize: '32px',
                     fontWeight: 500,
-                    color: '#f7f3ec',
+                    color: 'var(--color-canvas)',
                     margin: '0 0 16px',
                     lineHeight: 1.2,
                   }}
@@ -242,7 +242,7 @@ export default function Services({ embedded = false }: ServicesProps) {
                     fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
                     fontSize: '14px',
                     fontWeight: 300,
-                    color: 'rgba(245, 240, 232, 0.72)',
+                    color: 'color-mix(in srgb, var(--color-canvas) 72%, transparent)',
                     lineHeight: 1.7,
                     maxWidth: '440px',
                     margin: 0,
@@ -255,7 +255,7 @@ export default function Services({ embedded = false }: ServicesProps) {
           </div>
 
           <Link
-            href="/services"
+            href="/consulting"
             className="services-full-link link-underline"
             style={{
               display: 'inline-flex',
@@ -266,17 +266,17 @@ export default function Services({ embedded = false }: ServicesProps) {
               fontWeight: 400,
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
-              color: 'rgba(245, 240, 232, 0.72)',
+              color: 'color-mix(in srgb, var(--color-canvas) 72%, transparent)',
               textDecoration: 'none',
               transition: 'color 250ms ease',
               cursor: 'pointer',
               alignSelf: 'flex-start',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.color = '#a9c7b6'
+              e.currentTarget.style.color = 'var(--color-sage-light)'
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.color = 'rgba(245, 240, 232, 0.72)'
+              e.currentTarget.style.color = 'color-mix(in srgb, var(--color-canvas) 72%, transparent)'
             }}
           >
             <span>SEE HOW WE WORK</span>
@@ -286,7 +286,7 @@ export default function Services({ embedded = false }: ServicesProps) {
 
         <style jsx>{`
           .services-full-link:focus-visible {
-            outline: 2px solid #5e7a6a;
+            outline: 2px solid var(--color-sage);
             outline-offset: 2px;
             border-radius: 4px;
           }
@@ -350,7 +350,7 @@ export default function Services({ embedded = false }: ServicesProps) {
               style={{
                 fontSize: '22px',
                 fontWeight: 500,
-                color: '#0f0f0f',
+                color: 'var(--color-ink)',
                 marginBottom: '20px',
                 marginTop: 0,
                 fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
@@ -362,7 +362,7 @@ export default function Services({ embedded = false }: ServicesProps) {
               style={{
                 fontSize: '15px',
                 fontWeight: 300,
-                color: '#666',
+                color: 'var(--color-ink-body)',
                 lineHeight: 1.85,
                 marginBottom: '24px',
                 marginTop: 0,
@@ -374,7 +374,7 @@ export default function Services({ embedded = false }: ServicesProps) {
             <span
               style={{
                 fontSize: '12px',
-                color: '#bbb',
+                color: 'var(--color-ink-faint)',
                 letterSpacing: '0.04em',
                 fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
               }}
@@ -387,7 +387,7 @@ export default function Services({ embedded = false }: ServicesProps) {
               style={{
                 fontSize: '22px',
                 fontWeight: 500,
-                color: '#0f0f0f',
+                color: 'var(--color-ink)',
                 marginBottom: '20px',
                 marginTop: 0,
                 fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
@@ -399,7 +399,7 @@ export default function Services({ embedded = false }: ServicesProps) {
               style={{
                 fontSize: '15px',
                 fontWeight: 300,
-                color: '#666',
+                color: 'var(--color-ink-body)',
                 lineHeight: 1.85,
                 marginBottom: '24px',
                 marginTop: 0,
@@ -411,7 +411,7 @@ export default function Services({ embedded = false }: ServicesProps) {
             <span
               style={{
                 fontSize: '12px',
-                color: '#bbb',
+                color: 'var(--color-ink-faint)',
                 letterSpacing: '0.04em',
                 fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
               }}

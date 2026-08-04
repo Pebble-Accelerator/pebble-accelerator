@@ -80,9 +80,9 @@ export default function PortfolioEditorial() {
               margin: 0,
             }}
           >
-            <span style={{ color: '#1a1a1a' }}>Every avalanche</span>
+            <span style={{ color: 'var(--color-ink)' }}>Every avalanche</span>
             <br />
-            <span style={{ fontStyle: 'italic', color: '#5e7a6a' }}>starts here.</span>
+            <span style={{ fontStyle: 'italic', color: 'var(--color-sage)' }}>starts here.</span>
           </h1>
         </div>
 
@@ -112,16 +112,18 @@ export default function PortfolioEditorial() {
                   padding: '6px 16px',
                   borderRadius: '999px',
                   cursor: 'pointer',
-                  border: isActive ? '1px solid #1a1a1a' : '1px solid #d4cfc2',
-                  backgroundColor: isActive ? '#1a1a1a' : 'transparent',
-                  color: isActive ? 'var(--color-canvas)' : '#1a1a1a',
+                  border: isActive
+                    ? '1px solid var(--color-ink)'
+                    : '1px solid var(--color-border-warm)',
+                  backgroundColor: isActive ? 'var(--color-ink)' : 'transparent',
+                  color: isActive ? 'var(--color-canvas)' : 'var(--color-ink)',
                   transition: 'border-color 0.25s ease, background-color 0.25s ease',
                 }}
                 onMouseEnter={(e) => {
-                  if (!isActive) e.currentTarget.style.borderColor = '#1a1a1a'
+                  if (!isActive) e.currentTarget.style.borderColor = 'var(--color-ink)'
                 }}
                 onMouseLeave={(e) => {
-                  if (!isActive) e.currentTarget.style.borderColor = '#d4cfc2'
+                  if (!isActive) e.currentTarget.style.borderColor = 'var(--color-border-warm)'
                 }}
               >
                 {label} · {count}

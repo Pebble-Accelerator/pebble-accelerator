@@ -16,9 +16,9 @@ type Props = {
 }
 
 /** Meta colour per ground. On dark, a lifted cream keeps the index/hairline above
- *  AA contrast instead of the near-invisible #888. */
+ *  AA contrast instead of the near-invisible var(--color-meta). */
 const META_LIGHT = 'var(--color-meta)'
-const META_DARK = 'rgba(245, 240, 232, 0.6)'
+const META_DARK = 'color-mix(in srgb, var(--color-canvas) 60%, transparent)'
 
 export default function SectionLabelLine({
   children,

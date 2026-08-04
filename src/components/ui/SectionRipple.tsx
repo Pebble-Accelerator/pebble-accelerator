@@ -23,7 +23,7 @@ const VB = 400
  */
 export default function SectionRipple({
   seed,
-  color = 'rgba(245, 240, 232, 0.09)',
+  color = 'color-mix(in srgb, var(--color-canvas) 9%, transparent)',
   opacity = 1,
   style,
 }: Props) {

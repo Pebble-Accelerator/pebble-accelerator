@@ -3,8 +3,8 @@ import { FILM_GRAIN_DATA_URI } from '@/lib/filmGrain'
 import { PEBBLE_WAVE_LOGO } from '@/data/portfolioWatermark'
 
 const CREAM = 'var(--color-canvas)'
-const EMBER = '#E8703A'
-const INK = '#1a1a1a'
+const EMBER = 'var(--color-ember)'
+const INK = 'var(--color-ink)'
 
 type ForestCTAProps = {
   /** Full-viewport slide on homepage; padded section on services/contact. */
@@ -37,7 +37,7 @@ export default function ForestCTA({ embedded = false }: ForestCTAProps) {
           bottom: embedded ? '-14vh' : '-18%',
           width: embedded ? '114vh' : 'min(720px, 85vw)',
           height: embedded ? '105vh' : 'min(640px, 75vw)',
-          backgroundColor: '#3a4a44',
+          backgroundColor: 'var(--color-slate-dark)',
           opacity: 0.19,
           WebkitMaskImage: `url(${PEBBLE_WAVE_LOGO})`,
           maskImage: `url(${PEBBLE_WAVE_LOGO})`,
@@ -109,7 +109,7 @@ export default function ForestCTA({ embedded = false }: ForestCTAProps) {
               fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
               fontSize: 'clamp(18px, 1.4vw, 20px)',
               lineHeight: 1.5,
-              color: 'rgba(245,239,228,0.7)',
+              color: 'color-mix(in srgb, var(--color-canvas) 70%, transparent)',
               margin: 0,
               maxWidth: '360px',
             }}
@@ -147,7 +147,7 @@ export default function ForestCTA({ embedded = false }: ForestCTAProps) {
             style={{
               width: '100%',
               height: '1px',
-              background: 'rgba(245,239,228,0.2)',
+              background: 'color-mix(in srgb, var(--color-canvas) 20%, transparent)',
             }}
           />
 
@@ -157,7 +157,7 @@ export default function ForestCTA({ embedded = false }: ForestCTAProps) {
             style={{
               fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
               fontSize: '15px',
-              color: 'rgba(245,239,228,0.8)',
+              color: 'color-mix(in srgb, var(--color-canvas) 80%, transparent)',
               textDecoration: 'none',
             }}
           >

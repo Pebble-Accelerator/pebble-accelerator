@@ -1,7 +1,6 @@
 import Hero from '@/components/sections/Hero'
 import GBAMap from '@/components/sections/GBAMap'
 import PortfolioHome from '@/components/sections/PortfolioHome'
-import People from '@/components/sections/People'
 import Services from '@/components/sections/Services'
 import Backers from '@/components/sections/Backers'
 import SaltaGen from '@/components/sections/SaltaGen'
@@ -47,9 +46,6 @@ export default function Home() {
         </div>
         <div className="home-slide" style={snapWrapperStyle}>
           <PortfolioHome />
-        </div>
-        <div className="home-slide" style={snapWrapperStyle}>
-          <People />
         </div>
         <div className="home-slide" style={snapWrapperStyle}>
           <Services embedded />

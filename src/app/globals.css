@@ -10,7 +10,6 @@
      truth so a future palette change is one edit here. Values unchanged from the
      literals they replaced; the site must stay pixel-identical. */
   --color-canvas: #f5efe4;
-  --color-ink-900: #1a1a1a;
   --color-slate-dark: #2d3a35;
   --color-ink: #0f0f0f;
   --color-ink-dark: #333333;
@@ -27,6 +26,25 @@
   --color-hover-bg: #fafafa;
   --color-forest: #2D6A5A;
   --color-ember: #E8703A;
+  /* Promoted from #5e7a6a, used raw (and as rgba(94,122,106,...)) in 9+ files
+     before this token existed — Hero, Backers, Services, Portfolio, GBAMap,
+     contact. See DESIGN.md "Color duplication" audit. */
+  --color-sage: #5e7a6a;
+  /* Sage/ember lifted for AA legibility on dark grounds (hero, SaltaGen,
+     Services-embedded). Genuinely distinct values, not drift — the ember
+     variant already carried the comment "Lifted ember for AA legibility on
+     the dark ground" before this token existed; the sage variant follows the
+     same pattern. Delta from base sage: ~76/255 per channel; from base ember:
+     ~10-36/255 — both far past what accidental hex drift produces. */
+  --color-sage-light: #a9c7b6;
+  --color-ember-light: #F2915E;
+  /* Card/panel background, one step darker than --color-canvas — used for
+     visual layering (ServicesCardStack's CREAM_PANEL, Backers hover state).
+     Delta from canvas: 13-20/255 per channel, a real, visible difference. */
+  --color-panel: #e8e0d0;
+  /* Warm stone-toned hairline, distinct from the cool-grey --color-border
+     (#e8e8e8) — reused as-is across GBAMap and PortfolioEditorial borders. */
+  --color-border-warm: #d4cfc2;
   /* Canonical metadata label grey (promoted from the hardcoded #888/#999 used on
      eyebrows, section labels, and mono indices). */
   --color-meta: #888888;
@@ -67,7 +85,7 @@ body {
 }
 
 body {
-  color: #0f0f0f;
+  color: var(--color-ink);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -158,7 +176,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 .link-underline--sage::after {
-  background: #5e7a6a;
+  background: var(--color-sage);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -281,61 +299,18 @@ body:has(.snap-container) > footer {
   }
 }
 
-/* Stats in slide band */
-.stats-band {
-  height: 100%;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--color-canvas);
-  padding: 0;
-  box-sizing: border-box;
-}
-
-.stats-band .stats-grid {
-  align-items: center;
-}
-
-.stats-band .stats-item {
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 0 48px;
-}
-
-.stats-band .stats-item:first-child {
-  padding-left: 0;
-}
-
-.stats-band .stats-item:last-child {
-  padding-right: 0;
-  border-right: none;
-}
-
-.stats-band .stats-number {
-  font-size: 88px;
-  font-weight: 500;
-  letter-spacing: -0.04em;
-  color: #0f0f0f;
-  line-height: 1;
-  margin-bottom: 0;
-}
-
-.stats-band .stats-label {
-  margin-top: 8px;
-  font-size: 11px;
-  color: #999;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
+/* .stats-band and its nested rules were Stats.tsx-only — deleted, dead since
+   that component was removed as an unused orphan (DESIGN.md / eng-review
+   T12). The standalone .stats-grid/.stats-item/.stats-overlay rules below
+   remain — those are GBAMap.tsx's live stats overlay, a separate,
+   non-nested set. */
 
 .services-section--embedded .services-embedded-label {
   font-family: var(--font-ibm-plex-sans), system-ui, sans-serif;
   font-size: 10px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #888;
+  color: var(--color-meta);
   padding-top: 0;
   margin: 0 0 20px;
   flex-shrink: 0;
@@ -353,7 +328,7 @@ body:has(.snap-container) > footer {
 .services-section--embedded .services-embedded-divider {
   width: 1px;
   height: 70%;
-  background: #d4cfc2;
+  background: var(--color-border-warm);
   justify-self: center;
   align-self: center;
 }
@@ -394,7 +369,10 @@ body:has(.snap-container) > footer {
   align-items: flex-start;
   justify-content: center;
   padding: 0 24px;
-  border-right: 1px solid #c8d4c4;
+  /* #c8d4c4 was a near-duplicate of --color-border-warm (#d4cfc2) — a
+     slightly cooler-green cast at 1px hairline opacity, imperceptible.
+     Collapsed rather than adding a 5th border color for this. */
+  border-right: 1px solid var(--color-border-warm);
   opacity: 1;
   transform: none;
   min-width: 0;
@@ -414,7 +392,7 @@ body:has(.snap-container) > footer {
   font-size: 64px;
   font-weight: 500;
   letter-spacing: -0.04em;
-  color: #0f0f0f;
+  color: var(--color-ink);
   line-height: 1.1;
   display: block;
   margin-bottom: 8px;
@@ -422,7 +400,7 @@ body:has(.snap-container) > footer {
 
 .stats-label {
   font-size: 11px;
-  color: #999;
+  color: var(--color-ink-label);
   font-weight: 400;
   letter-spacing: 0.1em;
   text-transform: uppercase;

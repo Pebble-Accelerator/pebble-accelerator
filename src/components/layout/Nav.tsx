@@ -47,12 +47,12 @@ export default function Nav() {
     }
   }, [pathname])
 
-  const linkColor = overHero ? 'rgba(245, 240, 232, 0.88)' : '#555'
-  const linkHover = overHero ? '#ffffff' : '#0f0f0f'
-  const barColor = overHero ? 'rgba(245, 240, 232, 0.9)' : '#0f0f0f'
+  const linkColor = overHero ? 'color-mix(in srgb, var(--color-canvas) 88%, transparent)' : 'var(--color-ink-secondary)'
+  const linkHover = overHero ? '#ffffff' : 'var(--color-ink)'
+  const barColor = overHero ? 'color-mix(in srgb, var(--color-canvas) 90%, transparent)' : 'var(--color-ink)'
   // Chip is --color-meta on the light bar; lifted cream on the dark hero so it
   // stays legible (mirrors the link light/dark logic).
-  const chipColor = overHero ? 'rgba(245, 240, 232, 0.6)' : 'var(--color-meta)'
+  const chipColor = overHero ? 'color-mix(in srgb, var(--color-canvas) 60%, transparent)' : 'var(--color-meta)'
 
   // On the homepage, the logo is a "back to top" control: glide to the first slide
   // via the slideshow controller's existing goTo(0). On other routes it navigates
@@ -84,7 +84,7 @@ export default function Nav() {
         right: 0,
         width: '100%',
         zIndex: 100,
-        background: overHero ? 'transparent' : 'rgba(245,240,232,0.96)',
+        background: overHero ? 'transparent' : 'color-mix(in srgb, var(--color-canvas) 96%, transparent)',
         backdropFilter: overHero ? 'none' : 'blur(8px)',
         WebkitBackdropFilter: overHero ? 'none' : 'blur(8px)',
         transition: 'background 0.35s ease, backdrop-filter 0.35s ease',
@@ -219,7 +219,7 @@ export default function Nav() {
           position: 'fixed',
           inset: 0,
           zIndex: 99,
-          background: '#F5F0E8',
+          background: 'var(--color-canvas)',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
@@ -235,7 +235,7 @@ export default function Nav() {
               border: 'none',
               fontSize: '24px',
               cursor: 'pointer',
-              color: '#0f0f0f',
+              color: 'var(--color-ink)',
             }}
           >
             ×
@@ -249,7 +249,7 @@ export default function Nav() {
                 fontFamily: 'var(--font-cormorant), Georgia, serif',
                 fontSize: '40px',
                 fontWeight: 500,
-                color: '#0f0f0f',
+                color: 'var(--color-ink)',
                 textDecoration: 'none',
                 padding: '16px 0',
                 borderBottom: '1px solid rgba(0,0,0,0.08)',

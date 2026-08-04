@@ -58,7 +58,7 @@ const FLAT_LABEL_BASE: React.CSSProperties = {
   fontFamily: 'var(--font-cormorant), Georgia, serif',
   fontSize: '17px',
   fontWeight: 500,
-  color: '#2d3a35',
+  color: 'var(--color-slate-dark)',
   background: 'var(--color-canvas)',
   padding: '2px 8px',
   borderRadius: '2px',
@@ -99,9 +99,9 @@ function cityCoordinateBounds(): [[number, number], [number, number]] {
 const DOT_ORDER = CITIES.map((c) => c.id)
 
 const MAP_STATS = [
-  { number: '28', label: 'STARTUPS BACKED', color: '#5e7a6a' },
-  { number: '39', label: 'COMPANIES ACCELERATED', color: '#5e7a6a' },
-  { number: '100%', label: 'HK HOSPITAL COVERAGE', color: '#E8703A' },
+  { number: '28', label: 'STARTUPS BACKED', color: 'var(--color-sage)' },
+  { number: '39', label: 'COMPANIES ACCELERATED', color: 'var(--color-sage)' },
+  { number: '100%', label: 'HK HOSPITAL COVERAGE', color: 'var(--color-ember)' },
 ] as const
 
 /** Split a stat string into its numeric target and trailing suffix (e.g. "28+" → 28, "+"). */
@@ -352,14 +352,14 @@ function GBAMap() {
                 fontWeight: 500,
                 lineHeight: 1.07,
                 letterSpacing: '-0.02em',
-                color: '#1a1a1a',
+                color: 'var(--color-ink)',
                 margin: 0,
               }}
             >
-              <span style={{ fontWeight: 500, fontStyle: 'normal', color: '#1a1a1a' }}>
+              <span style={{ fontWeight: 500, fontStyle: 'normal', color: 'var(--color-ink)' }}>
                 Pebble is built at the center of Asia&apos;s{' '}
               </span>
-              <span style={{ fontWeight: 500, fontStyle: 'italic', color: '#5e7a6a' }}>
+              <span style={{ fontWeight: 500, fontStyle: 'italic', color: 'var(--color-sage)' }}>
                 biomedical corridor.
               </span>
             </h2>
@@ -369,7 +369,7 @@ function GBAMap() {
                 fontFamily: 'var(--font-cormorant), Georgia, serif',
                 fontSize: 'clamp(18px, min(1.9vw, 2.8vh), 26px)',
                 fontWeight: 400,
-                color: '#2d3a35',
+                color: 'var(--color-slate-dark)',
                 lineHeight: 1.4,
                 maxWidth: '520px',
                 marginTop: '24px',
@@ -426,7 +426,7 @@ function GBAMap() {
                     fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
                     fontSize: '11px',
                     fontWeight: 400,
-                    color: '#888',
+                    color: 'var(--color-meta)',
                     textTransform: 'uppercase',
                     letterSpacing: '0.12em',
                     lineHeight: 1.2,
@@ -462,7 +462,7 @@ function GBAMap() {
               overflow: 'hidden',
               height: 'min(420px, calc(100vh - 300px))',
               width: '100%',
-              border: '1px solid rgba(45, 58, 53, 0.14)',
+              border: '1px solid color-mix(in srgb, var(--color-slate-dark) 14%, transparent)',
             }}
           >
             {shouldLoadMap ? (
@@ -581,7 +581,7 @@ function GBAMap() {
               fontWeight: 400,
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
-              color: '#888',
+              color: 'var(--color-meta)',
               alignSelf: 'flex-start',
             }}
           >
@@ -609,14 +609,14 @@ function GBAMap() {
           width: 11px;
           height: 11px;
           border-radius: 50%;
-          background: #2d3a35;
+          background: var(--color-slate-dark);
           box-sizing: content-box;
           pointer-events: none;
           transition: transform 200ms ease, opacity 200ms ease, border-color 200ms ease;
           border: 1.5px solid transparent;
         }
         .gba-dot--anchor {
-          border-color: rgba(245, 239, 228, 0.95);
+          border-color: color-mix(in srgb, var(--color-canvas) 95%, transparent);
         }
         .gba-dot--quiet {
           /* ~78% of anchor size, near-solid opacity, same cream halo as
@@ -624,13 +624,13 @@ function GBAMap() {
              to the labeled anchors. */
           transform: scale(0.78);
           opacity: 0.9;
-          border-color: rgba(245, 239, 228, 0.95);
+          border-color: color-mix(in srgb, var(--color-canvas) 95%, transparent);
         }
         .gba-dot--quiet.gba-dot--active {
           /* On hover/tap, scale up to full anchor weight for feedback. */
           transform: scale(1);
           opacity: 1;
-          border-color: rgba(245, 239, 228, 0.95);
+          border-color: color-mix(in srgb, var(--color-canvas) 95%, transparent);
         }
         .gba-hit {
           position: absolute;
@@ -648,7 +648,7 @@ function GBAMap() {
           z-index: 2;
         }
         .gba-hit:focus-visible {
-          outline: 2px solid #5e7a6a;
+          outline: 2px solid var(--color-sage);
           outline-offset: 2px;
           border-radius: 50%;
         }
@@ -687,34 +687,34 @@ function GBAMap() {
           width: 24px;
           height: 24px;
           border-radius: 50%;
-          background-color: rgba(245, 239, 228, 0.85);
-          border: 1px solid #d4cfc2;
+          background-color: color-mix(in srgb, var(--color-canvas) 85%, transparent);
+          border: 1px solid var(--color-border-warm);
           box-shadow: none;
           transition: background-color 0.2s ease, border-color 0.2s ease;
         }
 
         .apac-map-card .mapboxgl-ctrl-attrib-button:hover {
-          background-color: rgba(245, 239, 228, 1);
-          border-color: #888;
+          background-color: var(--color-canvas);
+          border-color: var(--color-meta);
         }
 
         .apac-map-card .mapboxgl-ctrl-attrib-button:focus-visible {
-          outline: 2px solid #5e7a6a;
+          outline: 2px solid var(--color-sage);
           outline-offset: 2px;
         }
 
         .apac-map-card .mapboxgl-ctrl-attrib-inner {
           font-family: var(--font-ibm-plex-sans), system-ui, sans-serif;
           font-size: 11px;
-          color: #888;
+          color: var(--color-meta);
           background: var(--color-canvas);
-          border: 1px solid rgba(45, 58, 53, 0.14);
+          border: 1px solid color-mix(in srgb, var(--color-slate-dark) 14%, transparent);
           border-radius: 4px;
           padding: 6px 10px;
         }
 
         .apac-map-card .mapboxgl-ctrl-attrib-inner a {
-          color: #888;
+          color: var(--color-meta);
         }
       `}</style>
     </section>

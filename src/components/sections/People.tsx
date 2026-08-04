@@ -17,7 +17,7 @@ const labelStyle: React.CSSProperties = {
   whiteSpace: 'nowrap',
 }
 
-const TILE_NAME_FOREST = '#2d3a35'
+const TILE_NAME_FOREST = 'var(--color-slate-dark)'
 /** Neutral stone in the same family as the portfolio tiles; the placeholder tile
  *  uses the identical gradient system (base → 12% darker) so people can be dropped
  *  in later without a redesign. */
@@ -51,11 +51,13 @@ function PersonCard({ person }: { person: Person }) {
     padding: 'clamp(18px, 2.4vw, 28px)',
     overflow: 'hidden',
     borderRadius: '10px',
-    border: '1px solid rgba(45, 58, 53, 0.14)',
+    border: '1px solid color-mix(in srgb, var(--color-slate-dark) 14%, transparent)',
   }
 
-  const nameColor = hasPhoto ? '#f5efe4' : TILE_NAME_FOREST
-  const roleColor = hasPhoto ? 'rgba(245,239,228,0.85)' : '#4F6B5D'
+  const nameColor = hasPhoto ? 'var(--color-canvas)' : TILE_NAME_FOREST
+  // #4F6B5D left as-is: coincides with the Platform bucket accent value but
+  // isn't part of the general token set — see DESIGN.md.
+  const roleColor = hasPhoto ? 'color-mix(in srgb, var(--color-canvas) 85%, transparent)' : '#4F6B5D'
 
   return (
     <div className="person-tile">
@@ -154,7 +156,7 @@ function PersonCard({ person }: { person: Person }) {
                 fontWeight: 500,
                 letterSpacing: '0.08em',
                 textTransform: 'uppercase',
-                color: hasPhoto ? '#f5efe4' : '#2D6A5A',
+                color: hasPhoto ? 'var(--color-canvas)' : 'var(--color-forest)',
               }}
             >
               Read →
@@ -165,14 +167,18 @@ function PersonCard({ person }: { person: Person }) {
 
       <style jsx>{`
         .person-tile-surface {
-          box-shadow: inset 0 1px 0 rgba(245, 239, 228, 0.5), 0 1px 2px rgba(45, 58, 53, 0.05);
+          box-shadow:
+            inset 0 1px 0 color-mix(in srgb, var(--color-canvas) 50%, transparent),
+            0 1px 2px color-mix(in srgb, var(--color-slate-dark) 5%, transparent);
           transition: transform 0.25s ease, box-shadow 0.25s ease;
           will-change: transform;
         }
 
         .person-tile-surface:hover {
           transform: translateY(-5px);
-          box-shadow: inset 0 1px 0 rgba(245, 239, 228, 0.5), 0 18px 38px -14px rgba(45, 58, 53, 0.3);
+          box-shadow:
+            inset 0 1px 0 color-mix(in srgb, var(--color-canvas) 50%, transparent),
+            0 18px 38px -14px color-mix(in srgb, var(--color-slate-dark) 30%, transparent);
         }
 
         .person-tile-wave-front {
@@ -190,7 +196,9 @@ function PersonCard({ person }: { person: Person }) {
           }
           .person-tile-surface:hover {
             transform: none;
-            box-shadow: inset 0 1px 0 rgba(245, 239, 228, 0.5), 0 6px 16px -8px rgba(45, 58, 53, 0.22);
+            box-shadow:
+              inset 0 1px 0 color-mix(in srgb, var(--color-canvas) 50%, transparent),
+              0 6px 16px -8px color-mix(in srgb, var(--color-slate-dark) 22%, transparent);
           }
           .person-tile-surface:hover .person-tile-wave-front {
             transform: none;
@@ -233,7 +241,7 @@ export default function People() {
             fontWeight: 500,
             lineHeight: 1.08,
             letterSpacing: '-0.02em',
-            color: '#1a1a1a',
+            color: 'var(--color-ink)',
             margin: '0 auto clamp(48px, 7vh, 88px)',
             maxWidth: '22ch',
           }}

@@ -69,7 +69,7 @@ export default function PortfolioHome() {
               fontWeight: 500,
               lineHeight: 1.08,
               letterSpacing: '-0.02em',
-              color: '#1a1a1a',
+              color: 'var(--color-ink)',
               margin: 0,
               maxWidth: '18ch',
             }}
@@ -86,7 +86,7 @@ export default function PortfolioHome() {
               fontWeight: 500,
               letterSpacing: '0.1em',
               textTransform: 'uppercase',
-              color: '#2D6A5A',
+              color: 'var(--color-forest)',
               whiteSpace: 'nowrap',
               flexShrink: 0,
             }}

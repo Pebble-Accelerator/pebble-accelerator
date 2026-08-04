@@ -10,8 +10,8 @@ import {
 /** Actual fixed-nav height (see Nav.tsx) so sticky headers sit just under it. */
 const MAIN_NAV_HEIGHT = '64px'
 
-const FOREST = '#2d3a35'
-const CREAM_PANEL = '#e8e0d0'
+const FOREST = 'var(--color-slate-dark)'
+const CREAM_PANEL = 'var(--color-panel)'
 
 const headerPadding = 'clamp(32px, 4vw, 48px) clamp(40px, 4.5vw, 56px) clamp(20px, 2.5vw, 28px)'
 const contentPadding = '0 clamp(40px, 4.5vw, 56px) clamp(40px, 4.5vw, 56px)'
@@ -44,7 +44,7 @@ function InvestmentHeader() {
           fontWeight: 500,
           letterSpacing: '0.12em',
           textTransform: 'uppercase',
-          color: '#E8703A',
+          color: 'var(--color-ember)',
           margin: '0 0 18px',
         }}
       >
@@ -76,7 +76,7 @@ function InvestmentBody() {
           fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
           fontSize: '15px',
           lineHeight: 1.65,
-          color: 'rgba(245, 239, 228, 0.85)',
+          color: 'color-mix(in srgb, var(--color-canvas) 85%, transparent)',
           maxWidth: '560px',
           margin: '0 0 28px',
         }}
@@ -87,7 +87,7 @@ function InvestmentBody() {
       </p>
       <div
         style={{
-          borderTop: '1px solid rgba(245, 239, 228, 0.15)',
+          borderTop: '1px solid color-mix(in srgb, var(--color-canvas) 15%, transparent)',
           paddingTop: '28px',
         }}
       >
@@ -135,7 +135,7 @@ function ConsultingHeader() {
           fontWeight: 400,
           letterSpacing: '0.12em',
           textTransform: 'uppercase',
-          color: '#888',
+          color: 'var(--color-meta)',
           margin: '0 0 18px',
         }}
       >
@@ -147,12 +147,12 @@ function ConsultingHeader() {
           fontSize: 'clamp(30px, 3.2vw, 44px)',
           fontWeight: 500,
           lineHeight: 1.2,
-          color: '#1a1a1a',
+          color: 'var(--color-ink)',
           margin: 0,
         }}
       >
         For companies beyond our investment scope, the{' '}
-        <span style={{ fontStyle: 'italic', color: '#2d3a35' }}>same door.</span>
+        <span style={{ fontStyle: 'italic', color: 'var(--color-slate-dark)' }}>same door.</span>
       </h2>
     </>
   )
@@ -165,7 +165,7 @@ function ConsultingBody() {
         fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
         fontSize: '15px',
         lineHeight: 1.65,
-        color: '#1a1a1a',
+        color: 'var(--color-ink)',
         margin: 0,
         maxWidth: '620px',
       }}
@@ -186,7 +186,7 @@ function TimelineCol({ label, children }: { label: string; children: React.React
           fontWeight: 500,
           letterSpacing: '0.12em',
           textTransform: 'uppercase',
-          color: '#E8703A',
+          color: 'var(--color-ember)',
           margin: '0 0 12px',
         }}
       >
@@ -197,7 +197,7 @@ function TimelineCol({ label, children }: { label: string; children: React.React
           fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
           fontSize: '14px',
           lineHeight: 1.55,
-          color: 'rgba(245, 239, 228, 0.92)',
+          color: 'color-mix(in srgb, var(--color-canvas) 92%, transparent)',
           margin: 0,
         }}
       >
@@ -231,7 +231,7 @@ export default function ServicesCardStack() {
         sectionStyle={{
           ...sectionBase,
           backgroundColor: CREAM_PANEL,
-          border: '1px solid rgba(45, 58, 53, 0.14)',
+          border: '1px solid color-mix(in srgb, var(--color-slate-dark) 14%, transparent)',
         }}
         headerStyle={{ backgroundColor: CREAM_PANEL, padding: headerPadding }}
         contentStyle={{ padding: contentPadding }}

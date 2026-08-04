@@ -66,8 +66,8 @@ export default function RippleSubmitButton() {
           border-radius: 50%;
           background: radial-gradient(
             circle,
-            rgba(245, 239, 228, 0.55) 0%,
-            rgba(245, 239, 228, 0.4) 30%,
+            color-mix(in srgb, var(--color-canvas) 55%, transparent) 0%,
+            color-mix(in srgb, var(--color-canvas) 40%, transparent) 30%,
             transparent 70%
           );
           transform: scale(0);

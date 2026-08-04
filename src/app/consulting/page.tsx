@@ -10,10 +10,17 @@ export const metadata = {
 export default function ConsultingPage() {
   return (
     <>
-      <main style={{ backgroundColor: 'var(--color-canvas)' }}>
+      {/* A plain div, not <main> — layout.tsx already provides the page's <main>
+          landmark; a second nested <main> here was invalid HTML and a duplicate
+          a11y landmark. `.services-page-main` also carries a CSS hook
+          (globals.css:61, html:has(.services-page-main)) that fixes a sticky
+          positioning conflict — this route silently lacked it before. */}
+      <div className="services-page-main" style={{ backgroundColor: 'var(--color-canvas)' }}>
         <ServicesEditorial />
-      </main>
-      <CTAStrip />
+      </div>
+      <div className="services-page-cta" style={{ position: 'relative', zIndex: 3 }}>
+        <CTAStrip />
+      </div>
     </>
   )
 }

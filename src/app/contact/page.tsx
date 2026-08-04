@@ -2,10 +2,12 @@ import type { CSSProperties } from 'react'
 import FadeIn from '@/components/ui/FadeIn'
 import RippleSubmitButton from '@/components/contact/RippleSubmitButton'
 
-const SAGE = '#5e7a6a'
-const EMBER = '#E8703A'
-const FOREST = '#2d3a35'
-const INK = '#1a1a1a'
+// Previously local hex constants (SAGE/EMBER/FOREST/INK) — replaced with the
+// real design tokens throughout this file. FOREST's value (#2d3a35) was
+// actually --color-slate-dark, not --color-forest (#2D6A5A) — a naming
+// collision with a different real token. INK's value (#1a1a1a) was a second,
+// undocumented near-black; standardized to var(--color-ink) (#0f0f0f), the
+// one used everywhere else on the site. See DESIGN.md.
 const LINKEDIN = 'https://linkedin.com/company/pebbleaccelerator'
 
 const eyebrowLabel: CSSProperties = {
@@ -15,7 +17,7 @@ const eyebrowLabel: CSSProperties = {
   fontWeight: 400,
   letterSpacing: '0.14em',
   textTransform: 'uppercase',
-  color: 'rgba(26,26,26,0.55)',
+  color: 'color-mix(in srgb, var(--color-ink) 55%, transparent)',
 }
 
 const fieldLabel: CSSProperties = {
@@ -25,7 +27,7 @@ const fieldLabel: CSSProperties = {
   fontWeight: 400,
   letterSpacing: '0.14em',
   textTransform: 'uppercase',
-  color: 'rgba(26,26,26,0.55)',
+  color: 'color-mix(in srgb, var(--color-ink) 55%, transparent)',
   marginBottom: '10px',
 }
 
@@ -58,7 +60,7 @@ export default function ContactPage() {
                     width: '8px',
                     height: '8px',
                     borderRadius: '999px',
-                    background: EMBER,
+                    background: 'var(--color-ember)',
                     display: 'inline-block',
                   }}
                 />
@@ -72,12 +74,12 @@ export default function ContactPage() {
                   fontWeight: 500,
                   lineHeight: 1.04,
                   letterSpacing: '-0.02em',
-                  color: INK,
+                  color: 'var(--color-ink)',
                   margin: '0 0 20px',
                 }}
               >
                 Let&rsquo;s{' '}
-                <span style={{ fontStyle: 'italic', color: SAGE }}>talk.</span>
+                <span style={{ fontStyle: 'italic', color: 'var(--color-sage)' }}>talk.</span>
               </h1>
 
               <p
@@ -85,7 +87,7 @@ export default function ContactPage() {
                   fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
                   fontSize: '16px',
                   lineHeight: 1.6,
-                  color: 'rgba(26,26,26,0.75)',
+                  color: 'color-mix(in srgb, var(--color-ink) 75%, transparent)',
                   margin: '0 0 32px',
                   maxWidth: '420px',
                 }}
@@ -102,7 +104,7 @@ export default function ContactPage() {
                   listStyle: 'none',
                   margin: 0,
                   padding: 0,
-                  border: '1px solid rgba(94, 122, 106, 0.28)',
+                  border: '1px solid color-mix(in srgb, var(--color-sage) 28%, transparent)',
                   borderRadius: '3px',
                   background: 'transparent',
                   width: '100%',
@@ -116,7 +118,10 @@ export default function ContactPage() {
                       gap: '24px',
                       alignItems: 'baseline',
                       padding: '22px 24px',
-                      borderTop: i === 0 ? 'none' : '1px solid rgba(94, 122, 106, 0.28)',
+                      borderTop:
+                        i === 0
+                          ? 'none'
+                          : '1px solid color-mix(in srgb, var(--color-sage) 28%, transparent)',
                     }}
                   >
                     <span
@@ -125,7 +130,7 @@ export default function ContactPage() {
                         fontSize: '12px',
                         fontWeight: 500,
                         letterSpacing: '0.12em',
-                        color: EMBER,
+                        color: 'var(--color-ember)',
                         flexShrink: 0,
                         width: '28px',
                       }}
@@ -138,12 +143,16 @@ export default function ContactPage() {
                         fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
                         fontSize: '17px',
                         lineHeight: 1.5,
-                        color: INK,
+                        color: 'var(--color-ink)',
                       }}
                     >
                       <span
                         className="font-display"
-                        style={{ fontStyle: 'italic', color: SAGE, fontSize: '21px' }}
+                        style={{
+                          fontStyle: 'italic',
+                          color: 'var(--color-sage)',
+                          fontSize: '21px',
+                        }}
                       >
                         {q.lead}
                       </span>
@@ -162,7 +171,7 @@ export default function ContactPage() {
                     style={{
                       fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
                       fontSize: '15px',
-                      color: INK,
+                      color: 'var(--color-ink)',
                       textDecoration: 'none',
                     }}
                   >
@@ -179,7 +188,7 @@ export default function ContactPage() {
                     style={{
                       fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
                       fontSize: '15px',
-                      color: INK,
+                      color: 'var(--color-ink)',
                       textDecoration: 'none',
                     }}
                   >
@@ -306,10 +315,10 @@ export default function ContactPage() {
           font-size: 16px;
           font-weight: 400;
           line-height: 1.5;
-          color: ${INK};
+          color: var(--color-ink);
           background: transparent;
           border: 0;
-          border-bottom: 1px solid rgba(94, 122, 106, 0.4);
+          border-bottom: 1px solid color-mix(in srgb, var(--color-sage) 40%, transparent);
           border-radius: 0;
           padding: 8px 0 12px;
           outline: none;
@@ -317,14 +326,14 @@ export default function ContactPage() {
           box-sizing: border-box;
         }
         .contact-input::placeholder {
-          color: rgba(26, 26, 26, 0.35);
+          color: color-mix(in srgb, var(--color-ink) 35%, transparent);
         }
         .contact-input:hover {
-          border-bottom-color: rgba(45, 58, 53, 0.5);
+          border-bottom-color: color-mix(in srgb, var(--color-slate-dark) 50%, transparent);
         }
         .contact-input:focus {
-          border-bottom-color: ${FOREST};
-          box-shadow: 0 1px 0 0 ${FOREST};
+          border-bottom-color: var(--color-slate-dark);
+          box-shadow: 0 1px 0 0 var(--color-slate-dark);
         }
         .contact-input--textarea {
           min-height: 140px;
@@ -344,20 +353,25 @@ export default function ContactPage() {
           letter-spacing: 0.14em;
           text-transform: uppercase;
           color: var(--color-canvas);
-          background: ${FOREST};
+          background: var(--color-slate-dark);
           border: 0;
           border-radius: 2px;
           cursor: pointer;
           transition: background-color 240ms ease, transform 100ms ease;
         }
         .contact-submit:hover {
+          /* Darkened slate for the hover state. #1f2a26 is a hand-picked shade,
+             not yet a token — the same value is independently used in
+             CompanyCard.tsx's hover state. Candidate for its own token
+             (--color-slate-hover?) when color consolidation (DESIGN.md task #8)
+             sweeps hover states. */
           background: #1f2a26;
         }
         .contact-submit:active {
           transform: translateY(1px);
         }
         .contact-submit:focus-visible {
-          outline: 2px solid ${SAGE};
+          outline: 2px solid var(--color-sage);
           outline-offset: 3px;
         }
 
@@ -366,7 +380,7 @@ export default function ContactPage() {
           font-family: var(--font-ibm-plex-sans), system-ui, sans-serif;
           font-size: 13px;
           font-weight: 300;
-          color: rgba(26, 26, 26, 0.6);
+          color: color-mix(in srgb, var(--color-ink) 60%, transparent);
           line-height: 1.55;
         }
       `}</style>

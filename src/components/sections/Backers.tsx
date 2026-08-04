@@ -37,7 +37,7 @@ const CHIP_INNER_LOGO_MAX_HEIGHT = 42
 const CHIP_INNER_LOGO_MAX_WIDTH = 144
 
 const darkChipStyle: CSSProperties = {
-  background: '#1a1a1a',
+  background: 'var(--color-ink)',
   borderRadius: '6px',
   padding: '8px 14px',
   display: 'inline-flex',
@@ -172,7 +172,7 @@ export default function Backers({ embedded = false }: BackersProps) {
           width: 8px;
           height: 8px;
           border-radius: 50%;
-          background: #E8703A;
+          background: var(--color-ember);
           display: inline-block;
           flex-shrink: 0;
         }
@@ -182,7 +182,7 @@ export default function Backers({ embedded = false }: BackersProps) {
           font-weight: 400;
           letter-spacing: 0.14em;
           text-transform: uppercase;
-          color: rgba(26, 26, 26, 0.55);
+          color: color-mix(in srgb, var(--color-ink) 55%, transparent);
         }
         .backers-headline {
           grid-column: 1;
@@ -192,7 +192,7 @@ export default function Backers({ embedded = false }: BackersProps) {
           font-size: clamp(28px, 3vw, 44px);
           line-height: 1.12;
           letter-spacing: -0.015em;
-          color: #1a1a1a;
+          color: var(--color-ink);
           max-width: 18ch;
         }
         .backers-lede {
@@ -202,7 +202,7 @@ export default function Backers({ embedded = false }: BackersProps) {
           font-size: 15px;
           font-weight: 300;
           line-height: 1.6;
-          color: #555;
+          color: var(--color-ink-secondary);
           max-width: 38ch;
           /* Optical alignment: drop the lede slightly so its top reads aligned
              with the Cormorant headline's cap-line, not its x-height. */
@@ -224,6 +224,10 @@ export default function Backers({ embedded = false }: BackersProps) {
           align-items: stretch;
           justify-content: flex-start;
           text-decoration: none;
+          /* #efe8db kept as a one-off: the resting state of a two-step darken
+             (rest -> hover -> var(--color-panel)) too close to canvas (delta
+             6-9/255) to deserve its own token, but distinct enough from the
+             hover state to matter here. */
           background: #efe8db;
           padding: clamp(18px, 1.8vw, 22px) clamp(20px, 2vw, 28px) clamp(12px, 1.3vw, 16px);
           box-sizing: border-box;
@@ -231,11 +235,11 @@ export default function Backers({ embedded = false }: BackersProps) {
           transition: background-color 200ms ease, transform 200ms ease;
         }
         .backer-cell:hover {
-          background: #e8e0d0;
+          background: var(--color-panel);
           transform: translateY(-2px);
         }
         .backer-cell:focus-visible {
-          outline: 2px solid #5e7a6a;
+          outline: 2px solid var(--color-sage);
           outline-offset: 4px;
         }
         .backer-cell__logobox {
@@ -247,7 +251,7 @@ export default function Backers({ embedded = false }: BackersProps) {
         }
         .backer-cell__divider {
           height: 1px;
-          background: rgba(26, 26, 26, 0.1);
+          background: color-mix(in srgb, var(--color-ink) 10%, transparent);
           margin: clamp(10px, 1.1vw, 14px) 0 clamp(7px, 0.8vw, 10px);
         }
         .backer-cell__region {
@@ -256,7 +260,7 @@ export default function Backers({ embedded = false }: BackersProps) {
           font-weight: 400;
           letter-spacing: 0.12em;
           text-transform: uppercase;
-          color: #888;
+          color: var(--color-meta);
         }
 
         .backers-footnote {
@@ -264,19 +268,19 @@ export default function Backers({ embedded = false }: BackersProps) {
           font-family: var(--font-ibm-plex-sans), system-ui, sans-serif;
           font-size: 14px;
           font-weight: 300;
-          color: #666;
+          color: var(--color-ink-body);
           line-height: 1.5;
         }
         .backers-footnote__link {
-          color: #2d3a35;
+          color: var(--color-slate-dark);
           font-weight: 400;
           text-decoration: none;
-          border-bottom: 1px solid rgba(45, 58, 53, 0.3);
+          border-bottom: 1px solid color-mix(in srgb, var(--color-slate-dark) 30%, transparent);
           transition: border-color 250ms ease, color 250ms ease;
         }
         .backers-footnote__link:hover {
-          color: #5e7a6a;
-          border-bottom-color: #5e7a6a;
+          color: var(--color-sage);
+          border-bottom-color: var(--color-sage);
         }
 
         @media (max-width: 767px) {

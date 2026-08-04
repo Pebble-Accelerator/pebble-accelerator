@@ -1,12 +1,17 @@
 import type { CSSProperties } from 'react'
 import type { Company } from '@/types'
 
-/** Tiles are now light — watermark reads as a muted dark/forest tonal mark. */
-export const WATERMARK_MARK = '#2d3a35'
-export const WATERMARK_OPACITY = 0.2
+/** Monogram fallback tone (used only when no usable logo asset exists). */
+export const WATERMARK_MARK = 'var(--color-slate-dark)'
 
-/** Dark tonal filter for colour PNGs so logos read quietly on light tiles. */
-export const WATERMARK_LOGO_FILTER = 'grayscale(100%) brightness(0.32) contrast(1.05)'
+/**
+ * Full opacity, no filter. This mark used to render at 0.2 opacity behind a
+ * grayscale/darken filter with alt="" — a real company logo turned into
+ * illegible decoration. The site's credibility argument depends on named,
+ * verifiable companies; a logo nobody can identify does not carry that
+ * argument. See DESIGN.md and the design doc's portfolio-logos-ghosted finding.
+ */
+export const WATERMARK_OPACITY = 1
 
 /** Fixed top-right box — identical on every tile (24px inset, 92px box). */
 export const WATERMARK_BOX_STYLE: CSSProperties = {

@@ -32,11 +32,11 @@ export default function ServicesEditorial() {
                 margin: 0,
               }}
             >
-              <span style={{ color: '#1a1a1a' }}>No cohorts.</span>
+              <span style={{ color: 'var(--color-ink)' }}>No cohorts.</span>
               <br />
-              <span style={{ fontStyle: 'italic', color: '#2d3a35' }}>Every company,</span>
+              <span style={{ fontStyle: 'italic', color: 'var(--color-slate-dark)' }}>Every company,</span>
               <br />
-              <span style={{ fontStyle: 'italic', color: '#2d3a35' }}>one-on-one.</span>
+              <span style={{ fontStyle: 'italic', color: 'var(--color-slate-dark)' }}>one-on-one.</span>
             </h1>
           </div>
           <div
@@ -55,7 +55,7 @@ export default function ServicesEditorial() {
                 fontSize: '15px',
                 fontWeight: 400,
                 lineHeight: 1.65,
-                color: '#1a1a1a',
+                color: 'var(--color-ink)',
                 maxWidth: '480px',
                 margin: 0,
               }}
