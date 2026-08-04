@@ -5,6 +5,25 @@ homepage redesign design doc and belongs to no stage of that plan.
 
 ---
 
+## 6. Grid-collapse breakpoints vary across similarly-shaped grids
+
+**What:** `PortfolioHome.tsx` (3→2→1 col) breaks at 900px/600px; `People.tsx` (4→2→1 col)
+breaks at 900px/520px; `PortfolioEditorial.tsx` (2→1 col, the shared `CompanyCard` grid)
+breaks straight to 1 col at 720px with no intermediate tier. The primary 768px breakpoint
+(nav, mobile scroll behavior) is consistent everywhere — only these secondary column-collapse
+points drift from each other.
+
+**Why:** Surfaced by `/design-review`'s outside-voice pass (2026-08-04). Deferred: the
+reviewing subagent itself called this "plausibly intentional per-grid design" — each grid has
+a different column count and content density, so identical breakpoints aren't obviously
+correct either. Lowest-confidence of the findings from that pass.
+
+**Depends on:** A decision on whether these grids should share a breakpoint scale at all, or
+whether per-grid tuning is the right call. Worth revisiting with real content in the grids
+(People.tsx is currently unrendered — see item 0) rather than deciding in the abstract.
+
+---
+
 ## 0. Restore the team section with real names, roles, and photos
 
 **What:** `data/people.ts` and `components/sections/People.tsx` still exist, intentionally
