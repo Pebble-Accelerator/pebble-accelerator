@@ -7,10 +7,6 @@ import FadeIn from '@/components/ui/FadeIn'
 import SectionLabelLine from '@/components/ui/SectionLabelLine'
 import SectionRipple from '@/components/ui/SectionRipple'
 
-type SaltaGenProps = {
-  embedded?: boolean
-}
-
 const SALTAGEN_LOGO_WIDTH = 916
 const SALTAGEN_LOGO_HEIGHT = 515
 
@@ -84,7 +80,7 @@ function SaltaGenVisual() {
   )
 }
 
-export default function SaltaGen({ embedded = false }: SaltaGenProps) {
+export default function SaltaGen() {
   const contentRailStyle = {
     width: '100%',
     maxWidth: '1200px',
@@ -102,7 +98,7 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
         display: 'inline-flex',
         alignItems: 'baseline',
         gap: '4px',
-        marginTop: embedded ? '20px' : '32px',
+        marginTop: '20px',
         fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
         fontSize: '11px',
         fontWeight: 400,
@@ -127,9 +123,7 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
 
   return (
     <section
-      className={
-        embedded ? 'saltagen-section--embedded saltagen-section--dark' : undefined
-      }
+      className="saltagen-section--embedded saltagen-section--dark"
       style={{
         // Dark ground — carries the hero's dark language through (alternates the
         // homepage light/dark instead of running flat cream).
@@ -137,21 +131,14 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
         position: 'relative',
         width: '100%',
         boxSizing: 'border-box',
-        ...(embedded
-          ? {
-              height: '100vh',
-              maxHeight: '100vh',
-              overflow: 'hidden',
-              // 8vw gutter (wider than the 5vw standard) is deliberate for the split.
-              padding: 'var(--space-page-top) 8vw var(--space-section-y)',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'safe center',
-            }
-          : {
-              padding: '120px 8vw',
-              display: 'block',
-            }),
+        height: '100vh',
+        maxHeight: '100vh',
+        overflow: 'hidden',
+        // 8vw gutter (wider than the 5vw standard) is deliberate for the split.
+        padding: 'var(--space-page-top) 8vw var(--space-section-y)',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'safe center',
       }}
     >
       <FadeIn>
@@ -182,7 +169,7 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
               minWidth: 0,
             }}
           >
-            <SectionLabelLine index={5} tone="dark" marginBottom={embedded ? '14px' : '28px'}>
+            <SectionLabelLine index={5} tone="dark" marginBottom="14px">
               <span
                 style={{
                   fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
@@ -201,13 +188,13 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
             <h2
               style={{
                 fontFamily: 'var(--font-cormorant), Georgia, serif',
-                fontSize: embedded ? 'clamp(28px, 3vw, 42px)' : 'clamp(32px, 3.5vw, 48px)',
+                fontSize: 'clamp(28px, 3vw, 42px)',
                 lineHeight: 1.12,
                 letterSpacing: '-0.02em',
                 color: 'var(--color-canvas)',
                 // Right-aligned headline — the distinguishing move of this two-column slide.
                 textAlign: 'right',
-                margin: `0 0 ${embedded ? '16px' : '24px'}`,
+                margin: '0 0 16px',
                 flexShrink: 0,
               }}
             >
@@ -227,12 +214,12 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
             <p
               style={{
                 fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-                fontSize: embedded ? '16px' : '17px',
+                fontSize: '16px',
                 fontWeight: 300,
                 color: 'color-mix(in srgb, var(--color-canvas) 82%, transparent)',
                 lineHeight: 1.6,
                 maxWidth: '520px',
-                margin: `0 0 ${embedded ? '22px' : '28px'}`,
+                margin: '0 0 22px',
                 flexShrink: 0,
               }}
             >
@@ -268,7 +255,7 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
                     style={{
                       margin: 0,
                       fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-                      fontSize: embedded ? '15px' : '17px',
+                      fontSize: '15px',
                       fontWeight: 300,
                       color: 'color-mix(in srgb, var(--color-canvas) 82%, transparent)',
                       lineHeight: 1.5,
@@ -295,25 +282,23 @@ export default function SaltaGen({ embedded = false }: SaltaGenProps) {
               width: '100%',
             }}
           >
-            {embedded && (
-              <div
-                aria-hidden
-                style={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  width: 'clamp(360px, 46vh, 560px)',
-                  aspectRatio: '1',
-                  transform: 'translate(-50%, -50%)',
-                  pointerEvents: 'none',
-                  zIndex: 0,
-                }}
-              >
-                {/* Reference ripple: radiates from the CENTRE of the logo card, making
-                    the sister fund the visible point of impact. */}
-                <SectionRipple seed="saltagen" color="color-mix(in srgb, var(--color-canvas) 11%, transparent)" />
-              </div>
-            )}
+            <div
+              aria-hidden
+              style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                width: 'clamp(360px, 46vh, 560px)',
+                aspectRatio: '1',
+                transform: 'translate(-50%, -50%)',
+                pointerEvents: 'none',
+                zIndex: 0,
+              }}
+            >
+              {/* Reference ripple: radiates from the CENTRE of the logo card, making
+                  the sister fund the visible point of impact. */}
+              <SectionRipple seed="saltagen" color="color-mix(in srgb, var(--color-canvas) 11%, transparent)" />
+            </div>
             <div
               style={{
                 position: 'relative',

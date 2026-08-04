@@ -24,11 +24,6 @@ const BACKER_LOGO_TREATMENT: Record<string, BackerLogoTreatment> = {
   'THF Enterprises': 'multiply',
 }
 
-type BackersProps = {
-  /** Use the slide-shaped 100vh layout. The home page renders <Backers embedded /> as its own slide. */
-  embedded?: boolean
-}
-
 /** Uniform bounding box for the logo area in each cell (every logo reads with equal weight regardless of native aspect). */
 const LOGO_BOX_HEIGHT = 64
 const NAKED_LOGO_MAX_HEIGHT = 64
@@ -59,7 +54,7 @@ function backerLogoImg(b: (typeof backers)[number], src: string, treatment: Back
   return <img className="backer-logo-img" src={src} alt={b.name} style={imgStyle} />
 }
 
-export default function Backers({ embedded = false }: BackersProps) {
+export default function Backers() {
   const renderCell = (b: (typeof backers)[number]) => {
     const src = LOGO_BY_NAME[b.name]
     const treatment = BACKER_LOGO_TREATMENT[b.name] ?? 'default'
@@ -82,25 +77,18 @@ export default function Backers({ embedded = false }: BackersProps) {
     )
   }
 
-  const sectionStyle: CSSProperties = embedded
-    ? {
-        background: 'var(--color-canvas)',
-        width: '100%',
-        height: '100vh',
-        maxHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        boxSizing: 'border-box',
-        overflow: 'hidden',
-        // Top reserve matches the hero / GBA slides so the eyebrow clears the fixed 64px nav.
-        padding: 'var(--space-page-top) var(--gutter-x) var(--space-section-y)',
-      }
-    : {
-        background: 'var(--color-canvas)',
-        width: '100%',
-        padding: '96px 5vw',
-        boxSizing: 'border-box',
-      }
+  const sectionStyle: CSSProperties = {
+    background: 'var(--color-canvas)',
+    width: '100%',
+    height: '100vh',
+    maxHeight: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+    boxSizing: 'border-box',
+    overflow: 'hidden',
+    // Top reserve matches the hero / GBA slides so the eyebrow clears the fixed 64px nav.
+    padding: 'var(--space-page-top) var(--gutter-x) var(--space-section-y)',
+  }
 
   return (
     <section className="backers-section backers-section--embedded" style={sectionStyle}>
@@ -110,7 +98,7 @@ export default function Backers({ embedded = false }: BackersProps) {
           width: '100%',
           maxWidth: '1200px',
           margin: '0 auto',
-          flex: embedded ? 1 : undefined,
+          flex: 1,
           minHeight: 0,
           display: 'flex',
           flexDirection: 'column',

@@ -48,15 +48,15 @@ export default function Home() {
           <PortfolioHome />
         </div>
         <div className="home-slide" style={snapWrapperStyle}>
-          <Services embedded />
+          <Services />
         </div>
 
         <div className="home-slide" style={snapWrapperStyle}>
-          <Backers embedded />
+          <Backers />
         </div>
 
         <div className="home-slide" style={snapWrapperStyle}>
-          <SaltaGen embedded />
+          <SaltaGen />
         </div>
 
         <div className="home-slide" style={snapWrapperStyle}>
