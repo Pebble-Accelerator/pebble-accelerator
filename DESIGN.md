@@ -176,10 +176,10 @@ homepage grid and `/portfolio` at once.
 
 ### 6. `Section.tsx` adoption is route-dependent, and that's mostly *correct* for now
 
-`Section.tsx` is used on `/portfolio` (`PortfolioEditorial`) and
-`/services`+`/consulting` (`ServicesEditorial`). It is used by **zero** of the
-eight homepage section components (`Hero`, `GBAMap`, `PortfolioHome`, `People`,
-`Services`, `Backers`, `SaltaGen`, `CTAStrip`) and not on `/contact`.
+`Section.tsx` is used on `/portfolio` (`PortfolioEditorial`), `/consulting`
+(`ServicesEditorial`), and now `/contact` (fixed — see below). It is used by
+**zero** of the eight homepage section components (`Hero`, `GBAMap`,
+`PortfolioHome`, `People`, `Services`, `Backers`, `SaltaGen`, `CTAStrip`).
 
 The homepage gap is not a bug to fix independently — those sections are
 full-viewport locked slides inside the `snap-container`/`home-slide` system
@@ -187,16 +187,24 @@ that stage B of the eng review is already removing. Once the homepage becomes
 a normal scrolling document, re-evaluate whether its sections should adopt
 `Section.tsx`. Trying to force it in now means redoing the work twice.
 
-`/contact` not using `Section.tsx` is a real, independent gap — task #5.
+**FIXED (2026-08-04):** `/contact` now uses `Section` (`first`, custom
+`maxWidth="1280px"`, `paddingBottom` overridden back to the page's original
+`--space-2xl` since `Section`'s default `--space-section-y` is a different
+responsive value, flex-centering classes preserved via `className`).
 
-### 7. `SectionLabelLine` (the eyebrow+hairline pattern) is missing on two routes
+### 7. `SectionLabelLine` (the eyebrow+hairline pattern) is missing on one route
 
-Used on the homepage (`SaltaGen`, `PortfolioHome`, `People`, `Backers`) and on
-`/portfolio` (`PortfolioEditorial`). **Not used** on `/services`/`/consulting`
-(`ServicesEditorial` goes straight into an `<h1>` with no eyebrow, hand-rolling
-inline colors `#1a1a1a`/`#2d3a35` for the headline instead) or on `/contact`
-(hand-rolls its own eyebrow span — see `eyebrowLabel` in `contact/page.tsx`).
-Fold into tasks #4 and #5 respectively.
+Used on the homepage (`SaltaGen`, `PortfolioHome`, `People`, `Backers`), on
+`/portfolio` (`PortfolioEditorial`), and now on `/contact` (fixed — see
+below). **Still not used** on `/consulting` — `ServicesEditorial` goes
+straight into an `<h1>` with no eyebrow, hand-rolling inline colors
+`#1a1a1a`/`#2d3a35` for the headline instead. This one remains open; not
+part of the `/contact` fix.
+
+**FIXED (2026-08-04):** `/contact` replaced its hand-rolled ember-dot eyebrow
+span with `<SectionLabelLine index={1}>`, matching the numbered-hairline
+pattern everywhere else. Real visible change: the ember dot is gone, replaced
+by `(01)` and a hairline that draws in on scroll.
 
 ### 8. Stray `fontFamily: 'Georgia, "Times New Roman", serif'` in `Portfolio.tsx`
 
