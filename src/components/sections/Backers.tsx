@@ -80,13 +80,12 @@ export default function Backers() {
   const sectionStyle: CSSProperties = {
     background: 'var(--color-canvas)',
     width: '100%',
-    height: '100vh',
-    maxHeight: '100vh',
+    // Natural height. This section carried `height/maxHeight: 100vh` + overflow
+    // hidden with NO mobile release, so on phones it silently clipped whatever
+    // did not fit one screen. Both are gone; it sizes to its content everywhere.
     display: 'flex',
     flexDirection: 'column',
     boxSizing: 'border-box',
-    overflow: 'hidden',
-    // Top reserve matches the hero / GBA slides so the eyebrow clears the fixed 64px nav.
     padding: 'var(--space-page-top) var(--gutter-x) var(--space-section-y)',
   }
 

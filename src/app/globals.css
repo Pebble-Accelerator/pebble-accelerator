@@ -208,52 +208,12 @@ a { color: inherit; text-decoration: none; }
   animation: none !important;
   opacity: 0.28;
 }
-/* Homepage: single scroll surface ; prevent body + snap-container fighting */
-body:has(.snap-container) {
-  overflow: hidden;
-  height: 100%;
-}
-
-body:has(.snap-container) main {
-  height: 100vh;
-  overflow: hidden;
-}
-
-body:has(.snap-container) > footer {
-  display: none;
-}
-
-.snap-container {
-  height: 100vh;
-  overflow-y: scroll;
-  scroll-snap-type: none;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Snap disabled during layout iteration ; rhythm kept via section heights */
-.snap-final-group {
-  scroll-snap-align: none;
-  flex-shrink: 0;
-}
-
-.snap-section {
-  scroll-snap-align: none;
-  height: 100vh;
-  min-height: 100vh;
-  overflow: hidden;
-  box-sizing: border-box;
-}
-
-.snap-section:not(#hero-section) {
-  padding-top: 60px;
-}
-
-@supports (-webkit-touch-callout: none) {
-  .snap-section {
-    height: -webkit-fill-available;
-    min-height: -webkit-fill-available;
-  }
-}
+/* The homepage scroll-hijack lived here: `body:has(.snap-container)` locked body
+   and main to one viewport so `.snap-container` could be the only scroll surface,
+   and hid the layout-level <footer> because page.tsx rendered a second one as the
+   last slide. All of it is gone — the homepage is a normal scrolling document and
+   layout.tsx renders the only footer. The `.snap-section` / `.snap-final-group`
+   rules that followed were already dead (no component emitted those classes). */
 
 @keyframes heroChevronIn {
   from {
@@ -276,13 +236,11 @@ body:has(.snap-container) > footer {
   }
 }
 
-.hero-snap-wrapper {
-  scroll-snap-align: none;
-}
-
 .hero-section {
   height: auto;
-  min-height: 100vh;
+  /* svh, not vh: under document scroll the mobile URL-bar collapse makes a hard
+     100vh hero resize mid-scroll. Matches the inline minHeight in Hero.tsx. */
+  min-height: 100svh;
   overflow: visible;
 }
 
@@ -408,52 +366,12 @@ body:has(.snap-container) > footer {
   font-family: var(--font-ibm-plex-sans), system-ui, sans-serif;
 }
 
-/* Combined Stats + What We Do + Backers */
-.snap-section.combined-slide {
-  padding-top: 0;
-}
-
-.combined-slide {
-  background: var(--color-canvas);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  border-top: none;
-}
-
-.services-section--embedded,
-.backers-section--embedded {
-  overflow: hidden;
-}
+/* `.combined-slide` / `.final-snap-slide` rules were removed here: no component
+   has emitted those classes since the slides were split apart. `.services-section
+   --embedded` / `.backers-section--embedded { overflow: hidden }` went with them —
+   that clip only existed to keep content inside a 100vh slide. */
 
 @media (max-width: 768px) {
-  .final-snap-slide {
-    scroll-snap-align: none;
-    height: auto;
-    min-height: auto;
-    overflow: visible;
-  }
-
-  .final-snap-slide__why,
-  .final-snap-slide__cta {
-    flex: none;
-    height: auto;
-    min-height: auto;
-    overflow: visible;
-  }
-
-  .combined-slide {
-    height: 100vh;
-    min-height: 100vh;
-    overflow: hidden;
-  }
-
-  .combined-slide__stats,
-  .combined-slide__services,
-  .combined-slide__backers {
-    min-height: 0;
-  }
-
   .stats-number {
     font-size: 48px;
   }
@@ -463,35 +381,13 @@ body:has(.snap-container) > footer {
   }
 }
 
-/* Homepage mobile (< Tailwind md / 768px): native scroll + natural section height */
+/* Homepage mobile (< Tailwind md / 768px): layout only.
+   This block used to open by unwinding the desktop scroll lock — body, main,
+   .snap-container and .home-slide all forced back to auto height so phones got
+   native scroll. That unwind is gone: there is nothing left to unwind, because
+   the document scrolls at every width now. What remains is genuine mobile layout
+   (column collapse, padding, sizes). */
 @media (max-width: 767px) {
-  body:has(.snap-container) {
-    overflow: auto;
-    height: auto;
-  }
-
-  body:has(.snap-container) main {
-    height: auto;
-    overflow: visible;
-  }
-
-  .snap-container {
-    height: auto !important;
-    overflow-y: visible !important;
-  }
-
-  .home-slide,
-  .hero-snap-wrapper {
-    height: auto !important;
-    min-height: 0 !important;
-    overflow: visible !important;
-  }
-
-  .hero-section {
-    min-height: 100svh;
-    height: auto !important;
-  }
-
   .apac-map {
     height: auto !important;
     overflow: visible !important;

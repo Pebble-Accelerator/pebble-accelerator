@@ -131,8 +131,8 @@ export default function SaltaGen() {
         position: 'relative',
         width: '100%',
         boxSizing: 'border-box',
-        height: '100vh',
-        maxHeight: '100vh',
+        // Natural height (was a locked 100vh slide). `overflow: hidden` stays —
+        // the absolutely-positioned wave motif below still needs clipping.
         overflow: 'hidden',
         // 8vw gutter (wider than the 5vw standard) is deliberate for the split.
         padding: 'var(--space-page-top) 8vw var(--space-section-y)',

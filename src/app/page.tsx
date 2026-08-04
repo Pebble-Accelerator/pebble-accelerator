@@ -5,68 +5,29 @@ import Services from '@/components/sections/Services'
 import Backers from '@/components/sections/Backers'
 import SaltaGen from '@/components/sections/SaltaGen'
 import CTAStrip from '@/components/sections/CTAStrip'
-import Footer from '@/components/layout/Footer'
-import HomeScrollController from '@/components/home/HomeScrollController'
 
-const snapWrapperStyle = {
-  height: '100vh',
-  minHeight: '100vh',
-  overflow: 'hidden' as const,
-  flexShrink: 0,
-}
-
+/**
+ * Homepage — a normal long-scroll document.
+ *
+ * This was previously a `.snap-container` scroll surface holding eight 100vh
+ * `.home-slide` wrappers driven by a wheel/touch/key hijack. That capped every
+ * section at exactly one screen. Sections now stack as ordinary siblings and set
+ * their own height, which is what lets the redesign vary them.
+ *
+ * The footer is NOT rendered here — `layout.tsx` renders the only one. While the
+ * hijack existed this page rendered a second `<Footer/>` as the last slide and a
+ * CSS rule hid the layout one; both halves of that arrangement are gone.
+ */
 export default function Home() {
   return (
     <>
-      <div
-        className="snap-container"
-        style={{
-          height: '100vh',
-          overflowY: 'scroll',
-          WebkitOverflowScrolling: 'touch',
-          background: 'var(--color-canvas)',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        <div
-          className="hero-snap-wrapper home-slide"
-          style={{
-            height: '100vh',
-            minHeight: '100vh',
-            overflow: 'visible',
-            position: 'relative',
-            flexShrink: 0,
-          }}
-        >
-          <Hero />
-        </div>
-        <div className="home-slide" style={snapWrapperStyle}>
-          <GBAMap />
-        </div>
-        <div className="home-slide" style={snapWrapperStyle}>
-          <PortfolioHome />
-        </div>
-        <div className="home-slide" style={snapWrapperStyle}>
-          <Services />
-        </div>
-
-        <div className="home-slide" style={snapWrapperStyle}>
-          <Backers />
-        </div>
-
-        <div className="home-slide" style={snapWrapperStyle}>
-          <SaltaGen />
-        </div>
-
-        <div className="home-slide" style={snapWrapperStyle}>
-          <CTAStrip embedded />
-        </div>
-        <div className="home-slide">
-          <Footer />
-        </div>
-      </div>
-      <HomeScrollController />
+      <Hero />
+      <GBAMap />
+      <PortfolioHome />
+      <Services />
+      <Backers />
+      <SaltaGen />
+      <CTAStrip />
     </>
   )
 }

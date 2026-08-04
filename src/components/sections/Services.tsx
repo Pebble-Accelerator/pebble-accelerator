@@ -5,7 +5,6 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import SectionLabelLine from '@/components/ui/SectionLabelLine'
 import Link from 'next/link'
-import { getHomeScrollScroller } from '@/lib/homeSlideshow'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -44,8 +43,6 @@ export default function Services() {
       return
     }
 
-    const snapScroller = getHomeScrollScroller()
-
     gsap.set(label, { opacity: 0, y: 12, willChange: 'transform' })
     gsap.set(leftCol, { opacity: 0, x: -24, willChange: 'transform' })
     gsap.set(rightCol, { opacity: 0, x: 24, willChange: 'transform' })
@@ -57,7 +54,6 @@ export default function Services() {
       ease: 'power2.out',
       scrollTrigger: {
         trigger: section,
-        scroller: snapScroller,
         start: 'top 95%',
         once: true,
       },
@@ -70,7 +66,6 @@ export default function Services() {
     const columnsTween = gsap.timeline({
       scrollTrigger: {
         trigger: section,
-        scroller: snapScroller,
         start: 'top 95%',
         once: true,
       },
@@ -120,8 +115,6 @@ export default function Services() {
         // alternates light/dark instead of running flat cream.
         background: 'var(--color-slate-dark)',
         position: 'relative',
-        height: '100vh',
-        maxHeight: '100vh',
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
@@ -129,7 +122,6 @@ export default function Services() {
         alignItems: 'stretch',
         boxSizing: 'border-box',
         border: 'none',
-        overflow: 'hidden',
         // Consistent top-reserve rhythm with the Hero/GBA slides: nav (64px)
         // + breathing room. Content still vertically centers, but in a tighter
         // remaining area so the slide reads composed instead of under-filled.

@@ -9,12 +9,11 @@ export default function Nav() {
   const [menuOpen, setMenuOpen] = useState(false)
   const pathname = usePathname()
 
-  // The homepage hero is a dark slide; every other slide (and every other route)
-  // is the light cream ground. While the hero occupies the top, the nav goes
+  // The homepage hero is dark; every section below it (and every other route) is
+  // the light cream ground. While the hero occupies the top, the nav goes
   // transparent with light links so there is no hard cream seam across the dark
-  // hero; the moment a light slide takes over it reverts to the solid cream bar
-  // with dark links. Tracked by watching the hero's position in the scroller
-  // (works for the desktop scroll-hijack and mobile native scroll alike).
+  // hero; the moment a light section takes over it reverts to the solid cream bar
+  // with dark links. Tracked by watching the hero's position in the viewport.
   const [overHero, setOverHero] = useState(false)
 
   useEffect(() => {
@@ -35,13 +34,10 @@ export default function Nav() {
     compute()
     const id = window.setInterval(compute, 120)
     const onScroll = () => compute() // immediate response on top of the poll
-    const scroller = document.querySelector('.snap-container')
-    scroller?.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onScroll)
     return () => {
       clearInterval(id)
-      scroller?.removeEventListener('scroll', onScroll)
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
     }
@@ -54,19 +50,15 @@ export default function Nav() {
   // stays legible (mirrors the link light/dark logic).
   const chipColor = overHero ? 'color-mix(in srgb, var(--color-canvas) 60%, transparent)' : 'var(--color-meta)'
 
-  // On the homepage, the logo is a "back to top" control: glide to the first slide
-  // via the slideshow controller's existing goTo(0). On other routes it navigates
-  // to "/" normally (Next <Link>). Under reduced-motion the controller is inactive
-  // (no window.__homeSlideshow), so fall back to an instant native scroll to top.
+  // On the homepage the logo is a "back to top" control; on other routes it
+  // navigates to "/" normally (Next <Link>). This used to call the slideshow
+  // controller's goTo(0) and fall back to scrolling `.snap-container`; both are
+  // gone, so it is a plain document scroll to top.
   const handleLogoActivate = (e: { preventDefault: () => void }) => {
     if (pathname !== '/') return
     e.preventDefault()
-    const api = typeof window !== 'undefined' ? window.__homeSlideshow : undefined
-    if (api) {
-      api.goTo(0)
-      return
-    }
-    document.querySelector<HTMLElement>('.snap-container')?.scrollTo({ top: 0, behavior: 'auto' })
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' })
   }
 
   const links = [

@@ -6,21 +6,19 @@ const CREAM = 'var(--color-canvas)'
 const EMBER = 'var(--color-ember)'
 const INK = 'var(--color-ink)'
 
-type ForestCTAProps = {
-  /** Full-viewport slide on homepage; padded section on services/contact. */
-  embedded?: boolean
-}
-
-export default function ForestCTA({ embedded = false }: ForestCTAProps) {
+/**
+ * The `embedded` prop is gone. It existed only to switch this section between a
+ * locked 100vh homepage slide and the padded section /consulting already used;
+ * with the homepage on document scroll both call sites want the padded form.
+ */
+export default function ForestCTA() {
   return (
     <section
-      className={embedded ? 'forest-cta--embedded' : undefined}
+      className="forest-cta"
       style={{
         background: 'var(--color-slate-dark)',
-        padding: embedded ? '0 5vw' : 'clamp(80px, 10vw, 120px) 5vw',
+        padding: 'clamp(80px, 10vw, 120px) 5vw',
         width: '100%',
-        height: embedded ? '100vh' : 'auto',
-        minHeight: embedded ? '100vh' : undefined,
         display: 'flex',
         alignItems: 'center',
         boxSizing: 'border-box',
@@ -33,10 +31,10 @@ export default function ForestCTA({ embedded = false }: ForestCTAProps) {
         className="forest-cta-wave"
         style={{
           position: 'absolute',
-          right: embedded ? '-30vh' : '-12%',
-          bottom: embedded ? '-14vh' : '-18%',
-          width: embedded ? '114vh' : 'min(720px, 85vw)',
-          height: embedded ? '105vh' : 'min(640px, 75vw)',
+          right: '-12%',
+          bottom: '-18%',
+          width: 'min(720px, 85vw)',
+          height: 'min(640px, 75vw)',
           backgroundColor: 'var(--color-slate-dark)',
           opacity: 0.19,
           WebkitMaskImage: `url(${PEBBLE_WAVE_LOGO})`,

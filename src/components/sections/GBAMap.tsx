@@ -8,9 +8,45 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Map, { AttributionControl, Marker } from 'react-map-gl/mapbox'
 import type { MapRef } from 'react-map-gl/mapbox'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
-import { getHomeScrollScroller, HOME_DESKTOP_MQ } from '@/lib/homeSlideshow'
+import { DESKTOP_MQ } from '@/lib/breakpoints'
 
 gsap.registerPlugin(ScrollTrigger)
+
+/**
+ * Preload lead for the GBA map, as a fraction of the viewport rather than a fixed
+ * pixel count. Half a screen of lead in both directions: far enough that the map
+ * has its style JSON and first tiles in flight before it scrolls into view, close
+ * enough that it is not fetched for a reader who never gets past the hero.
+ *
+ * Viewport-relative on purpose. The old value was a fixed `250px` measured against
+ * a locked 100vh slide; once sections vary in height and this one goes full-bleed,
+ * a percentage keeps the *intent* ("half a screen of warning") stable where a pixel
+ * count would silently become a different amount of lead at every breakpoint.
+ */
+const MAP_PRELOAD_ROOT_MARGIN = '50% 0px'
+
+/**
+ * Grace period before the preload observer is attached at all.
+ *
+ * Geometry forces this. The map section starts immediately below a ~100svh hero,
+ * so its top edge sits exactly at the fold: with a viewport root, ANY positive
+ * rootMargin already intersects at scroll position 0. rootMargin alone therefore
+ * cannot express "preload ahead of view, but not during first paint" — the two are
+ * only separable in time, not in distance.
+ *
+ * What we are protecting is not bundle weight. Hero imports mapbox-gl statically,
+ * so the GL bundle is in the initial payload either way; what this defers is a
+ * second WebGL context plus a second tile burst competing with the hero's own
+ * tiles over the opening seconds, for a reader who may be on a throttled mainland
+ * connection.
+ *
+ * Net behaviour, verified: hero map alone at ~800ms, GBA map instantiated by
+ * ~1.2s. It still loads for a reader who never scrolls — that is deliberate, since
+ * it is the section they hit next and it must not arrive blank. The rootMargin
+ * above governs lead time once this section is no longer the one directly under
+ * the hero, which the redesign's reordering will change.
+ */
+const MAP_PRELOAD_FIRST_PAINT_GRACE_MS = 800
 
 type LabelPos = {
   top?: number
@@ -127,7 +163,7 @@ function GBAMap() {
   const statNumberRefs = useRef<(HTMLSpanElement | null)[]>([])
   const statsAnimated = useRef(false)
   const [isDesktop, setIsDesktop] = useState(() =>
-    typeof window !== 'undefined' ? window.matchMedia(HOME_DESKTOP_MQ).matches : true
+    typeof window !== 'undefined' ? window.matchMedia(DESKTOP_MQ).matches : true
   )
   // Whether the device can hover (fine pointer). Used to gate the
   // onMouseEnter / onMouseLeave handlers so iPad-style touch devices don't
@@ -137,7 +173,7 @@ function GBAMap() {
   const [supportsHover, setSupportsHover] = useState(true)
 
   useEffect(() => {
-    const mq = window.matchMedia(HOME_DESKTOP_MQ)
+    const mq = window.matchMedia(DESKTOP_MQ)
     const sync = () => setIsDesktop(mq.matches)
     sync()
     mq.addEventListener('change', sync)
@@ -184,16 +220,23 @@ function GBAMap() {
 
   useEffect(() => {
     if (shouldLoadMap) return
-    const snapScroller = getHomeScrollScroller()
-    const observer = new IntersectionObserver(
-      ([entry]) => entry?.isIntersecting && setShouldLoadMap(true),
-      {
-        root: snapScroller ?? null,
-        rootMargin: '250px',
-      }
-    )
-    if (sectionRef.current) observer.observe(sectionRef.current)
-    return () => observer.disconnect()
+
+    let observer: IntersectionObserver | null = null
+    // Root is the viewport. It used to be the `.snap-container` scroll surface on
+    // desktop; there is no scroll surface but the document now.
+    const attach = () => {
+      observer = new IntersectionObserver(
+        ([entry]) => entry?.isIntersecting && setShouldLoadMap(true),
+        { rootMargin: MAP_PRELOAD_ROOT_MARGIN }
+      )
+      if (sectionRef.current) observer.observe(sectionRef.current)
+    }
+
+    const timer = window.setTimeout(attach, MAP_PRELOAD_FIRST_PAINT_GRACE_MS)
+    return () => {
+      window.clearTimeout(timer)
+      observer?.disconnect()
+    }
   }, [shouldLoadMap])
 
   useEffect(() => {
@@ -214,13 +257,10 @@ function GBAMap() {
 
     gsap.set(dots, { opacity: 0, scale: 0, willChange: 'transform' })
 
-    const snapScroller = getHomeScrollScroller()
-
     const tl = gsap.timeline({
       delay: 0.1,
       scrollTrigger: {
         trigger: container,
-        scroller: snapScroller,
         start: 'top 95%',
         once: true,
       },
@@ -258,7 +298,6 @@ function GBAMap() {
 
     const target = sectionRef.current
     if (!target) return
-    const snapScroller = getHomeScrollScroller()
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -288,10 +327,7 @@ function GBAMap() {
 
         observer.disconnect()
       },
-      {
-        root: snapScroller ?? null,
-        threshold: 0.35,
-      }
+      { threshold: 0.35 }
     )
 
     observer.observe(target)
@@ -304,17 +340,15 @@ function GBAMap() {
       className="apac-map"
       style={{
         background: 'var(--color-canvas)',
-        // Locked to one viewport like the other slides so the slideshow
-        // advances in one wheel. vh-aware font clamps on H2/lede/stats
-        // guarantee content fits the available inner area at 700vh+, so
-        // "100%" never clips under the overflow:hidden ceiling.
-        height: '100vh',
+        // Natural height. This was `height: 100vh; overflow: hidden` so the slide
+        // advanced in exactly one wheel gesture; under document scroll the section
+        // sizes to its content and the vh-aware font clamps have nothing to fit
+        // inside anymore.
         display: 'flex',
         alignItems: 'flex-start',
         padding: 'var(--space-page-top) var(--gutter-x) var(--space-section-y)',
         width: '100%',
         boxSizing: 'border-box',
-        overflow: 'hidden',
       }}
     >
       <div

@@ -40,22 +40,20 @@ export default function Hero() {
     path.style.strokeDashoffset = `${length}`
   }, [])
 
+  // The chevron advances the document to the section directly below the hero.
+  // It used to call the slideshow controller's advance(1) and fall back to
+  // scrolling `.snap-container`; both are gone, so this is plain document scroll.
   const scrollToNext = () => {
-    // Prefer the slideshow controller (GSAP glide) when it's active.
-    if (typeof window !== 'undefined' && window.__homeSlideshow) {
-      window.__homeSlideshow.advance(1)
+    const hero = document.getElementById('hero-section')
+    const next = hero?.nextElementSibling
+    const behavior: ScrollBehavior = reduced ? 'auto' : 'smooth'
+
+    if (next instanceof HTMLElement) {
+      next.scrollIntoView({ behavior, block: 'start' })
       return
     }
-    // Fallback for reduced-motion / controller absent: native instant jump.
-    const container = document.querySelector('.snap-container') as HTMLElement | null
-    const heroWrapper = document.querySelector('.hero-snap-wrapper')
-    const nextSlide = heroWrapper?.nextElementSibling as HTMLElement | null
-    if (container && nextSlide) {
-      const containerTop = container.getBoundingClientRect().top
-      const slideTop = nextSlide.getBoundingClientRect().top
-      const top = container.scrollTop + (slideTop - containerTop)
-      container.scrollTo({ top })
-    }
+    // Hero is the last element (shouldn't happen) — advance one screen.
+    window.scrollTo({ top: window.innerHeight, behavior })
   }
 
   return (
@@ -64,8 +62,9 @@ export default function Hero() {
       className="hero-section"
       style={{
         position: 'relative',
-        height: '100vh',
-        minHeight: '100vh',
+        // Small-viewport unit: under document scroll the mobile URL bar collapse
+        // makes a hard 100vh jump the page. `svh` holds still.
+        minHeight: '100svh',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'safe center',
