@@ -261,7 +261,13 @@ function GBAMap() {
       delay: 0.1,
       scrollTrigger: {
         trigger: container,
-        start: 'top 95%',
+        // `top 95%` fired the moment the card's top edge cleared the bottom of the
+        // screen. That was right when a slide arrived all at once via a 0.6s glide;
+        // under continuous scroll it means the 11-dot stagger (~1.6s) plays out
+        // while the map is still essentially off-screen, so the reader arrives to a
+        // finished map and never sees it populate. 85% gives the stagger a head
+        // start proportional to its length without spending it below the fold.
+        start: 'top 85%',
         once: true,
       },
     })
@@ -494,7 +500,14 @@ function GBAMap() {
               position: 'relative',
               borderRadius: '10px',
               overflow: 'hidden',
-              height: 'min(420px, calc(100vh - 300px))',
+              // Was `min(420px, calc(100vh - 300px))`. The `- 300px` was slide
+              // chrome: the copy column and stats had to share one locked 100vh
+              // with this card, so the card took whatever the viewport had left.
+              // Nothing shares a fixed viewport with it now, so it sizes itself.
+              // Lands at ~416px on the common 800px-tall screen (was 420, so no
+              // visible change there), stops shrinking on short viewports, and is
+              // allowed to grow a little on tall ones instead of capping at 420.
+              height: 'clamp(320px, 52vh, 460px)',
               width: '100%',
               border: '1px solid color-mix(in srgb, var(--color-slate-dark) 14%, transparent)',
             }}

@@ -54,7 +54,8 @@ export default function Services() {
       ease: 'power2.out',
       scrollTrigger: {
         trigger: section,
-        start: 'top 95%',
+        // See the note on the columns trigger below — both retuned off `top 95%`.
+        start: 'top 80%',
         once: true,
       },
       onComplete: () => {
@@ -66,7 +67,13 @@ export default function Services() {
     const columnsTween = gsap.timeline({
       scrollTrigger: {
         trigger: section,
-        start: 'top 95%',
+        // `top 95%` was tuned for a slide that arrived as a full viewport in one
+        // 0.6s glide, so firing as the top edge appeared was correct. Scrolling
+        // continuously, that same value starts the left/right column sweep while
+        // barely a sliver of the section is showing, and it is over before the
+        // columns are readable — the motion reads cheap because nobody sees it.
+        // At 80% roughly a fifth of the section is on screen when it starts.
+        start: 'top 80%',
         once: true,
       },
     })
