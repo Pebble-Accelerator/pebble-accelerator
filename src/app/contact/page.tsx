@@ -1,6 +1,8 @@
 import type { CSSProperties } from 'react'
 import FadeIn from '@/components/ui/FadeIn'
 import RippleSubmitButton from '@/components/contact/RippleSubmitButton'
+import Section from '@/components/ui/Section'
+import SectionLabelLine from '@/components/ui/SectionLabelLine'
 
 // Previously local hex constants (SAGE/EMBER/FOREST/INK) — replaced with the
 // real design tokens throughout this file. FOREST's value (#2d3a35) was
@@ -39,236 +41,230 @@ const QUALIFIERS = [
 
 export default function ContactPage() {
   return (
-    <div
+    <Section
+      first
+      maxWidth="1280px"
       className="flex flex-1 flex-col justify-center"
-      style={{
-        paddingLeft: 'var(--gutter-x)',
-        paddingRight: 'var(--gutter-x)',
-        paddingTop: 'var(--space-page-top)',
-        paddingBottom: 'var(--space-2xl)',
-      }}
+      // Contact's original bottom padding was --space-2xl (fixed), not
+      // Section's default --space-section-y (responsive clamp) — preserved
+      // here rather than silently adopting the default.
+      style={{ paddingBottom: 'var(--space-2xl)' }}
     >
-      <div style={{ maxWidth: '1280px', margin: '0 auto', width: '100%' }}>
-        <FadeIn>
-          <div className="contact-grid">
-            {/* LEFT COLUMN: copy */}
-            <div className="contact-left">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '28px' }}>
-                <span
-                  aria-hidden
+      <FadeIn>
+        <div className="contact-grid">
+          {/* LEFT COLUMN: copy */}
+          <div className="contact-left">
+            {/* SectionLabelLine, not the hand-rolled ember-dot eyebrow this
+                page used to have — matches the numbered-hairline pattern
+                every other route's opening eyebrow already uses
+                (PortfolioEditorial, Backers, SaltaGen, Services). Real,
+                visible change: the ember dot is gone, replaced by "(01)"
+                and a hairline that draws in on scroll. */}
+            <SectionLabelLine index={1} marginBottom="28px">
+              <span style={eyebrowLabel}>Contact</span>
+            </SectionLabelLine>
+
+            <h1
+              className="font-display"
+              style={{
+                fontSize: 'clamp(56px, 7vw, 88px)',
+                fontWeight: 500,
+                lineHeight: 1.04,
+                letterSpacing: '-0.02em',
+                color: 'var(--color-ink)',
+                margin: '0 0 20px',
+              }}
+            >
+              Let&rsquo;s{' '}
+              <span style={{ fontStyle: 'italic', color: 'var(--color-sage)' }}>talk.</span>
+            </h1>
+
+            <p
+              style={{
+                fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+                fontSize: '16px',
+                lineHeight: 1.6,
+                color: 'color-mix(in srgb, var(--color-ink) 75%, transparent)',
+                margin: '0 0 32px',
+                maxWidth: '420px',
+              }}
+            >
+              If any of these describe you, we want to hear from you.
+            </p>
+
+            {/* Three qualifier items wrapped in a single flat container with
+                a thin sage hairline border. Internal dividers between items
+                use the same hairline; the container border handles the top
+                and bottom edges, so no rules above item 1 or below item 3. */}
+            <ol
+              style={{
+                listStyle: 'none',
+                margin: 0,
+                padding: 0,
+                border: '1px solid color-mix(in srgb, var(--color-sage) 28%, transparent)',
+                borderRadius: '3px',
+                background: 'transparent',
+                width: '100%',
+              }}
+            >
+              {QUALIFIERS.map((q, i) => (
+                <li
+                  key={q.num}
                   style={{
-                    width: '8px',
-                    height: '8px',
-                    borderRadius: '999px',
-                    background: 'var(--color-ember)',
-                    display: 'inline-block',
+                    display: 'flex',
+                    gap: '24px',
+                    alignItems: 'baseline',
+                    padding: '22px 24px',
+                    borderTop:
+                      i === 0
+                        ? 'none'
+                        : '1px solid color-mix(in srgb, var(--color-sage) 28%, transparent)',
                   }}
-                />
-                <span style={eyebrowLabel}>Contact</span>
-              </div>
-
-              <h1
-                className="font-display"
-                style={{
-                  fontSize: 'clamp(56px, 7vw, 88px)',
-                  fontWeight: 500,
-                  lineHeight: 1.04,
-                  letterSpacing: '-0.02em',
-                  color: 'var(--color-ink)',
-                  margin: '0 0 20px',
-                }}
-              >
-                Let&rsquo;s{' '}
-                <span style={{ fontStyle: 'italic', color: 'var(--color-sage)' }}>talk.</span>
-              </h1>
-
-              <p
-                style={{
-                  fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-                  fontSize: '16px',
-                  lineHeight: 1.6,
-                  color: 'color-mix(in srgb, var(--color-ink) 75%, transparent)',
-                  margin: '0 0 32px',
-                  maxWidth: '420px',
-                }}
-              >
-                If any of these describe you, we want to hear from you.
-              </p>
-
-              {/* Three qualifier items wrapped in a single flat container with
-                  a thin sage hairline border. Internal dividers between items
-                  use the same hairline; the container border handles the top
-                  and bottom edges, so no rules above item 1 or below item 3. */}
-              <ol
-                style={{
-                  listStyle: 'none',
-                  margin: 0,
-                  padding: 0,
-                  border: '1px solid color-mix(in srgb, var(--color-sage) 28%, transparent)',
-                  borderRadius: '3px',
-                  background: 'transparent',
-                  width: '100%',
-                }}
-              >
-                {QUALIFIERS.map((q, i) => (
-                  <li
-                    key={q.num}
+                >
+                  <span
                     style={{
-                      display: 'flex',
-                      gap: '24px',
-                      alignItems: 'baseline',
-                      padding: '22px 24px',
-                      borderTop:
-                        i === 0
-                          ? 'none'
-                          : '1px solid color-mix(in srgb, var(--color-sage) 28%, transparent)',
+                      fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+                      fontSize: '12px',
+                      fontWeight: 500,
+                      letterSpacing: '0.12em',
+                      color: 'var(--color-ember)',
+                      flexShrink: 0,
+                      width: '28px',
+                    }}
+                  >
+                    {q.num}
+                  </span>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+                      fontSize: '17px',
+                      lineHeight: 1.5,
+                      color: 'var(--color-ink)',
                     }}
                   >
                     <span
+                      className="font-display"
                       style={{
-                        fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-                        fontSize: '12px',
-                        fontWeight: 500,
-                        letterSpacing: '0.12em',
-                        color: 'var(--color-ember)',
-                        flexShrink: 0,
-                        width: '28px',
+                        fontStyle: 'italic',
+                        color: 'var(--color-sage)',
+                        fontSize: '21px',
                       }}
                     >
-                      {q.num}
+                      {q.lead}
                     </span>
-                    <p
-                      style={{
-                        margin: 0,
-                        fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-                        fontSize: '17px',
-                        lineHeight: 1.5,
-                        color: 'var(--color-ink)',
-                      }}
-                    >
-                      <span
-                        className="font-display"
-                        style={{
-                          fontStyle: 'italic',
-                          color: 'var(--color-sage)',
-                          fontSize: '21px',
-                        }}
-                      >
-                        {q.lead}
-                      </span>
-                      {q.rest}
-                    </p>
-                  </li>
-                ))}
-              </ol>
+                    {q.rest}
+                  </p>
+                </li>
+              ))}
+            </ol>
 
-              <div style={{ display: 'flex', gap: '56px', marginTop: '44px', flexWrap: 'wrap' }}>
-                <div>
-                  <p style={{ ...eyebrowLabel, marginBottom: '10px' }}>Email</p>
-                  <a
-                    href="mailto:pebbleadmin@tigerjadecapital.com"
-                    className="link-underline"
-                    style={{
-                      fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-                      fontSize: '15px',
-                      color: 'var(--color-ink)',
-                      textDecoration: 'none',
-                    }}
-                  >
-                    pebbleadmin@tigerjadecapital.com
-                  </a>
-                </div>
-                <div>
-                  <p style={{ ...eyebrowLabel, marginBottom: '10px' }}>Elsewhere</p>
-                  <a
-                    href={LINKEDIN}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="link-underline"
-                    style={{
-                      fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-                      fontSize: '15px',
-                      color: 'var(--color-ink)',
-                      textDecoration: 'none',
-                    }}
-                  >
-                    LinkedIn &rarr;
-                  </a>
-                </div>
+            <div style={{ display: 'flex', gap: '56px', marginTop: '44px', flexWrap: 'wrap' }}>
+              <div>
+                <p style={{ ...eyebrowLabel, marginBottom: '10px' }}>Email</p>
+                <a
+                  href="mailto:pebbleadmin@tigerjadecapital.com"
+                  className="link-underline"
+                  style={{
+                    fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+                    fontSize: '15px',
+                    color: 'var(--color-ink)',
+                    textDecoration: 'none',
+                  }}
+                >
+                  pebbleadmin@tigerjadecapital.com
+                </a>
+              </div>
+              <div>
+                <p style={{ ...eyebrowLabel, marginBottom: '10px' }}>Elsewhere</p>
+                <a
+                  href={LINKEDIN}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link-underline"
+                  style={{
+                    fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
+                    fontSize: '15px',
+                    color: 'var(--color-ink)',
+                    textDecoration: 'none',
+                  }}
+                >
+                  LinkedIn &rarr;
+                </a>
               </div>
             </div>
+          </div>
 
-            {/* RIGHT COLUMN: flat form on cream, no card */}
-            <div className="contact-right">
-              <p style={{ ...eyebrowLabel, marginBottom: '32px' }}>Send a message</p>
+          {/* RIGHT COLUMN: flat form on cream, no card */}
+          <div className="contact-right">
+            <p style={{ ...eyebrowLabel, marginBottom: '32px' }}>Send a message</p>
 
-              <form action="mailto:pebbleadmin@tigerjadecapital.com" method="POST" noValidate>
+            <form action="mailto:pebbleadmin@tigerjadecapital.com" method="POST" noValidate>
+              <div className="contact-field">
+                <label htmlFor="contact-name" style={fieldLabel}>
+                  Full name
+                </label>
+                <input
+                  id="contact-name"
+                  type="text"
+                  name="name"
+                  required
+                  placeholder="Jane Chan"
+                  className="contact-input"
+                />
+              </div>
+
+              <div className="contact-field-row">
                 <div className="contact-field">
-                  <label htmlFor="contact-name" style={fieldLabel}>
-                    Full name
+                  <label htmlFor="contact-company" style={fieldLabel}>
+                    Company
                   </label>
                   <input
-                    id="contact-name"
+                    id="contact-company"
                     type="text"
-                    name="name"
-                    required
-                    placeholder="Jane Chan"
+                    name="company"
+                    placeholder="OncoBridge"
                     className="contact-input"
                   />
                 </div>
-
-                <div className="contact-field-row">
-                  <div className="contact-field">
-                    <label htmlFor="contact-company" style={fieldLabel}>
-                      Company
-                    </label>
-                    <input
-                      id="contact-company"
-                      type="text"
-                      name="company"
-                      placeholder="OncoBridge"
-                      className="contact-input"
-                    />
-                  </div>
-                  <div className="contact-field">
-                    <label htmlFor="contact-email" style={fieldLabel}>
-                      Email
-                    </label>
-                    <input
-                      id="contact-email"
-                      type="email"
-                      name="email"
-                      required
-                      placeholder="jane@company.com"
-                      className="contact-input"
-                    />
-                  </div>
-                </div>
-
                 <div className="contact-field">
-                  <label htmlFor="contact-message" style={fieldLabel}>
-                    Message
+                  <label htmlFor="contact-email" style={fieldLabel}>
+                    Email
                   </label>
-                  <textarea
-                    id="contact-message"
-                    name="message"
-                    rows={5}
+                  <input
+                    id="contact-email"
+                    type="email"
+                    name="email"
                     required
-                    placeholder="Tell us what you're building, and how we can help."
-                    className="contact-input contact-input--textarea"
+                    placeholder="jane@company.com"
+                    className="contact-input"
                   />
                 </div>
+              </div>
 
-                <RippleSubmitButton />
+              <div className="contact-field">
+                <label htmlFor="contact-message" style={fieldLabel}>
+                  Message
+                </label>
+                <textarea
+                  id="contact-message"
+                  name="message"
+                  rows={5}
+                  required
+                  placeholder="Tell us what you're building, and how we can help."
+                  className="contact-input contact-input--textarea"
+                />
+              </div>
 
-                <p className="contact-footnote">
-                  We read every message, usually back within two working days.
-                </p>
-              </form>
-            </div>
+              <RippleSubmitButton />
+
+              <p className="contact-footnote">
+                We read every message, usually back within two working days.
+              </p>
+            </form>
           </div>
-        </FadeIn>
-      </div>
+        </div>
+      </FadeIn>
 
       <style>{`
         .contact-grid {
@@ -384,6 +380,6 @@ export default function ContactPage() {
           line-height: 1.55;
         }
       `}</style>
-    </div>
+    </Section>
   )
 }
