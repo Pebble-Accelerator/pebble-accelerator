@@ -236,6 +236,15 @@ a { color: inherit; text-decoration: none; }
   }
 }
 
+/* The nav is fixed at 64px, so anything that scrolls a section to the top of the
+   viewport (the hero chevron, back/forward restoration, any future anchor link)
+   would otherwise tuck that section's first line underneath it. While each section
+   was a 100vh slide this was absorbed by their large top padding; under document
+   scroll it needs saying explicitly. */
+main > section {
+  scroll-margin-top: 72px;
+}
+
 .hero-section {
   height: auto;
   /* svh, not vh: under document scroll the mobile URL-bar collapse makes a hard
@@ -388,13 +397,11 @@ a { color: inherit; text-decoration: none; }
    the document scrolls at every width now. What remains is genuine mobile layout
    (column collapse, padding, sizes). */
 @media (max-width: 767px) {
+  /* `height: auto`, `overflow: visible` and `align-items: flex-start` used to be
+     forced here to break the 100vh slide clip; the section no longer sets any of
+     them, so the overrides are gone. Padding keeps `!important` — it is beating an
+     inline style, which is the only reason any rule in this block still needs it. */
   .apac-map {
-    height: auto !important;
-    overflow: visible !important;
-    align-items: flex-start !important;
-    /* Top reserve covers the fixed 64px nav on mobile native scroll
-       (trimmed 24px on this section so the block sits a touch higher;
-       still leaves ~24px breathing room below the navbar). */
     padding: 88px 5vw 48px !important;
   }
 
@@ -447,9 +454,6 @@ a { color: inherit; text-decoration: none; }
   }
 
   .services-section--embedded {
-    height: auto !important;
-    max-height: none !important;
-    overflow: visible !important;
     justify-content: flex-start !important;
     padding: 48px 5vw !important;
   }
@@ -472,10 +476,10 @@ a { color: inherit; text-decoration: none; }
     margin-bottom: 36px !important;
   }
 
+  /* `overflow: visible` is deliberately NOT restored: it existed to release the
+     100vh clip, but SaltaGen still sets `overflow: hidden` inline to clip its
+     absolutely-positioned wave motif, which should stay clipped on mobile too. */
   .saltagen-section--embedded {
-    height: auto !important;
-    max-height: none !important;
-    overflow: visible !important;
     padding-top: 48px !important;
   }
 
@@ -506,10 +510,22 @@ a { color: inherit; text-decoration: none; }
     margin-top: 16px !important;
   }
 
-  .forest-cta--embedded {
-    height: auto !important;
-    min-height: 0 !important;
-    overflow: visible !important;
+  /* `.forest-cta--embedded` is gone with the `embedded` prop. The CTA now ships
+     the same padded form /consulting already used, so it only needs its mobile
+     padding tightened from the desktop clamp. */
+  .forest-cta {
+    padding: 48px 5vw !important;
+  }
+
+  /* Backers: its first real mobile treatment.
+     This section carried `height: 100vh; max-height: 100vh; overflow: hidden`
+     inline with no release in this block, so on phones it clipped whatever did
+     not fit one screen — the partnering line at the bottom was being cut off.
+     The inline clip is gone; what it needs now is the same tightened padding as
+     its neighbours instead of the desktop nav-clearance reserve, which is dead
+     weight on a section that is never the first thing under the nav.
+     Column collapse and cell padding live in Backers.tsx's own <style> block. */
+  .backers-section {
     padding: 48px 5vw !important;
   }
 }
