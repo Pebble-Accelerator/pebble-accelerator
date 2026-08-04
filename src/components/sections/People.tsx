@@ -152,9 +152,12 @@ function PersonCard({ person }: { person: Person }) {
                 display: 'inline-block',
                 marginTop: '12px',
                 fontFamily: 'var(--font-ibm-plex-sans), system-ui, sans-serif',
-                fontSize: '11px',
+                // Matches PortfolioHome.tsx's "See all →" — the same functional
+                // element (in-content CTA link with trailing arrow), previously
+                // 11px/500/0.08em here vs 12px/500/0.1em there.
+                fontSize: '12px',
                 fontWeight: 500,
-                letterSpacing: '0.08em',
+                letterSpacing: '0.1em',
                 textTransform: 'uppercase',
                 color: hasPhoto ? 'var(--color-canvas)' : 'var(--color-forest)',
               }}
